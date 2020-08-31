@@ -33,6 +33,7 @@ while = "wh"
 for = "fr"
 default = "df"
 break = "br"
+return = "ret"
 
 /* operators */
 assignment = ":"
@@ -81,8 +82,9 @@ number = 0|[1-9][:digit]*
     {print}             {System.out.println("<print," + yytext() + ">");}
     {while}             {System.out.println("<while," + yytext() + ">");}
     {for}               {System.out.println("<for," + yytext() + ">");}
-    {default}               {System.out.println("<default," + yytext() + ">");}
-    {break}               {System.out.println("<break," + yytext() + ">");}
+    {default}           {System.out.println("<default," + yytext() + ">");}
+    {break}             {System.out.println("<break," + yytext() + ">");}
+    {return}            {System.out.println("<return," + yytext() + ">");}
 
     /* operators */
     {assignment}        {/*return symbol(sym.EQ);*/
