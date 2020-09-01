@@ -79,9 +79,9 @@ class Tokens {
     "\1\12\1\13\1\14\1\15\1\16\1\17\1\20\1\21"+
     "\1\22\11\23\1\24\1\3\1\25\1\26\1\27\2\3"+
     "\32\7\1\30\1\31\1\32\1\3\1\7\1\3\1\33"+
-    "\1\34\1\7\1\35\1\7\1\36\1\37\1\40\1\41"+
-    "\4\7\1\42\1\43\1\44\1\7\1\45\1\7\1\37"+
-    "\1\46\1\7\1\47\3\7\1\3\1\50\2\3\41\0"+
+    "\1\34\1\7\1\35\1\36\1\37\1\40\1\41\1\42"+
+    "\4\7\1\43\1\44\1\45\1\7\1\46\1\7\1\47"+
+    "\1\50\1\7\1\51\3\7\1\3\1\52\2\3\41\0"+
     "\2\3\4\7\4\3\1\7\2\3\1\0\7\3\1\7"+
     "\4\3\1\7\5\3\27\7\1\3\37\7\1\3\u01ca\7"+
     "\4\3\14\7\16\3\5\7\7\3\1\7\1\3\1\7"+
@@ -279,12 +279,12 @@ class Tokens {
     "\1\0\1\1\2\2\1\1\1\3\1\4\1\5\1\6"+
     "\1\7\1\10\1\11\1\12\1\13\1\14\1\1\1\15"+
     "\2\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25"+
-    "\10\4\1\1\1\26\1\27\1\30\1\31\1\32\1\33"+
+    "\11\4\1\1\1\26\1\27\1\30\1\31\1\32\1\33"+
     "\1\34\1\4\1\35\1\36\1\37\1\4\1\40\1\41"+
-    "\1\42\1\43\1\0\1\44\1\45";
+    "\1\42\1\4\1\43\1\0\1\44\1\45\1\46";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[54];
+    int [] result = new int[57];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -309,16 +309,17 @@ class Tokens {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\51\0\51\0\122\0\173\0\51\0\244\0\51"+
-    "\0\51\0\51\0\51\0\51\0\315\0\51\0\366\0\u011f"+
-    "\0\51\0\51\0\u0148\0\u0171\0\u019a\0\51\0\u01c3\0\51"+
-    "\0\51\0\51\0\u01ec\0\u0215\0\u023e\0\u0267\0\u0290\0\u02b9"+
-    "\0\u02e2\0\u030b\0\u0334\0\51\0\51\0\51\0\51\0\51"+
-    "\0\51\0\51\0\u035d\0\244\0\244\0\244\0\u0386\0\244"+
-    "\0\244\0\244\0\244\0\u0334\0\244\0\244";
+    "\0\0\0\53\0\53\0\126\0\201\0\53\0\254\0\53"+
+    "\0\53\0\53\0\53\0\53\0\327\0\53\0\u0102\0\u012d"+
+    "\0\53\0\53\0\u0158\0\u0183\0\u01ae\0\53\0\u01d9\0\53"+
+    "\0\53\0\53\0\u0204\0\u022f\0\u025a\0\u0285\0\u02b0\0\u02db"+
+    "\0\u0306\0\u0331\0\u035c\0\u0387\0\53\0\53\0\53\0\53"+
+    "\0\53\0\53\0\53\0\u03b2\0\254\0\254\0\254\0\u03dd"+
+    "\0\254\0\254\0\254\0\u0408\0\254\0\u0387\0\254\0\254"+
+    "\0\254";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[54];
+    int [] result = new int[57];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -344,28 +345,31 @@ class Tokens {
     "\1\2\2\3\1\2\1\4\1\5\1\6\1\7\1\10"+
     "\1\11\1\12\1\13\1\14\1\15\1\16\1\17\1\20"+
     "\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30"+
-    "\1\31\1\32\1\33\1\34\1\35\1\36\2\7\1\37"+
-    "\1\7\1\40\1\41\2\7\1\42\1\43\53\0\1\3"+
-    "\74\0\1\44\22\0\1\7\6\0\1\7\12\0\2\7"+
-    "\7\0\15\7\16\0\1\45\52\0\1\46\47\0\1\47"+
-    "\56\0\1\23\10\0\1\23\1\0\1\23\1\0\1\23"+
-    "\22\0\1\50\63\0\1\51\50\0\1\52\22\0\1\7"+
-    "\6\0\1\7\12\0\2\7\7\0\7\7\1\53\5\7"+
+    "\1\31\1\32\1\33\1\34\1\35\1\7\1\36\2\7"+
+    "\1\37\1\7\1\40\1\41\1\42\2\7\1\43\1\44"+
+    "\55\0\1\3\76\0\1\45\24\0\1\7\6\0\1\7"+
+    "\12\0\2\7\7\0\17\7\16\0\1\46\54\0\1\47"+
+    "\51\0\1\50\60\0\1\23\10\0\1\23\2\0\1\23"+
+    "\1\0\1\23\4\0\1\23\16\0\1\51\65\0\1\52"+
+    "\52\0\1\53\24\0\1\7\6\0\1\7\12\0\2\7"+
+    "\7\0\10\7\1\54\6\7\1\0\1\7\6\0\1\7"+
+    "\12\0\2\7\7\0\13\7\1\55\3\7\1\0\1\7"+
+    "\6\0\1\7\12\0\2\7\7\0\4\7\1\56\12\7"+
+    "\1\0\1\7\6\0\1\7\12\0\2\7\7\0\13\7"+
+    "\1\57\1\7\1\60\1\7\1\0\1\7\6\0\1\7"+
+    "\12\0\2\7\7\0\4\7\1\61\12\7\1\0\1\7"+
+    "\6\0\1\7\12\0\2\7\7\0\13\7\1\62\3\7"+
     "\1\0\1\7\6\0\1\7\12\0\2\7\7\0\12\7"+
-    "\1\54\2\7\1\0\1\7\6\0\1\7\12\0\2\7"+
-    "\7\0\3\7\1\55\11\7\1\0\1\7\6\0\1\7"+
-    "\12\0\2\7\7\0\12\7\1\56\1\57\1\7\1\0"+
-    "\1\7\6\0\1\7\12\0\2\7\7\0\3\7\1\60"+
-    "\11\7\1\0\1\7\6\0\1\7\12\0\2\7\7\0"+
-    "\12\7\1\61\2\7\1\0\1\7\6\0\1\7\12\0"+
-    "\2\7\7\0\11\7\1\62\3\7\1\0\1\7\6\0"+
-    "\1\7\12\0\2\7\7\0\5\7\1\63\7\7\1\0"+
-    "\50\64\1\3\1\7\6\0\1\7\12\0\2\7\7\0"+
-    "\2\7\1\65\12\7\1\0\1\7\6\0\1\7\12\0"+
-    "\2\7\7\0\7\7\1\66\5\7\1\0";
+    "\1\63\4\7\1\0\1\7\6\0\1\7\12\0\2\7"+
+    "\7\0\3\7\1\64\13\7\1\0\1\7\6\0\1\7"+
+    "\12\0\2\7\7\0\6\7\1\65\10\7\1\0\52\66"+
+    "\1\3\1\7\6\0\1\7\12\0\2\7\7\0\2\7"+
+    "\1\67\14\7\1\0\1\7\6\0\1\7\12\0\2\7"+
+    "\7\0\10\7\1\70\6\7\1\0\1\7\6\0\1\7"+
+    "\12\0\2\7\7\0\14\7\1\71\2\7\1\0";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[943];
+    int [] result = new int[1075];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -409,11 +413,11 @@ class Tokens {
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
     "\1\0\2\11\2\1\1\11\1\1\5\11\1\1\1\11"+
-    "\2\1\2\11\3\1\1\11\1\1\3\11\11\1\7\11"+
-    "\11\1\1\0\2\1";
+    "\2\1\2\11\3\1\1\11\1\1\3\11\12\1\7\11"+
+    "\12\1\1\0\3\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[54];
+    int [] result = new int[57];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -888,197 +892,202 @@ class Tokens {
                         + " line: " + yyline + ", column: " + yycolumn);
             }
             // fall through
-          case 38: break;
+          case 39: break;
           case 2:
             { /* ignore */
             }
             // fall through
-          case 39: break;
+          case 40: break;
           case 3:
             { System.out.println("<comilla," + yytext() + ">");
             }
             // fall through
-          case 40: break;
+          case 41: break;
           case 4:
             { /*return symbol(sym.IDENTIFIER);*/
                         System.out.println("<ID," + yytext() + ">");
             }
             // fall through
-          case 41: break;
+          case 42: break;
           case 5:
             { /*return symbol(sym.MOD);*/
                         System.out.println("<mod," + yytext() + ">");
             }
             // fall through
-          case 42: break;
+          case 43: break;
           case 6:
             { System.out.println("<apostrophe," + yytext() + ">");
             }
             // fall through
-          case 43: break;
+          case 44: break;
           case 7:
             { System.out.println("<openParentesis," + yytext() + ">");
             }
             // fall through
-          case 44: break;
+          case 45: break;
           case 8:
             { System.out.println("<closeParentesis," + yytext() + ">");
             }
             // fall through
-          case 45: break;
+          case 46: break;
           case 9:
             { /*return symbol(sym.MULT);*/
                         System.out.println("<multiplication," + yytext() + ">");
             }
             // fall through
-          case 46: break;
+          case 47: break;
           case 10:
             { /*return symbol(sym.PLUS);*/
                         System.out.println("<plus," + yytext() + ">");
             }
             // fall through
-          case 47: break;
+          case 48: break;
           case 11:
             { System.out.println("<coma," + yytext() + ">");
             }
             // fall through
-          case 48: break;
+          case 49: break;
           case 12:
             { /*return symbol(sym.MINUS);*/
                         System.out.println("<minus," + yytext() + ">");
             }
             // fall through
-          case 49: break;
+          case 50: break;
           case 13:
             { /*return symbol(sym.DIV);*/
                         System.out.println("<division," + yytext() + ">");
             }
             // fall through
-          case 50: break;
+          case 51: break;
           case 14:
             { System.out.println("<number," + yytext() + ">");
             }
             // fall through
-          case 51: break;
+          case 52: break;
           case 15:
             { System.out.println("<colon," + yytext() + ">");
             }
             // fall through
-          case 52: break;
+          case 53: break;
           case 16:
             { System.out.println("<lessThan," + yytext() + ">");
             }
             // fall through
-          case 53: break;
+          case 54: break;
           case 17:
             { /*return symbol(sym.EQEQ);*/
                         System.out.println("<equalTo," + yytext() + ">");
             }
             // fall through
-          case 54: break;
+          case 55: break;
           case 18:
             { System.out.println("<greaterThan," + yytext() + ">");
             }
             // fall through
-          case 55: break;
+          case 56: break;
           case 19:
             { System.out.println("<openSqrBracket," + yytext() + ">");
             }
             // fall through
-          case 56: break;
+          case 57: break;
           case 20:
             { System.out.println("<backslash," + yytext() + ">");
             }
             // fall through
-          case 57: break;
+          case 58: break;
           case 21:
             { System.out.println("<closeSqrBracket," + yytext() + ">");
             }
             // fall through
-          case 58: break;
+          case 59: break;
           case 22:
             { /*return symbol(sym.EQEQ);*/
                         System.out.println("<noEqualTo," + yytext() + ">");
             }
             // fall through
-          case 59: break;
+          case 60: break;
           case 23:
             { System.out.println("<increment," + yytext() + ">");
             }
             // fall through
-          case 60: break;
+          case 61: break;
           case 24:
             { System.out.println("<decrement," + yytext() + ">");
             }
             // fall through
-          case 61: break;
+          case 62: break;
           case 25:
             { System.out.println("<pyc," + yytext() + ">");
             }
             // fall through
-          case 62: break;
+          case 63: break;
           case 26:
             { System.out.println("<closeBlock," + yytext() + ">");
             }
             // fall through
-          case 63: break;
+          case 64: break;
           case 27:
             { System.out.println("<lessOrEqual," + yytext() + ">");
             }
             // fall through
-          case 64: break;
+          case 65: break;
           case 28:
             { System.out.println("<greaterOrEqual," + yytext() + ">");
             }
             // fall through
-          case 65: break;
+          case 66: break;
           case 29:
             { System.out.println("<break," + yytext() + ">");
             }
             // fall through
-          case 66: break;
+          case 67: break;
           case 30:
             { System.out.println("<default," + yytext() + ">");
             }
             // fall through
-          case 67: break;
+          case 68: break;
           case 31:
             { System.out.println("<for," + yytext() + ">");
             }
             // fall through
-          case 68: break;
+          case 69: break;
           case 32:
             { System.out.println("<ifSwitch," + yytext() + ">");
             }
             // fall through
-          case 69: break;
+          case 70: break;
           case 33:
             { /*return symbol(sym.OR);*/
                         System.out.println("<conOr," + yytext() + ">");
             }
             // fall through
-          case 70: break;
+          case 71: break;
           case 34:
             { System.out.println("<print," + yytext() + ">");
             }
             // fall through
-          case 71: break;
+          case 72: break;
           case 35:
             { System.out.println("<while," + yytext() + ">");
             }
             // fall through
-          case 72: break;
+          case 73: break;
           case 36:
             { /*return symbol(sym.AND);*/
                         System.out.println("<conAnd," + yytext() + ">");
             }
             // fall through
-          case 73: break;
+          case 74: break;
           case 37:
             { System.out.println("<function," + yytext() + ">");
             }
             // fall through
-          case 74: break;
+          case 75: break;
+          case 38:
+            { System.out.println("<return," + yytext() + ">");
+            }
+            // fall through
+          case 76: break;
           default:
             zzScanError(ZZ_NO_MATCH);
         }

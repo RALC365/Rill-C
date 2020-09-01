@@ -36,7 +36,6 @@ break = "br"
 return = "ret"
 
 /* operators */
-assignment = ":"
 equalTo = "="
 noEqualTo = "!="
 greaterOrEqual = ">="
@@ -87,8 +86,6 @@ number = 0|[1-9][:digit]*
     {return}            {System.out.println("<return," + yytext() + ">");}
 
     /* operators */
-    {assignment}        {/*return symbol(sym.EQ);*/
-                        System.out.println("<assignment," + yytext() + ">");}
     {equalTo}           {/*return symbol(sym.EQEQ);*/
                         System.out.println("<equalTo," + yytext() + ">");}
     {noEqualTo}         {/*return symbol(sym.EQEQ);*/
@@ -132,4 +129,4 @@ number = 0|[1-9][:digit]*
 }
 
 
-/* INVESTIGAR MÁS SOBRE LA CLASE SYM ya que es la parte del CUP*/ 
+/* INVESTIGAR MÁS SOBRE LA CLASE SYM ya que es parte del CUP*/ 
