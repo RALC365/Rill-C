@@ -26,6 +26,7 @@ InputCharacter = [^\r\n]
 WhiteSpace = {LineTerminator} | [ \t\f]
 
 /* control statements */
+variable = "vb"
 function = "fun"
 ifSwitch = "if"
 print = "pp"
@@ -38,14 +39,10 @@ return = "ret"
 /* operators */
 equalTo = "="
 noEqualTo = "!="
-greaterOrEqual = ">="
-lessOrEqual = "<="
-lessThan = "<"
-greaterThan = ">"
-plus = "+"
-minus = "-"
-multiplication = "*"
-division = "/"
+orEqual = ">=" || "<="
+than = "<" || ">"
+plus = "+" || "-"
+multiplication = "*" || "/"
 mod = "%"
 increment = "++"
 decrement = "--"
@@ -90,18 +87,12 @@ number = 0|[1-9][:digit]*
                         System.out.println("<equalTo," + yytext() + ">");}
     {noEqualTo}         {/*return symbol(sym.EQEQ);*/
                         System.out.println("<noEqualTo," + yytext() + ">");}
-    {greaterOrEqual}    {System.out.println("<greaterOrEqual," + yytext() + ">");}
-    {lessOrEqual}       {System.out.println("<lessOrEqual," + yytext() + ">");}
-    {lessThan}          {System.out.println("<lessThan," + yytext() + ">");}
-    {greaterThan}       {System.out.println("<greaterThan," + yytext() + ">");}
+    {orEqual}    {System.out.println("<greaterOrEqual," + yytext() + ">");}
+    {than}          {System.out.println("<lessThan," + yytext() + ">");}
     {plus}              {/*return symbol(sym.PLUS);*/
                         System.out.println("<plus," + yytext() + ">");}
-    {minus}             {/*return symbol(sym.MINUS);*/
-                        System.out.println("<minus," + yytext() + ">");}
     {multiplication}    {/*return symbol(sym.MULT);*/
                         System.out.println("<multiplication," + yytext() + ">");}
-    {division}          {/*return symbol(sym.DIV);*/
-                        System.out.println("<division," + yytext() + ">");}
     {mod}               {/*return symbol(sym.MOD);*/
                         System.out.println("<mod," + yytext() + ">");}
     {increment}         {System.out.println("<increment," + yytext() + ">");}
