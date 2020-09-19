@@ -1,0 +1,147 @@
+package CUP;
+
+import java_cup.runtime.Symbol;
+/**
+*import java_cup.runtime.*;
+**/
+
+parser code
+{:
+    private Symbol s;
+    
+    /**
+     * Método al que se llama automáticamente ante algún error sintactico.
+    **/ 
+    public void syntax_error(Symbol s){
+        this.s = s;
+        System.out.println("Error Sintáctico recuperable en la Línea " + (s.left) +
+        " Columna "+s.right+ ". No se esperaba este componente: " +s.value+".");
+    }
+
+    /**
+     * Método al que se llama automáticamente ante algún error sintáctico 
+     * en el que ya no es posible una recuperación de errores.
+     **/ 
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+        System.out.println("Error síntactico irrecuperable en la Línea " + 
+        (s.left)+ " Columna "+s.right+". Componente " + s.value + 
+        " no reconocido."); 
+    }
+
+    public Symbol getS(){
+        return this.s;
+    }
+:};
+
+terminal closeBlock, openParentesis, closeParentesis, pyc, openSqrBracket, 
+         closeSqrBracket, coma, colon, quotMark, apostrophe, Main,
+         variable, integer, Bool, Char, array, matrix, function, ifSwitch, 
+         While, For, equalTo, noEqualTo, orEqual, than,
+         plus, ID, number, To, False, True,
+         decrement,mod, Default, Return,backslash,conAnd, increment, conOr, ERROR, multiplication, Print ;
+
+non terminal INICIO, WHILE, FOR, IF, TIPO_VARIABLE, STRING,
+            SENTENCIA_BOOLEANA, SENTENCIA, DECLARACION, ARREGLO, MATRIZ;
+
+start with INICIO;
+
+INICIO ::= 
+    openParentesis closeParentesis openParentesis Main colon SENTENCIA closeBlock
+;
+
+WHILE ::= 
+openParentesis SENTENCIA_BOOLEANA closeParentesis openParentesis While colon SENTENCIA closeBlock
+;
+
+FOR ::= 
+openParentesis ID coma number To number coma plus number closeParentesis openParentesis For colon SENTENCIA closeBlock
+;
+
+IF ::= 
+openParentesis SENTENCIA_BOOLEANA closeParentesis openParentesis ifSwitch colon SENTENCIA closeBlock |
+//openParentesis SENTENCIA_BOOLEANA closeParentesis openParentesis ifSwitch colon SENTENCIA openParentesis Default closeBlock SENTENCIA closeBlock 
+;
+
+
+SENTENCIA ::= 
+    WHILE |
+    FOR |
+    IF |
+    DECLARACION |
+    pyc
+;
+
+DECLARACION ::= 
+    variable ID pyc |
+    integer ID pyc |
+    Bool ID pyc |
+    Char ID pyc |
+    array ID pyc |
+    matrix ID pyc |
+
+    integer ID colon number pyc |
+    Bool ID colon False pyc |
+    Bool ID colon True pyc |
+    Bool ID colon SENTENCIA_BOOLEANA pyc |
+    Char ID colon apostrophe STRING apostrophe pyc|
+    Char ID colon quotMark STRING quotMark pyc |
+    array ID colon openSqrBracket ARREGLO closeSqrBracket pyc |
+    matrix ID colon openSqrBracket MATRIZ closeSqrBracket pyc
+
+    
+;
+
+ARREGLO ::=
+    number | 
+    //number coma ARREGLO | 
+    apostrophe STRING apostrophe | quotMark STRING quotMark |
+    //apostrophe STRING apostrophe coma ARREGLO | quotMark STRING quotMark coma ARREGLO
+;
+
+MATRIZ ::= 
+    openSqrBracket ARREGLO closeSqrBracket |
+    openSqrBracket ARREGLO closeSqrBracket coma MATRIZ |
+    ARREGLO | ARREGLO coma MATRIZ
+;
+
+TIPO_VARIABLE ::=
+number | ID | apostrophe apostrophe | quotMark quotMark |
+apostrophe STRING apostrophe | quotMark STRING quotMark
+;
+
+STRING ::=
+ID | ID STRING
+;
+
+SENTENCIA_BOOLEANA ::= 
+    ID equalTo ID |
+    ID equalTo number |
+    ID equalTo apostrophe STRING apostrophe |
+    ID equalTo quotMark STRING quotMark |
+    ID equalTo False |
+    ID equalTo True |
+
+    ID noEqualTo ID |
+    ID noEqualTo number |
+    ID noEqualTo apostrophe STRING apostrophe |
+    ID noEqualTo quotMark STRING quotMark |
+    ID noEqualTo False |
+    ID noEqualTo True |
+
+    ID than ID |
+    ID than number |
+    ID orEqual ID |
+    ID orEqual number
+;
+
+OPERACIONAL ::=
+decrement |
+mod | 
+Default | 
+Return |
+backslash |
+conAnd | 
+increment | 
+conOr | 
+ERROR
+;
