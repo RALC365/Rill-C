@@ -11,63 +11,61 @@ import Main.Tokens;
 %public
 
 /* comment */
-comment = "|" ~"|"
+COMMENT = "|"~"|"
 
 /* code structure */
-closeBlock = ":)"
-openParentesis = "("
-closeParentesis = ")"
-pyc = ".,"
-openSqrBracket = "["
-closeSqrBracket = "]"
-coma = ","
-colon = ":"
-quotMark = "\""
-apostrophe = "'"
-backslash = "\\"
-LineTerminator = \r|\n|\r\n
-InputCharacter = [^\r\n]
-WhiteSpace = {LineTerminator} | [ \t\f]
+CLOSE_BLOCK = ":)"
+OPEN_PARENTESIS = "("
+CLOSE_PARENTESIS = ")"
+PYC = ".,"
+BETWEEN = "..."
+OPEN_SQR_BRACKET = "["
+CLOSE_SQR_BRACKET = "]"
+COMA = ","
+COLON = ":"
+BACK_SLASH = "\\"
+NEW_LINE = "ln"
+NULL = "nll"
+TRUE = "true"
+FALSE = "false"
+STRING = "\""~"\""
+CHAR_ELEMENT = "'" [:jletter:] "'"
+LINE_TERMINATOR = \r|\n|\r\n
+INPUT_CHARACTER = [^\r\n]
+WHITE_SPACE = {LINE_TERMINATOR} | [ \t\f]
 
 /* control statements */
-Main = "main"
-variable = "vb"
-integer = "int"
-Bool = "bln"
-Char = "chr"
-array = "arr"
-matrix = "mtr"
-function = "fun"
-ifSwitch = "if"
-Print = "pp"
-While = "wh"
-For = "fr"
-Default = "els"
-//break = "br"
-Return = "ret"
+FUNCTION = "fun"
+IF_SWITCH = "if"
+PRINT = "pp"
+WHILE = "wh"
+FOR = "fr"
+ELSE = "els"
+RETURN = "ret"
+CIN = "in"
+TO = "to" | "->"
+MAIN = "main"
 
 /* operators */
-equalTo = "="
-noEqualTo = "!="
-orEqual = ">=" | "<="
-than = "<" | ">"
-plus = "+" | "-"
-multiplication = "*" | "/"
-mod = "%"
-increment = "++"
-decrement = "--"
-To = "->" | "to"
-False = "False"
-True = "True"
+OP_REL = "="|">="|"<="|"<"|">"
+OP_SUM = "+" | "-"
+OP_MULTI_DIV = "*" | "/"
+MOD = "%"
+INCREMENT = "++"|"--"
+CON_AND = "and"
+CON_OR = "or"
 
-
-/* todavía en veremos */
-conAnd = "and"
-conOr = "or"
+/* data types */
+INTENGER = "int"
+BOOLEAN = "bln"
+CHAR = "chr"
+ARRAY = "arr"
+MATRIX = "mtx"
+VARIABLE = "vb"
 
 /* identifier */
 ID = [:jletter:] [:jletterdigit:]*
-number = 0|[1-9][:digit]*
+NUMBER = 0 | [1-9][0-9]*
 
 //Codigo
 %{
@@ -76,63 +74,63 @@ number = 0|[1-9][:digit]*
 %%
 
 <YYINITIAL> {
-
     /* code structure */
-    {closeBlock}        {lexeme=yytext(); return closeBlock;}
-    {openParentesis}    {lexeme=yytext(); return openParentesis;}
-    {closeParentesis}   {lexeme=yytext(); return closeParentesis;}
-    {pyc}               {lexeme=yytext(); return pyc;}
-    {openSqrBracket}    {lexeme=yytext(); return openSqrBracket;}
-    {closeSqrBracket}   {lexeme=yytext(); return closeSqrBracket;}
-    {coma}              {lexeme=yytext(); return coma;}
-    {colon}             {lexeme=yytext(); return colon;}
-    {quotMark}          {lexeme=yytext(); return quotMark;}
-    {apostrophe}        {lexeme=yytext(); return apostrophe;}
-    {backslash}         {lexeme=yytext(); return backslash;}
+    
+    {CLOSE_BLOCK}           {lexeme=yytext(); return CLOSE_BLOCK;}
+    {OPEN_PARENTESIS}       {lexeme=yytext(); return OPEN_PARENTESIS;}
+    {CLOSE_PARENTESIS}      {lexeme=yytext(); return CLOSE_PARENTESIS;}
+    {PYC}                   {lexeme=yytext(); return PYC;}
+    {BETWEEN}               {lexeme=yytext(); return BETWEEN;}
+    {OPEN_SQR_BRACKET}      {lexeme=yytext(); return OPEN_SQR_BRACKET;}
+    {CLOSE_SQR_BRACKET}     {lexeme=yytext(); return CLOSE_SQR_BRACKET;}
+    {COMA}                  {lexeme=yytext(); return COMA;}
+    {COLON}                 {lexeme=yytext(); return COLON;}
+    {BACK_SLASH}            {lexeme=yytext(); return BACK_SLASH;}
+    {NEW_LINE}              {lexeme=yytext(); return NEW_LINE;}
+    {NULL}                  {lexeme=yytext(); return NULL;}
+    {TRUE}                  {lexeme=yytext(); return TRUE;}
+    {FALSE}                 {lexeme=yytext(); return FALSE;}
+    {STRING}                {lexeme=yytext(); return STRING;}
+    {CHAR_ELEMENT}          {lexeme=yytext(); return CHAR_ELEMENT;}
 
     /* control statements */
-    {Main}              {lexeme=yytext(); return Main;}
-    {variable}          {lexeme=yytext(); return variable;}
-    {integer}           {lexeme=yytext(); return integer;}
-    {Bool}              {lexeme=yytext(); return Bool;}
-    {Char}              {lexeme=yytext(); return Char;}
-    {array}             {lexeme=yytext(); return array;}
-    {matrix}            {lexeme=yytext(); return matrix;}
-    {function}          {lexeme=yytext(); return function;}
-    {ifSwitch}          {lexeme=yytext(); return ifSwitch;}
-    {Print}             {lexeme=yytext(); return Print;}
-    {While}             {lexeme=yytext(); return While;}
-    {For}               {lexeme=yytext(); return For;}
-    {Default}           {lexeme=yytext(); return Default;}
-//    {break}             {System.out.println("<break," + yytext() + ">");}
-    {Return}            {lexeme=yytext(); return Return;}
+    {FUNCTION}              {lexeme=yytext(); return FUNCTION;}
+    {IF_SWITCH}             {lexeme=yytext(); return IF_SWITCH;}
+    {PRINT}                 {lexeme=yytext(); return PRINT;}
+    {WHILE}                 {lexeme=yytext(); return WHILE;}
+    {FOR}                   {lexeme=yytext(); return FOR;}
+    {ELSE}                  {lexeme=yytext(); return ELSE;}
+    {RETURN}                {lexeme=yytext(); return RETURN;}
+    {CIN}                   {lexeme=yytext(); return CIN;}
+    {TO}                    {lexeme=yytext(); return TO;}
+    {MAIN}                  {lexeme=yytext(); return MAIN;}
 
     /* operators */
-    {equalTo}           {lexeme=yytext(); return equalTo;}
-    {noEqualTo}         {lexeme=yytext(); return noEqualTo;}
-    {orEqual}           {lexeme=yytext(); return orEqual;}
-    {than}              {lexeme=yytext(); return than;}
-    {plus}              {lexeme=yytext(); return plus;}
-    {multiplication}    {lexeme=yytext(); return multiplication;}
-    {mod}               {lexeme=yytext(); return mod;}
-    {increment}         {lexeme=yytext(); return increment;}
-    {decrement}         {lexeme=yytext(); return decrement;}
-    /* todavía en veremos */
-    {conAnd}            {lexeme=yytext(); return conAnd;}
-    {conOr}             {lexeme=yytext(); return conOr;}
-    {To}                {lexeme=yytext(); return To;}
-    {False}             {lexeme=yytext(); return False;}
-    {True}              {lexeme=yytext(); return True;}
- 
+    {OP_REL}                {lexeme=yytext(); return OP_REL;}
+    {OP_SUM}                {lexeme=yytext(); return OP_SUM;}
+    {OP_MULTI_DIV}          {lexeme=yytext(); return OP_MULTI_DIV;}
+    {MOD}                   {lexeme=yytext(); return MOD;}
+    {INCREMENT}             {lexeme=yytext(); return INCREMENT;}
+    {CON_AND}               {lexeme=yytext(); return CON_AND;}
+    {CON_OR}                {lexeme=yytext(); return CON_OR;}
+    
+    /* data types */
+    {INTENGER}              {lexeme=yytext(); return INTENGER;}
+    {BOOLEAN}               {lexeme=yytext(); return BOOLEAN;}
+    {CHAR}                  {lexeme=yytext(); return CHAR;}
+    {ARRAY}                 {lexeme=yytext(); return ARRAY;}
+    {MATRIX}                {lexeme=yytext(); return MATRIX;}
+    {VARIABLE}              {lexeme=yytext(); return VARIABLE;}
+
     /* identifiers */
-    {ID}               {lexeme=yytext(); return ID;}
-    {number}           {lexeme=yytext(); return number;}
+    {ID}                    {lexeme=yytext(); return ID;}
+    {NUMBER}                {lexeme=yytext(); return NUMBER;}
 
     /* comments */
-    {comment}           {/* ignore */}
+    {COMMENT}               {/* ignore */}
     
     /* whitespace */
-    {WhiteSpace}        {/* ignore */}
+    {WHITE_SPACE}           {/* ignore */}
 
     /* error */
     [^]                {throw new Error("Illegal character <" + yytext() + ">"

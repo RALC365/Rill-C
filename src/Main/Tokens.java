@@ -10,52 +10,98 @@ package Main;
  * @author RALC365
  */
 public enum Tokens {
-    /* code structure */
-    Linea,
-    closeBlock,
-    openParentesis,
-    closeParentesis,
-    pyc,
-    openSqrBracket,
-    closeSqrBracket,
-    coma,
-    colon,
-    quotMark,
-    apostrophe,
-    backslash,
-    /* control statements */
-    Main,
-    variable,
-    integer,
-    Bool,
-    Char,
-    array,
-    matrix,
-    function,
-    ifSwitch,
-    Print,
-    While,
-    For,
-    Default,
-    Return,
-    /* operators */
-    equalTo,
-    noEqualTo,
-    orEqual,
-    than,
-    plus,
-    multiplication,
-    mod,
-    increment,
-    decrement,
-    To,
-    False,
-    True,
-    /* todavía en veremos */
-    conAnd,
-    conOr,
-    /* identifier */
-    ID,
-    number,
+    LINEA,
     ERROR,
+    /* code structure */
+  CLOSE_BLOCK,
+  OPEN_PARENTESIS,
+  CLOSE_PARENTESIS,
+  PYC,
+  BETWEEN,
+  OPEN_SQR_BRACKET,
+  CLOSE_SQR_BRACKET,
+  COMA,
+  COLON,
+  BACK_SLASH,
+  NEW_LINE,
+  NULL,
+  TRUE,
+  FALSE,
+  STRING,
+  CHAR_ELEMENT,
+/* control statements */
+  FUNCTION,
+  IF_SWITCH,
+  PRINT,
+  WHILE,
+  FOR,
+  ELSE,
+  RETURN,
+  CIN,
+  TO,
+  MAIN,
+/* operators */
+  OP_REL,
+  OP_SUM,
+  OP_MULTI_DIV,
+  MOD,
+  INCREMENT,
+  CON_AND,
+  CON_OR,
+/* data types */
+  INTENGER,
+  BOOLEAN,
+  CHAR,
+  ARRAY,
+  MATRIX,
+  VARIABLE,
+/* identifier */
+  ID,
+  NUMBER,
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

@@ -15,72 +15,70 @@ import java_cup.runtime.Symbol;
 %public
 
 /* comment */
-comment = "|" ~"|"
+COMMENT = "|"~"|"
 
 /* code structure */
-closeBlock = ":)"
-openParentesis = "("
-closeParentesis = ")"
-pyc = ".,"
-openSqrBracket = "["
-closeSqrBracket = "]"
-coma = ","
-colon = ":"
-quotMark = "\""
-apostrophe = "'"
-backslash = "\\"
-LineTerminator = \r|\n|\r\n
-InputCharacter = [^\r\n]
-WhiteSpace = {LineTerminator} | [ \t\f]
+CLOSE_BLOCK = ":)"
+OPEN_PARENTESIS = "("
+CLOSE_PARENTESIS = ")"
+PYC = ".,"
+BETWEEN = "..."
+OPEN_SQR_BRACKET = "["
+CLOSE_SQR_BRACKET = "]"
+COMA = ","
+COLON = ":"
+BACK_SLASH = "\\"
+NEW_LINE = "ln"
+NULL = "nll"
+TRUE = "true"
+FALSE = "false"
+STRING = "\""~"\""
+CHAR_ELEMENT = "'" [:jletter:] "'"
+LINE_TERMINATOR = \r|\n|\r\n
+INPUT_CHARACTER = [^\r\n]
+WHITE_SPACE = {LINE_TERMINATOR} | [ \t\f]
 
 /* control statements */
-Main = "main"
-variable = "vb"
-integer = "int"
-Bool = "bln"
-Char = "chr"
-array = "arr"
-matrix = "mtr"
-function = "fun"
-ifSwitch = "if"
-Print = "pp"
-While = "wh"
-For = "fr"
-Default = "els"
-//break = "br"
-Return = "ret"
+FUNCTION = "fun"
+IF_SWITCH = "if"
+PRINT = "pp"
+WHILE = "wh"
+FOR = "fr"
+ELSE = "els"
+RETURN = "ret"
+CIN = "in"
+TO = "to" | "->"
+MAIN = "main"
 
 /* operators */
-equalTo = "="
-noEqualTo = "!="
-orEqual = ">=" | "<="
-than = "<" | ">"
-plus = "+" | "-"
-multiplication = "*" | "/"
-mod = "%"
-increment = "++"
-decrement = "--"
-To = "->" | "to"
-False = "False"
-True = "True"
+OP_REL = "="|">="|"<="|"<"|">"
+OP_SUM = "+" | "-"
+OP_MULTI_DIV = "*" | "/"
+MOD = "%"
+INCREMENT = "++"|"--"
+CON_AND = "and"
+CON_OR = "or"
 
-
-/* todavía en veremos */
-conAnd = "and"
-conOr = "or"
+/* data types */
+INTENGER = "int"
+BOOLEAN = "bln"
+CHAR = "chr"
+ARRAY = "arr"
+MATRIX = "mtx"
+VARIABLE = "vb"
 
 /* identifier */
 ID = [:jletter:] [:jletterdigit:]*
-number = 0|[1-9][:digit]*
+NUMBER = 0 | [1-9][0-9]*
 
 //Codigo
 %{
     public Symbol symbol(int type, Object value){
-        return new Symbol(type, yyline, yycolumn, value);
+        return new Symbol(type, yycolumn, yyline, value);
     };
 
     public Symbol symbol(int type){
-        return new Symbol(type, yyline, yycolumn);
+        return new Symbol(type, yycolumn, yyline);
     };
 
 %}
@@ -89,65 +87,104 @@ number = 0|[1-9][:digit]*
 <YYINITIAL> {
 
     /* code structure */
-    {closeBlock}        {return new Symbol(sym.closeBlock, yycolumn, yyline, yytext());}
-    {openParentesis}    {return new Symbol(sym.openParentesis, yycolumn, yyline, yytext());}
-    {closeParentesis}   {return new Symbol(sym.closeParentesis, yycolumn, yyline, yytext());}
-    {pyc}               {return new Symbol(sym.pyc, yycolumn, yyline, yytext());}
-    {openSqrBracket}    {return new Symbol(sym.openSqrBracket, yycolumn, yyline, yytext());}
-    {closeSqrBracket}   {return new Symbol(sym.closeSqrBracket, yycolumn, yyline, yytext());}
-    {coma}              {return new Symbol(sym.coma, yycolumn, yyline, yytext());}
-    {colon}             {return new Symbol(sym.colon, yycolumn, yyline, yytext());}
-    {quotMark}          {return new Symbol(sym.quotMark, yycolumn, yyline, yytext());}     
-    {apostrophe}        {return new Symbol(sym.apostrophe, yycolumn, yyline, yytext());}         
-    {backslash}         {return new Symbol(sym.backslash, yycolumn, yyline, yytext());}         
+    
+    {CLOSE_BLOCK}           {System.out.println("<CLOSE_BLOCK," + yytext() + ">");
+                            return new Symbol(sym.CLOSE_BLOCK, yycolumn, yyline, yytext());}
+    {OPEN_PARENTESIS}       {System.out.println("<OPEN_PARENTESIS," + yytext() + ">");
+                            return new Symbol(sym.OPEN_PARENTESIS, yycolumn, yyline, yytext());}
+    {CLOSE_PARENTESIS}      {System.out.println("<CLOSE_PARENTESIS," + yytext() + ">");
+                            return new Symbol(sym.CLOSE_PARENTESIS, yycolumn, yyline, yytext());}
+    {PYC}                   {System.out.println("<PYC," + yytext() + ">");
+                            return new Symbol(sym.PYC, yycolumn, yyline, yytext());}
+    {BETWEEN}               {System.out.println("<BETWEEN," + yytext() + ">");
+                            return new Symbol(sym.BETWEEN, yycolumn, yyline, yytext());}
+    {OPEN_SQR_BRACKET}      {System.out.println("<OPEN_SQR_BRACKET," + yytext() + ">");
+                            return new Symbol(sym.OPEN_SQR_BRACKET, yycolumn, yyline, yytext());}
+    {CLOSE_SQR_BRACKET}     {System.out.println("<CLOSE_SQR_BRACKET," + yytext() + ">");
+                            return new Symbol(sym.CLOSE_SQR_BRACKET, yycolumn, yyline, yytext());}
+    {COMA}                  {System.out.println("<COMA," + yytext() + ">");
+                            return new Symbol(sym.COMA, yycolumn, yyline, yytext());}
+    {COLON}                 {System.out.println("<COLON," + yytext() + ">");
+                            return new Symbol(sym.COLON, yycolumn, yyline, yytext());}
+    {BACK_SLASH}            {System.out.println("<BACK_SLASH," + yytext() + ">");
+                            return new Symbol(sym.BACK_SLASH, yycolumn, yyline, yytext());}
+    {NEW_LINE}              {System.out.println("<NEW_LINE," + yytext() + ">");
+                            return new Symbol(sym.NEW_LINE, yycolumn, yyline, yytext());}
+    {NULL}                  {System.out.println("<NULL," + yytext() + ">");
+                            return new Symbol(sym.NULL, yycolumn, yyline, yytext());}
+    {TRUE}                  {System.out.println("<TRUE," + yytext() + ">");
+                            return new Symbol(sym.TRUE, yycolumn, yyline, yytext());}
+    {FALSE}                 {System.out.println("<FALSE," + yytext() + ">");
+                            return new Symbol(sym.FALSE, yycolumn, yyline, yytext());}
+    {STRING}                {System.out.println("<STRING," + yytext() + ">");
+                            return new Symbol(sym.STRING, yycolumn, yyline, yytext());}
+    {CHAR_ELEMENT}          {System.out.println("<CHAR_ELEMENT," + yytext() + ">");
+                            return new Symbol(sym.CHAR_ELEMENT, yycolumn, yyline, yytext());}
 
     /* control statements */
-    {Main}              {return new Symbol(sym.Main, yycolumn, yyline, yytext());}     
-    {variable}          {return new Symbol(sym.variable, yycolumn, yyline, yytext());}     
-    {integer}           {return new Symbol(sym.integer, yycolumn, yyline, yytext());}     
-    {Bool}              {return new Symbol(sym.Bool, yycolumn, yyline, yytext());} 
-    {Char}              {return new Symbol(sym.Char, yycolumn, yyline, yytext());} 
-    {array}             {return new Symbol(sym.array, yycolumn, yyline, yytext());}     
-    {matrix}            {return new Symbol(sym.matrix, yycolumn, yyline, yytext());}     
-    {function}          {return new Symbol(sym.function, yycolumn, yyline, yytext());}     
-    {ifSwitch}          {return new Symbol(sym.ifSwitch, yycolumn, yyline, yytext());}     
-    {Print}             {return new Symbol(sym.Print, yycolumn, yyline, yytext());}     
-    {While}             {return new Symbol(sym.While, yycolumn, yyline, yytext());}     
-    {For}               {return new Symbol(sym.For, yycolumn, yyline, yytext());} 
-    {Default}           {return new Symbol(sym.Default, yycolumn, yyline, yytext());}     
-//    {break}             {System.out.println("<break," + yytext() + ">");}         
-    {Return}            {return new Symbol(sym.Return, yycolumn, yyline, yytext());}     
+    {FUNCTION}              {System.out.println("<FUNCTION," + yytext() + ">");
+                            return new Symbol(sym.FUNCTION, yycolumn, yyline, yytext());}
+    {IF_SWITCH}             {System.out.println("<IF_SWITCH," + yytext() + ">");
+                            return new Symbol(sym.IF_SWITCH, yycolumn, yyline, yytext());}
+    {PRINT}                 {System.out.println("<PRINT," + yytext() + ">");
+                            return new Symbol(sym.PRINT, yycolumn, yyline, yytext());}
+    {WHILE}                 {System.out.println("<WHILE," + yytext() + ">");
+                            return new Symbol(sym.WHILE, yycolumn, yyline, yytext());}
+    {FOR}                   {System.out.println("<FOR," + yytext() + ">");
+                            return new Symbol(sym.FOR, yycolumn, yyline, yytext());}
+    {ELSE}                  {System.out.println("<ELSE," + yytext() + ">");
+                            return new Symbol(sym.ELSE, yycolumn, yyline, yytext());}
+    {RETURN}                {System.out.println("<RETURN," + yytext() + ">");
+                            return new Symbol(sym.RETURN, yycolumn, yyline, yytext());}
+    {CIN}                   {System.out.println("<CIN," + yytext() + ">");
+                            return new Symbol(sym.CIN, yycolumn, yyline, yytext());}
+    {TO}                    {System.out.println("<TO," + yytext() + ">");
+                            return new Symbol(sym.TO, yycolumn, yyline, yytext());}
+    {MAIN}                    {System.out.println("<MAIN," + yytext() + ">");
+                            return new Symbol(sym.MAIN, yycolumn, yyline, yytext());}
 
     /* operators */
-    {equalTo}           {return new Symbol(sym.equalTo, yycolumn, yyline, yytext());}     
-    {noEqualTo}         {return new Symbol(sym.noEqualTo, yycolumn, yyline, yytext());}         
-    {orEqual}           {return new Symbol(sym.orEqual, yycolumn, yyline, yytext());}     
-    {than}              {return new Symbol(sym.than, yycolumn, yyline, yytext());} 
-    {plus}              {return new Symbol(sym.plus, yycolumn, yyline, yytext());} 
-    {multiplication}    {return new Symbol(sym.multiplication, yychar, yyline, yytext());}           
-    {mod}               {return new Symbol(sym.mod, yycolumn, yyline, yytext());} 
-    {increment}         {return new Symbol(sym.increment, yycolumn, yyline, yytext());}         
-    {decrement}         {return new Symbol(sym.decrement, yycolumn, yyline, yytext());}         
-    /* todavía en veremos */            
-    {conAnd}            {return new Symbol(sym.conAnd, yycolumn, yyline, yytext());}     
-    {conOr}             {return new Symbol(sym.conOr, yycolumn, yyline, yytext());}    
-    {To}                {return new Symbol(sym.To, yycolumn, yyline, yytext());}
-    {False}             {return new Symbol(sym.False, yycolumn, yyline, yytext());}
-    {True}              {return new Symbol(sym.True, yycolumn, yyline, yytext());}
+    {OP_REL}                {System.out.println("<OP_REL," + yytext() + ">");
+                            return new Symbol(sym.OP_REL, yycolumn, yyline, yytext());}
+    {OP_SUM}                {System.out.println("<OP_SUM," + yytext() + ">");
+                            return new Symbol(sym.OP_SUM, yycolumn, yyline, yytext());}
+    {OP_MULTI_DIV}          {System.out.println("<OP_MULTI_DIV," + yytext() + ">");
+                            return new Symbol(sym.OP_MULTI_DIV, yycolumn, yyline, yytext());}
+    {MOD}                   {System.out.println("<MOD," + yytext() + ">");
+                            return new Symbol(sym.MOD, yycolumn, yyline, yytext());}
+    {INCREMENT}             {System.out.println("<INCREMENT," + yytext() + ">");
+                            return new Symbol(sym.INCREMENT, yycolumn, yyline, yytext());}
+    {CON_AND}               {System.out.println("<CON_AND," + yytext() + ">");
+                            return new Symbol(sym.CON_AND, yycolumn, yyline, yytext());}
+    {CON_OR}                {System.out.println("<CON_OR," + yytext() + ">");
+                            return new Symbol(sym.CON_OR, yycolumn, yyline, yytext());}
     
+    /* data types */
+    {INTENGER}              {System.out.println("<INTENGER," + yytext() + ">");
+                            return new Symbol(sym.INTENGER, yycolumn, yyline, yytext());}
+    {BOOLEAN}               {System.out.println("<BOOLEAN," + yytext() + ">");
+                            return new Symbol(sym.BOOLEAN, yycolumn, yyline, yytext());}
+    {CHAR}                  {System.out.println("<CHAR," + yytext() + ">");
+                            return new Symbol(sym.CHAR, yycolumn, yyline, yytext());}
+    {ARRAY}                 {System.out.println("<ARRAY," + yytext() + ">");
+                            return new Symbol(sym.ARRAY, yycolumn, yyline, yytext());}
+    {MATRIX}                {System.out.println("<MATRIX," + yytext() + ">");
+                            return new Symbol(sym.MATRIX, yycolumn, yyline, yytext());}
+    {VARIABLE}              {System.out.println("<VARIABLE," + yytext() + ">");
+                            return new Symbol(sym.VARIABLE, yycolumn, yyline, yytext());}
+
     /* identifiers */
-    {ID}               {return new Symbol(sym.ID, yycolumn, yyline, yytext());}  
-    {number}           {return new Symbol(sym.number, yycolumn, yyline, yytext());}      
+    {ID}                    {System.out.println("<ID," + yytext() + ">");
+                            return new Symbol(sym.ID, yycolumn, yyline, yytext());}
+    {NUMBER}                {System.out.println("<NUMBER," + yytext() + ">");
+                            return new Symbol(sym.NUMBER, yycolumn, yyline, new Integer(Integer.parseInt(yytext())));}
 
     /* comments */
-    {comment}           {/* ignore */}          
+    {COMMENT}               {/* ignore */}
     
     /* whitespace */
-    {WhiteSpace}        {/* ignore */}          
+    {WHITE_SPACE}           {/* ignore */}
 
     /* error */
     [^]                {return new Symbol(sym.ERROR, yycolumn, yyline, yytext());}        
 }
-
-
-/* INVESTIGAR MÁS SOBRE LA CLASE SYM ya que es parte del CUP*/ 

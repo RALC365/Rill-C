@@ -14,8 +14,8 @@ parser code
     **/ 
     public void syntax_error(Symbol s){
         this.s = s;
-        System.out.println("Error Sintáctico recuperable en la Línea " + (s.left) +
-        " Columna "+s.right+ ". No se esperaba este componente: " +s.value+".");
+        System.out.println("Error Sintáctico recuperable en la Línea " + (s.right) +
+        " Columna "+s.left+ ". No se esperaba este componente: " +s.value+".");
     }
 
     /**
@@ -24,7 +24,7 @@ parser code
      **/ 
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
         System.out.println("Error síntactico irrecuperable en la Línea " + 
-        (s.left)+ " Columna "+s.right+". Componente " + s.value + 
+        (s.right)+ " Columna "+s.left+". Componente " + s.value + 
         " no reconocido."); 
     }
 
@@ -33,115 +33,140 @@ parser code
     }
 :};
 
-terminal closeBlock, openParentesis, closeParentesis, pyc, openSqrBracket, 
-         closeSqrBracket, coma, colon, quotMark, apostrophe, Main,
-         variable, integer, Bool, Char, array, matrix, function, ifSwitch, 
-         While, For, equalTo, noEqualTo, orEqual, than,
-         plus, ID, number, To, False, True,
-         decrement,mod, Default, Return,backslash,conAnd, increment, conOr, ERROR, multiplication, Print ;
+terminal 
+  ERROR,
+  CLOSE_BLOCK,
+  OPEN_PARENTESIS,
+  CLOSE_PARENTESIS,
+  PYC,
+  BETWEEN,
+  OPEN_SQR_BRACKET,
+  CLOSE_SQR_BRACKET,
+  COMA,
+  COLON,
+  BACK_SLASH,
+  NEW_LINE,
+  NULL,
+  TRUE,
+  FALSE,
+  STRING,
+  CHAR_ELEMENT,
+/* control statements */
+  FUNCTION,
+  IF_SWITCH,
+  PRINT,
+  WHILE,
+  FOR,
+  ELSE,
+  RETURN,
+  CIN,
+  TO,
+  MAIN,
+/* operators */
+  OP_REL,
+  OP_SUM,
+  OP_MULTI_DIV,
+  MOD,
+  INCREMENT,
+  CON_AND,
+  CON_OR,
+/* data types */
+  INTENGER,
+  BOOLEAN,
+  CHAR,
+  ARRAY,
+  MATRIX,
+  VARIABLE,
+/* identifier */
+  ID,
+  NUMBER;
 
-non terminal INICIO, WHILE, FOR, IF, TIPO_VARIABLE, STRING,
-            SENTENCIA_BOOLEANA, SENTENCIA, DECLARACION, ARREGLO, MATRIZ;
+non terminal N_INICIO, N_WHILE, N_FOR, N_IF, N_TIPO_VARIABLE, N_ARREGLO, N_MATRIZ,
+            N_OPERACIONAL, N_SENTENCIA_BOOLEANA, N_SENTENCIA, N_DECLARACION;
 
-start with INICIO;
+start with N_INICIO;
 
-INICIO ::= 
-    openParentesis closeParentesis openParentesis Main colon SENTENCIA closeBlock
+N_INICIO ::= 
+    OPEN_PARENTESIS CLOSE_PARENTESIS OPEN_PARENTESIS MAIN COLON N_SENTENCIA CLOSE_BLOCK
+;
+N_WHILE ::= 
+OPEN_PARENTESIS N_SENTENCIA_BOOLEANA CLOSE_PARENTESIS OPEN_PARENTESIS WHILE COLON N_SENTENCIA CLOSE_BLOCK
 ;
 
-WHILE ::= 
-openParentesis SENTENCIA_BOOLEANA closeParentesis openParentesis While colon SENTENCIA closeBlock
+N_FOR ::= 
+OPEN_PARENTESIS ID COMA NUMBER TO NUMBER COMA INCREMENT CLOSE_PARENTESIS OPEN_PARENTESIS FOR COLON N_SENTENCIA CLOSE_BLOCK
 ;
 
-FOR ::= 
-openParentesis ID coma number To number coma plus number closeParentesis openParentesis For colon SENTENCIA closeBlock
-;
-
-IF ::= 
-openParentesis SENTENCIA_BOOLEANA closeParentesis openParentesis ifSwitch colon SENTENCIA closeBlock |
-//openParentesis SENTENCIA_BOOLEANA closeParentesis openParentesis ifSwitch colon SENTENCIA openParentesis Default closeBlock SENTENCIA closeBlock 
+N_IF ::= 
+OPEN_PARENTESIS N_SENTENCIA_BOOLEANA CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON N_SENTENCIA CLOSE_BLOCK |
+//OPEN_PARENTESIS N_SENTENCIA_BOOLEANA CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON N_SENTENCIA OPEN_PARENTESIS Default CLOSE_BLOCK N_SENTENCIA CLOSE_BLOCK 
 ;
 
 
-SENTENCIA ::= 
-    WHILE |
-    FOR |
-    IF |
-    DECLARACION |
-    pyc
+N_SENTENCIA ::= 
+    N_WHILE |
+    N_FOR |
+    N_IF |
+    N_DECLARACION |
+    PYC
 ;
 
-DECLARACION ::= 
-    variable ID pyc |
-    integer ID pyc |
-    Bool ID pyc |
-    Char ID pyc |
-    array ID pyc |
-    matrix ID pyc |
+N_DECLARACION ::= 
+    VARIABLE ID PYC |
+    INTENGER ID PYC |
+    BOOLEAN ID PYC |
+    CHAR ID PYC |
+    ARRAY ID PYC |
+    MATRIX ID PYC |
 
-    integer ID colon number pyc |
-    Bool ID colon False pyc |
-    Bool ID colon True pyc |
-    Bool ID colon SENTENCIA_BOOLEANA pyc |
-    Char ID colon apostrophe STRING apostrophe pyc|
-    Char ID colon quotMark STRING quotMark pyc |
-    array ID colon openSqrBracket ARREGLO closeSqrBracket pyc |
-    matrix ID colon openSqrBracket MATRIZ closeSqrBracket pyc
-
-    
+    INTENGER ID COLON NUMBER PYC |
+    BOOLEAN ID COLON FALSE PYC |
+    BOOLEAN ID COLON TRUE PYC |
+    BOOLEAN ID COLON N_SENTENCIA_BOOLEANA PYC |
+    CHAR ID COLON CHAR_ELEMENT PYC|
+    CHAR ID COLON STRING PYC |
+    ARRAY ID COLON OPEN_SQR_BRACKET N_ARREGLO CLOSE_SQR_BRACKET PYC |
+    MATRIX ID COLON OPEN_SQR_BRACKET N_MATRIZ CLOSE_SQR_BRACKET PYC
 ;
 
-ARREGLO ::=
-    number | 
-    //number coma ARREGLO | 
-    apostrophe STRING apostrophe | quotMark STRING quotMark |
+N_ARREGLO ::=
+    NUMBER COMA N_ARREGLO | 
+    STRING COMA N_ARREGLO |
+
     //apostrophe STRING apostrophe coma ARREGLO | quotMark STRING quotMark coma ARREGLO
 ;
 
-MATRIZ ::= 
-    openSqrBracket ARREGLO closeSqrBracket |
-    openSqrBracket ARREGLO closeSqrBracket coma MATRIZ |
-    ARREGLO | ARREGLO coma MATRIZ
+N_MATRIZ ::= 
+    OPEN_SQR_BRACKET N_ARREGLO CLOSE_SQR_BRACKET |
+    OPEN_SQR_BRACKET N_ARREGLO CLOSE_SQR_BRACKET COMA N_MATRIZ |
+    N_ARREGLO | N_ARREGLO COMA N_MATRIZ
 ;
 
-TIPO_VARIABLE ::=
-number | ID | apostrophe apostrophe | quotMark quotMark |
-apostrophe STRING apostrophe | quotMark STRING quotMark
+N_TIPO_VARIABLE ::=
+NUMBER | ID | STRING
 ;
 
-STRING ::=
-ID | ID STRING
+
+N_SENTENCIA_BOOLEANA ::= 
+    ID OP_REL ID |
+    ID OP_REL NUMBER |
+    ID OP_REL STRING |
+    ID OP_REL FALSE |
+    ID OP_REL TRUE |
+
+    /* AL REVES */
+    NUMBER OP_REL ID |
+    STRING OP_REL ID |
+    FALSE OP_REL ID |
+    TRUE OP_REL ID
 ;
 
-SENTENCIA_BOOLEANA ::= 
-    ID equalTo ID |
-    ID equalTo number |
-    ID equalTo apostrophe STRING apostrophe |
-    ID equalTo quotMark STRING quotMark |
-    ID equalTo False |
-    ID equalTo True |
-
-    ID noEqualTo ID |
-    ID noEqualTo number |
-    ID noEqualTo apostrophe STRING apostrophe |
-    ID noEqualTo quotMark STRING quotMark |
-    ID noEqualTo False |
-    ID noEqualTo True |
-
-    ID than ID |
-    ID than number |
-    ID orEqual ID |
-    ID orEqual number
-;
-
-OPERACIONAL ::=
-decrement |
-mod | 
-Default | 
-Return |
-backslash |
-conAnd | 
-increment | 
-conOr | 
+N_OPERACIONAL ::=
+MOD | 
+ELSE | 
+RETURN |
+BACK_SLASH |
+CON_AND | 
+CON_OR | 
 ERROR
 ;

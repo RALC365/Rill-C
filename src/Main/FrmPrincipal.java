@@ -45,17 +45,141 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 return;
             }
             switch (token) {
-                case Linea:
+                case LINEA:
                     cont++;
                     resultado += "LINEA " + cont + "\n";
                     break;
-                case closeBlock:
-                    resultado += "  <Comillas>\t\t" + lexer.lexeme + "\n";
+                case CLOSE_BLOCK:
+                    resultado += "  <CLOSE_BLOCK>\t\t" + lexer.lexeme + "\n";
                     break;
-                //FALTAN AGREGAR LOS DEMAS TOKENS
+                case OPEN_PARENTESIS:
+                    resultado += "  <OPEN_PARENTESIS>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case CLOSE_PARENTESIS:
+                    resultado += "  <CLOSE_PARENTESIS>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case PYC:
+                    resultado += "  <PYC>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case BETWEEN:
+                    resultado += "  <BETWEEN>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case OPEN_SQR_BRACKET:
+                    resultado += "  <OPEN_SQR_BRACKET>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case CLOSE_SQR_BRACKET:
+                    resultado += "  <CLOSE_SQR_BRACKET>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case COMA:
+                    resultado += "  <COMA>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case COLON:
+                    resultado += "  <COLON>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case BACK_SLASH:
+                    resultado += "  <BACK_SLASH>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case NEW_LINE:
+                    resultado += "  <NEW_LINE>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case NULL:
+                    resultado += "  <NULL>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case TRUE:
+                    resultado += "  <TRUE>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case FALSE:
+                    resultado += "  <FALSE>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case STRING:
+                    resultado += "  <STRING>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case CHAR_ELEMENT:
+                    resultado += "  <CHAR_ELEMENT>\t\t" + lexer.lexeme + "\n";
+                    break;
+                    /* control statements */
+                case FUNCTION:
+                    resultado += "  <FUNCTION>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case IF_SWITCH:
+                    resultado += "  <IF_SWITCH>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case WHILE:
+                    resultado += "  <WHILE>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case FOR:
+                    resultado += "  <FOR>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case ELSE:
+                    resultado += "  <ELSE>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case RETURN:
+                    resultado += "  <RETURN>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case CIN:
+                    resultado += "  <CIN>\t\t" + lexer.lexeme + "\n";
+                    break;
+                    
+                case TO:
+                    resultado += "  <TO>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case MAIN:
+                    resultado += "  <MAIN>\t\t" + lexer.lexeme + "\n";
+                    break;
+                    /* operators */
+                case OP_REL:
+                    resultado += "  <OP_REL>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case OP_SUM:
+                    resultado += "  <OP_SUM>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case OP_MULTI_DIV:
+                    resultado += "  <OP_MULTI_DIV>\t\t" + lexer.lexeme + "\n";
+                    break;
+                 
+                case MOD:
+                    resultado += "  <MOD>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case INCREMENT:
+                    resultado += "  <INCREMENT>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case CON_AND:
+                    resultado += "  <CON_AND>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case CON_OR:
+                    resultado += "  <CON_OR>\t\t" + lexer.lexeme + "\n";
+                    break;
+                    /* data types */
+                case INTENGER:
+                    resultado += "  <INTENGER>\t\t" + lexer.lexeme + "\n";
+                    break;
+                    
+                case BOOLEAN:
+                    resultado += "  <BOOLEAN>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case CHAR:
+                    resultado += "  <CHAR>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case ARRAY:
+                    resultado += "  <ARRAY>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case MATRIX:
+                    resultado += "  <MATRIX>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case VARIABLE:
+                    resultado += "  <VARIABLE>\t\t" + lexer.lexeme + "\n";
+                    break;
+                    /* identifiers */
+                case ID:
+                    resultado += "  <ID>\t\t" + lexer.lexeme + "\n";
+                    break;
+                case NUMBER:
+                    resultado += "  <NUMBER>\t\t" + lexer.lexeme + "\n";
+                    break;        
                 case ERROR:
                     resultado += "  <Simbolo no definido>\n";
                     break;
+                
                 default:
                     resultado += "  < " + lexer.lexeme + " >\n";
                     break;

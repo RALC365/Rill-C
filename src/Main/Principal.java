@@ -17,11 +17,8 @@ import java.nio.file.Paths;
  */
 public class Principal {
     public static void main(String[] args) throws Exception {
-        //String ruta1 = "C:/Users/RALC365/Desktop/Proyecto Compi/Ejemplos/AnalizadorLexico/src/LexerS/Lexer.flex";
         String ruta1 = "./src/LexerS/Lexer.flex";
-        //String ruta2 = "C:/Users/RALC365/Desktop/Proyecto Compi/Ejemplos/AnalizadorLexico/src/CUP/LexerCup.flex";
         String ruta2 = "./src/CUP/LexerCup.flex";
-        //String[] rutaS = {"-parser", "Sintax", "C:/Users/RALC365/Desktop/Proyecto Compi/Ejemplos/AnalizadorLexico/src/CUP/Sintax.cup"};
         String[] rutaS = {"-parser", "Sintax", "./src/CUP/Sintax.cup"};
         generar(ruta1, ruta2, rutaS);
     }
