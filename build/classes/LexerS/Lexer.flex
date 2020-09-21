@@ -30,7 +30,8 @@ TRUE = "true"
 FALSE = "false"
 STRING = "\""~"\""
 CHAR_ELEMENT = "'" [:jletter:] "'"
-LINE_TERMINATOR = \r|\n|\r\n
+LINE_TERMINATOR = \r
+LINEA = \n
 INPUT_CHARACTER = [^\r\n]
 WHITE_SPACE = {LINE_TERMINATOR} | [ \t\f]
 
@@ -75,7 +76,7 @@ NUMBER = 0 | [1-9][0-9]*
 
 <YYINITIAL> {
     /* code structure */
-    
+    {LINEA}                 {lexeme=yytext(); return LINEA;}
     {CLOSE_BLOCK}           {lexeme=yytext(); return CLOSE_BLOCK;}
     {OPEN_PARENTESIS}       {lexeme=yytext(); return OPEN_PARENTESIS;}
     {CLOSE_PARENTESIS}      {lexeme=yytext(); return CLOSE_PARENTESIS;}
@@ -133,8 +134,9 @@ NUMBER = 0 | [1-9][0-9]*
     {WHITE_SPACE}           {/* ignore */}
 
     /* error */
-    [^]                {throw new Error("Illegal character <" + yytext() + ">"
-                        + " line: " + yyline + ", column: " + yycolumn); }
+    /*[^]                {throw new Error("Illegal character <" + yytext() + ">"
+                        + " line: " + yyline + ", column: " + yycolumn); }*/
+    [^]                  {lexeme=yytext(); return ERROR;}
 }
 
 

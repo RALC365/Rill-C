@@ -186,5 +186,6 @@ NUMBER = 0 | [1-9][0-9]*
     {WHITE_SPACE}           {/* ignore */}
 
     /* error */
-    [^]                {return new Symbol(sym.ERROR, yycolumn, yyline, yytext());}        
+    [^]                {System.out.println("<ERROR," + yytext() + ">");
+                        return new Symbol(sym.ERROR, yycolumn, yyline, yytext());}        
 }

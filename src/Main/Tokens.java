@@ -7,7 +7,7 @@ package Main;
 
 /**
  *
- * @author RALC365
+ * @author WillRomero and RALC365
  */
 public enum Tokens {
     LINEA,
