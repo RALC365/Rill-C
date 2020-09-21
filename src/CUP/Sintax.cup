@@ -27,10 +27,18 @@ parser code
         (s.right)+ " Columna "+s.left+". Componente " + s.value + 
         " no reconocido."); 
     }
-
     public Symbol getS(){
         return this.s;
     }
+    //Guardar los errores encontrados
+    private String ERRORES = "";
+    public void addError(String error){
+        this.ERRORES += error;
+    }
+    public String getERRORES(){
+        return this.ERRORES;
+    }
+
 :};
 /* code structure */
 terminal 
@@ -119,7 +127,8 @@ expr        ::= expr:e1 OP_SUM  expr:e2                 {: RESULT = e1+e2;  :}
 
 N_INICIO ::= 
      N_MAIN |
-     N_MAIN N_FUNCTIONS
+     N_MAIN N_FUNCTIONS |
+     N_FUNCTIONS N_MAIN
 ;
 
 N_MAIN ::=
@@ -186,18 +195,24 @@ N_SENTENCIA ::=
     N_PRINT |
     N_SENTENCIA N_CIN |
     N_CIN |
-    N_SENTENCIA RETURN N_TIPO_VARIABLE PYC
+    N_SENTENCIA RETURN N_TIPO_VARIABLE PYC |
+    error:e {: 
+        String report = "Syntax error in line " + parser.getS().right + " Column " + parser.getS().left + ". No se esperaba este componente: " +parser.getS().value;
+        parser.addError(report + "\n");
+        parser.report_error(report,e); 
+
+:}
 ;
 
 N_DECLARACION ::= 
-    VARIABLE ID |
+    VARIABLE ID|
     INTENGER ID |
     BOOLEAN ID  |
     CHAR ID |
     ARRAY ID  |
     MATRIX ID  |
 
-    INTENGER ID COLON NUMBER  |
+    INTENGER ID COLON NUMBER |
     BOOLEAN ID COLON FALSE  |
     BOOLEAN ID COLON TRUE  |
     BOOLEAN ID COLON N_SENTENCIA_BOOLEANA_ANIDADA  |
@@ -205,7 +220,14 @@ N_DECLARACION ::=
     CHAR ID COLON STRING  |
     ARRAY ID COLON OPEN_SQR_BRACKET N_ARREGLO  |
     //ARRAY ID COLON N_MATRIZ  |
-    MATRIX ID COLON OPEN_SQR_BRACKET N_MATRIZ CLOSE_SQR_BRACKET 
+    MATRIX ID COLON OPEN_SQR_BRACKET N_MATRIZ CLOSE_SQR_BRACKET
+    //Error support
+    /*|error:e {: 
+                 System.out.println("Tokens esperado");
+                 System.out.println(expected_token_ids());
+                 System.out.println("Lo que disque le mando al ID");
+                 System.out.println("Exleft: " + exleft + " \nExright: " + exright + " \nExpected: " + expected);
+             :} PYC*/
 ;
 
 
