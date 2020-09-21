@@ -1,0 +1,50 @@
+()(main:
+int nota: 100.,
+	(peggo)(if:
+		(id=1):
+			int peggo: 1.,
+		(id=hola and xD < XD):
+			arr peggo: ["no","se", "diga", mas, nll].,
+		(>1):
+			bln peggo: true.,
+			vb miVida.,
+		|IGNORAME JFLEX| 
+		(50...10):|VOLVEME A IGNORAR JAJAJA XD|	
+			int peggo: 1.,
+		(<hola):
+			int peggo: 1.,
+			(peggo)(if:
+				(id=1):
+					int peggo: 1.,
+					(pp: "Salve Will!":).,
+				(els):
+					int peggo:2.,
+					(in:entrada:).,
+			:)
+	(els):
+		int peggo:2.,
+	:)
+	(h1=he)(wh:
+		int hola: 1.,
+	:)
+	(a,1 -> 19,++)(fr:
+		mtx noMames: [[1,2,xD,4],2,4,3,['A',"hola",3]].,
+		(noMames,1 to 19,--)(fr:
+			mtx noMames: [[1,2,xD,4],2,4,3,[1,"hola",3]].,
+		:)
+
+	:)
+:)
+
+(int a, int b, int c)funcionMagica(fun:mtx
+	(hola="peggo")(if:
+		int peggo: 1.,
+		(hola=10)(wh:
+			int peggo: 1.,
+			int peggo:2.,
+		:)
+	(els):
+		int peggo:2.,
+	:)
+	ret hola.,
+:)
