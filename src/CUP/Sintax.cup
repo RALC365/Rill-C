@@ -132,38 +132,48 @@ terminal
   terminal Integer NUMBER;
 
 /* Non terminals */
-non terminal N_INICIO, N_WHILE, N_FOR, N_IF, N_TIPO_VARIABLE, N_ARREGLO, N_MATRIZ,
-            N_OPERACIONAL, N_SENTENCIA_BOOLEANA, N_SENTENCIA, N_DECLARACION, N_AND_OR,
-            N_SWITCH, N_SWITCH_CASE, N_FUNCTION, N_PARAMETRO_FUNCTION, N_RETORNO_FUNCTION,
-            N_SENTENCIA_BOOLEANA_ANIDADA, N_PRINT, N_FUNCTIONS, N_CIN, N_MAIN,
-            N_DECLARACION_ID, N_ARGUMENTOS, N_BOOLEAN_ID, N_BOOLEAN_VALUE;
+non terminal 
 
-/* Onda fumada de Wilfredo */
-non terminal EXPR_LIST,
-SOUT
-;
-non terminal Integer    expr;      // used to store evaluated subexpressions
+/* code blocks */
+N_INICIO, 
+    N_MAIN,
+    N_FUNCTIONS,
+        N_FUNCTION, 
+            N_PARAMETRO_FUNCTION, 
+            N_RETORNO_FUNCTION,
 
-/* Precedences */
-precedence left OP_SUM;
-precedence left OP_MULTI_DIV;
+/* control statement */
+N_SENTENCIA,
+    N_WHILE,
+    N_FOR,
+    N_IF,
+    N_SWITCH, N_SWITCH_CASE,
 
-start with N_INICIO;
+/*variable definition*/
+N_SENTENCIA_BOOLEANA_ANIDADA,
+    N_SENTENCIA_BOOLEANA,   
+    N_AND_OR,
 
-/* The grammar rules */
-EXPR_LIST   ::= EXPR_LIST expr:e PYC         {: System.out.println(e);:}
-            | expr:e PYC                     {: System.out.println(e);:}
-;
+N_DECLARACION,
+    N_DECLARACION_ID, //Para las declaraciones int a,b,c,d.,
+        N_COMA_ID, //a,b,c,d,e...
+    N_TIPO_VARIABLE,
+    N_MATRIZ,
+    N_ARREGLO,
+    N_BOOLEAN_ID,
+        N_BOOLEAN_VALUE,
+        N_ARGUMENTOS,
 
-expr        ::= expr:e1 OP_SUM  expr:e2                 {: RESULT = e1+e2;  :}
-            | expr:e1 OP_MULTI_DIV expr:e2              {: RESULT = e1*e2;  :}
-            | OPEN_PARENTESIS expr:e CLOSE_PARENTESIS   {: RESULT = e;      :}
-            | NUMBER:n	                                {: RESULT = n;      :}
-;
-/* Fin de la Onda fumada de Wilfredo */
+/*Opetators*/
+N_PRINT,  
+N_CIN,
 
+/*Other*/
+N_OPERACIONAL;
 
+                        start with N_INICIO;
 
+/* -------------------------CODE BLOCKS------------------------------------- */
 N_INICIO ::= 
      N_MAIN |
      N_MAIN N_FUNCTIONS |
@@ -172,58 +182,12 @@ N_INICIO ::=
 
 N_MAIN ::=
     OPEN_PARENTESIS 
-        
     CLOSE_PARENTESIS 
     OPEN_PARENTESIS 
     MAIN 
     COLON 
-    
     N_SENTENCIA
-    
     CLOSE_BLOCK
-            
-;
-
-
-N_WHILE ::= 
-    //OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS WHILE COLON N_SENTENCIA CLOSE_BLOCK
-    OPEN_PARENTESIS:e1
-    N_SENTENCIA_BOOLEANA_ANIDADA:e2
-    
-    CLOSE_PARENTESIS:e3
-    OPEN_PARENTESIS:e4
-    WHILE:e5
-    COLON:e6
-
-    N_SENTENCIA:e7
-
-    CLOSE_BLOCK:e8
-        
-
-;
-
-N_FOR ::= 
-    OPEN_PARENTESIS ID COMA NUMBER TO NUMBER COMA INCREMENT CLOSE_PARENTESIS OPEN_PARENTESIS FOR COLON N_SENTENCIA CLOSE_BLOCK
-;
-
-/*IF    SWTICH*/
-N_IF ::= 
-    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON N_SENTENCIA CLOSE_BLOCK |
-    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON N_SENTENCIA OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON  N_SENTENCIA CLOSE_BLOCK
-;
-
-N_SWITCH ::=
-    OPEN_PARENTESIS 
-
-    ID CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON 
-    N_SWITCH_CASE 
-
-    CLOSE_BLOCK
-;
-
-N_SWITCH_CASE ::=
-    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS COLON N_SENTENCIA N_SWITCH_CASE |
-    OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON N_SENTENCIA
 ;
 
 N_FUNCTIONS::=
@@ -232,36 +196,32 @@ N_FUNCTIONS::=
 
 N_FUNCTION ::=
     OPEN_PARENTESIS 
-        
-
     N_PARAMETRO_FUNCTION 
-    
     CLOSE_PARENTESIS 
     ID 
     OPEN_PARENTESIS 
     FUNCTION 
     COLON 
-
     N_RETORNO_FUNCTION 
     N_SENTENCIA 
-    
     CLOSE_BLOCK 
-        
 ;
 
-N_PARAMETRO_FUNCTION ::=
-    N_DECLARACION COMA N_PARAMETRO_FUNCTION |
-    N_DECLARACION
-;
+    N_PARAMETRO_FUNCTION ::=
+        N_DECLARACION COMA N_PARAMETRO_FUNCTION |
+        N_DECLARACION
+    ;
 
-N_RETORNO_FUNCTION ::=
-    INTENGER |
-    BOOLEAN |
-    CHAR |
-    ARRAY |
-    MATRIX
-    /*Vacio significa void o procedimiento*/
-;
+    N_RETORNO_FUNCTION ::=
+        INTENGER |
+        BOOLEAN |
+        CHAR |
+        ARRAY |
+        MATRIX
+        /*Vacio significa void o procedimiento*/
+    ;
+
+/* -------------------------CONTROL STAMENTS------------------------- */
 N_SENTENCIA ::= 
     N_SENTENCIA N_WHILE |
     N_WHILE |
@@ -282,31 +242,138 @@ N_SENTENCIA ::=
         String report = "Syntax error in line " + parser.getS().right + " Column " + parser.getS().left + ". No se esperaba este componente: " +parser.getS().value;
         parser.addError(report + "\n");
         parser.report_error(report,e); 
-
-:}
+    :}
 ;
 
-N_DECLARACION_ID::=
-    N_DECLARACION_ID COMA ID | ID
+    N_WHILE ::= 
+        //OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS WHILE COLON N_SENTENCIA CLOSE_BLOCK
+        OPEN_PARENTESIS:e1
+        N_SENTENCIA_BOOLEANA_ANIDADA:e2
+        CLOSE_PARENTESIS:e3
+        OPEN_PARENTESIS:e4
+        WHILE:e5
+        COLON:e6
+        N_SENTENCIA:e7
+        CLOSE_BLOCK:e8
+    ;
+
+    N_FOR ::= 
+        OPEN_PARENTESIS 
+        ID 
+        COMA 
+        NUMBER 
+        TO 
+        NUMBER 
+        COMA 
+        INCREMENT 
+        CLOSE_PARENTESIS 
+        OPEN_PARENTESIS 
+        FOR 
+        COLON 
+        N_SENTENCIA 
+        CLOSE_BLOCK
+    ;
+
+N_IF ::= 
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON 
+        N_SENTENCIA 
+    CLOSE_BLOCK
+    |
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON 
+        N_SENTENCIA 
+    OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON  
+        N_SENTENCIA 
+    CLOSE_BLOCK
 ;
 
-N_ARGUMENTOS ::=
-    ID COMA N_ARGUMENTOS | ID PYC
+N_SWITCH ::=
+    OPEN_PARENTESIS ID CLOSE_PARENTESIS OPEN_PARENTESIS 
+        IF_SWITCH COLON 
+        N_SWITCH_CASE 
+    CLOSE_BLOCK
 ;
 
-N_BOOLEAN_ID ::=
-    BOOLEAN ID COLON
+N_SWITCH_CASE ::=
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS COLON 
+        N_SENTENCIA 
+        N_SWITCH_CASE 
+    |
+    OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON 
+        N_SENTENCIA
 ;
 
-N_BOOLEAN_VALUE::=
-    FALSE | TRUE | N_SENTENCIA_BOOLEANA_ANIDADA | 
-    ID OPEN_PARENTESIS N_ARGUMENTOS CLOSE_PARENTESIS | ID OPEN_PARENTESIS CLOSE_PARENTESIS
+/* -------------------------VARIABLE DEFINITION------------------------------ */
+N_SENTENCIA_BOOLEANA_ANIDADA ::=
+    N_SENTENCIA_BOOLEANA:e1
+        N_AND_OR:e2
 ;
+
+    N_AND_OR::=
+        CON_AND:e1
+            N_SENTENCIA_BOOLEANA:e2
+        N_AND_OR
+        |
+        CON_OR
+            N_SENTENCIA_BOOLEANA 
+        N_AND_OR
+        | /*vacio*/ 
+
+    ;
+
+    N_SENTENCIA_BOOLEANA ::= 
+        /*ID*/
+        ID:e1 OP_REL:e2 ID:e3 |
+        ID OP_REL NUMBER |
+        ID OP_REL STRING  |
+        ID OP_REL FALSE  |
+        ID OP_REL TRUE  |
+            /* AL REVES */
+        NUMBER OP_REL ID  |
+        STRING OP_REL ID  |
+        FALSE OP_REL ID  |
+        TRUE OP_REL ID  
+
+        /*Number*/
+        NUMBER OP_REL NUMBER |
+        NUMBER OP_REL STRING |
+        NUMBER OP_REL FALSE |
+        NUMBER OP_REL TRUE |
+            /* AL REVES */
+        STRING OP_REL NUMBER |
+        FALSE OP_REL NUMBER |
+        TRUE OP_REL NUMBER  
+
+        /*STRING*/
+        STRING OP_REL STRING |
+        STRING OP_REL FALSE |
+        STRING OP_REL TRUE |
+            /* AL REVES */
+        FALSE OP_REL STRING |
+        TRUE OP_REL STRING  
+
+
+        /*TRUE - FALSE*/
+        TRUE OP_REL FALSE |
+        TRUE OP_REL TRUE |
+        FALSE OP_REL FALSE |
+        FALSE OP_REL TRUE  
+
+
+        /*SWTICH*/
+        ID OP_REL |
+        OP_REL ID |
+        STRING OP_REL |
+        OP_REL STRING |
+        OP_REL NUMBER |
+        NUMBER OP_REL |
+        NUMBER BETWEEN NUMBER |
+        ID BETWEEN ID
+    ;
 
 N_DECLARACION ::= 
-    INTENGER ID N_DECLARACION_ID PYC |
-    BOOLEAN ID N_DECLARACION_ID PYC |
-    CHAR ID N_DECLARACION_ID PYC |
+    INTENGER N_DECLARACION_ID|
+    BOOLEAN N_DECLARACION_ID |
+    CHAR N_DECLARACION_ID |
 
     INTENGER ID COLON NUMBER |
     N_BOOLEAN_ID N_BOOLEAN_VALUE |
@@ -326,107 +393,50 @@ N_DECLARACION ::=
     CLOSE_SQR_BRACKET
 ;
 
+    N_DECLARACION_ID::=
+        N_DECLARACION_ID N_COMA_ID | ID
+    ;
 
-N_ARREGLO ::=
-    N_TIPO_VARIABLE COMA N_ARREGLO | N_TIPO_VARIABLE CLOSE_SQR_BRACKET
-    /*N_TIPO_VARIABLE COMA N_ARREGLO | */
-;  
+        N_COMA_ID ::=
+            ID COMA
+        ;
 
-N_MATRIZ ::= 
-    OPEN_SQR_BRACKET N_ARREGLO |
-    OPEN_SQR_BRACKET N_ARREGLO COMA N_MATRIZ |
-    N_TIPO_VARIABLE COMA N_MATRIZ | N_TIPO_VARIABLE
-;
+    N_TIPO_VARIABLE ::=
+        NUMBER | 
+        ID | 
+        STRING | 
+        NULL | 
+        CHAR_ELEMENT
+    ;
 
-N_TIPO_VARIABLE ::=
-    NUMBER | 
-    ID | 
-    STRING | 
-    NULL | 
-    CHAR_ELEMENT
-;
+    N_MATRIZ ::= 
+        OPEN_SQR_BRACKET N_ARREGLO |
+        OPEN_SQR_BRACKET N_ARREGLO COMA N_MATRIZ |
+        N_TIPO_VARIABLE COMA N_MATRIZ | N_TIPO_VARIABLE
+    ;
 
-N_SENTENCIA_BOOLEANA_ANIDADA ::=
-    N_SENTENCIA_BOOLEANA:e1
-        
-     N_AND_OR:e2
-        
-;
+    N_ARREGLO ::=
+        N_TIPO_VARIABLE COMA N_ARREGLO | N_TIPO_VARIABLE CLOSE_SQR_BRACKET
+        /*N_TIPO_VARIABLE COMA N_ARREGLO | */
+    ;
 
-N_SENTENCIA_BOOLEANA ::= 
-    /*ID*/
-    ID:e1 OP_REL:e2 ID:e3 
-|
-    ID OP_REL NUMBER |
-    ID OP_REL STRING  |
-    ID OP_REL FALSE  |
-    ID OP_REL TRUE  |
-        /* AL REVES */
-    NUMBER OP_REL ID  |
-    STRING OP_REL ID  |
-    FALSE OP_REL ID  |
-    TRUE OP_REL ID  
-    
-    /*Number*/
-    NUMBER OP_REL NUMBER |
-    NUMBER OP_REL STRING |
-    NUMBER OP_REL FALSE |
-    NUMBER OP_REL TRUE |
-        /* AL REVES */
-    STRING OP_REL NUMBER |
-    FALSE OP_REL NUMBER |
-    TRUE OP_REL NUMBER  
+    N_BOOLEAN_ID ::=
+        BOOLEAN ID COLON
+    ;
 
-    /*STRING*/
-    STRING OP_REL STRING |
-    STRING OP_REL FALSE |
-    STRING OP_REL TRUE |
-        /* AL REVES */
-    FALSE OP_REL STRING |
-    TRUE OP_REL STRING  
+        N_BOOLEAN_VALUE::=
+            FALSE | TRUE | N_SENTENCIA_BOOLEANA_ANIDADA | 
+            ID OPEN_PARENTESIS N_ARGUMENTOS CLOSE_PARENTESIS | ID OPEN_PARENTESIS CLOSE_PARENTESIS
+        ;
 
+        N_ARGUMENTOS ::=
+            ID COMA N_ARGUMENTOS | ID PYC
+        ;
 
-    /*TRUE - FALSE*/
-    TRUE OP_REL FALSE |
-    TRUE OP_REL TRUE |
-    FALSE OP_REL FALSE |
-    FALSE OP_REL TRUE  
-
-
-    /*SWTICH*/
-    ID OP_REL |
-    OP_REL ID |
-    STRING OP_REL |
-    OP_REL STRING |
-    OP_REL NUMBER |
-    NUMBER OP_REL |
-    NUMBER BETWEEN NUMBER |
-    ID BETWEEN ID
-    
-;
-
-N_AND_OR::=
-    CON_AND:e1
-     N_SENTENCIA_BOOLEANA:e2
-    
-    |
-    CON_OR
-     
-
-     N_SENTENCIA_BOOLEANA 
-
-
-     N_AND_OR
-
-    | /*vacio*/ 
-
-;
+/* ------------------------------OPERATORS--------------------------------- */
 
 N_PRINT ::=
     OPEN_PARENTESIS
-        {:parser.agregarNodo(parser.createNodo("N_PRINT"));
-          parser.setNodoActual((DefaultMutableTreeNode)parser.getNodoActual().getLastChild());
-            parser.agregarNodo(parser.createNodo("OPEN_PARENTESIS"));:} 
     PRINT 
     COLON 
     STRING 
@@ -443,10 +453,32 @@ N_CIN ::=
     PYC 
 ;
 
+/* ------------------------------OTHERS--------------------------------- */
 N_OPERACIONAL ::=
     MOD | 
-    ELSE | 
-    RETURN |
     BACK_SLASH |
     ERROR
 ;
+
+
+/* Onda fumada de Wilfredo
+non terminal EXPR_LIST,
+SOUT
+;
+non terminal Integer    expr;      // used to store evaluated subexpressions
+
+/* Precedences
+precedence left OP_SUM;
+precedence left OP_MULTI_DIV;
+
+/* The grammar rules
+EXPR_LIST   ::= EXPR_LIST expr:e PYC         {: System.out.println(e);:}
+            | expr:e PYC                     {: System.out.println(e);:}
+;
+
+expr        ::= expr:e1 OP_SUM  expr:e2                 {: RESULT = e1+e2;  :}
+            | expr:e1 OP_MULTI_DIV expr:e2              {: RESULT = e1*e2;  :}
+            | OPEN_PARENTESIS expr:e CLOSE_PARENTESIS   {: RESULT = e;      :}
+            | NUMBER:n	                                {: RESULT = n;      :}
+;
+/* Fin de la Onda fumada de Wilfredo */
