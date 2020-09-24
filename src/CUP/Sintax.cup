@@ -173,6 +173,8 @@ N_CIN,
 /*Other*/
 N_OPERACIONAL;
 
+/*Preferences*/
+precedence left CON_AND;
                         start with N_INICIO;
 
 /* -------------------------CODE BLOCKS------------------------------------- */
@@ -306,19 +308,27 @@ N_SENTENCIA ::=
 
 /* -------------------------VARIABLE DEFINITION------------------------------ */
 N_SENTENCIA_BOOLEANA_ANIDADA ::=
-    N_SENTENCIA_BOOLEANA:e1
-        N_AND_OR:e2
+    N_SENTENCIA_BOOLEANA
+        N_AND_OR
+    |
+    OPEN_PARENTESIS
+        N_SENTENCIA_BOOLEANA_ANIDADA
+    CLOSE_PARENTESIS
+    N_AND_OR
+    |
+    OPEN_PARENTESIS
+        N_SENTENCIA_BOOLEANA_ANIDADA
+    CLOSE_PARENTESIS
+    |
+    N_SENTENCIA_BOOLEANA
 ;
 
     N_AND_OR::=
         CON_AND
-            N_SENTENCIA_BOOLEANA
-        N_AND_OR
+            N_SENTENCIA_BOOLEANA_ANIDADA
         |
         CON_OR
-            N_SENTENCIA_BOOLEANA 
-        N_AND_OR
-        | /*vacio*/ 
+            N_SENTENCIA_BOOLEANA_ANIDADA
 
     ;
 
