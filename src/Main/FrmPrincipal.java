@@ -5,6 +5,7 @@
  */
 package Main;
 
+import AST.SwingDemo;
 import CUP.*;
 import LexerS.Lexer;
 import java.awt.Color;
@@ -392,7 +393,8 @@ public class FrmPrincipal extends javax.swing.JFrame {
         Sintax s = new Sintax(new CUP.LexerCup(new StringReader(ST)));
         
         try {
-            jtSintactico.setModel(s.createTreeSintax("SintaxTree"));
+            //jtSintactico.setModel(s.createTreeSintax("SintaxTree"));
+            s.createTreeSintax("Program");
             s.parse();
             /*for (int i = 0; i < s.reduce_table().length; i++) {
                 for (int j = 0; j < s.reduce_table()[i].length; j++) {
@@ -401,13 +403,19 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 System.out.println("");
             }*/
             if(s.getERRORES().equalsIgnoreCase("")){
-                txtAnalizarSin.setText("Analisis realizado correctamente");
-                txtAnalizarSin.setForeground(new Color(25, 111, 61));
+                /*txtAnalizarSin.setText("Analisis realizado correctamente");
+                txtAnalizarSin.setForeground(new Color(25, 111, 61));*/
+                txtAnalizarSin.setText("Errores: \n" + s.getERRORES());
+                txtAnalizarSin.setForeground(Color.red);
+                System.out.println("Se completo el análisis sintáctico");
+                
             }else{
                 txtAnalizarSin.setText(s.getERRORES());
                 txtAnalizarSin.setForeground(Color.red);
+                System.out.println("Se completo el análisis sintáctico");
             }
-            
+            SwingDemo sintaxTree = new SwingDemo(s.getTreeSintaxModel());
+            sintaxTree.showTree();
             jtSintactico.setModel(s.getTreeSintaxModel());
         } catch (Exception ex) {
             System.out.println("Entro al exeption que pinta en rojo");
