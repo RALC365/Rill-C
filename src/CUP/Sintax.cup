@@ -164,6 +164,7 @@ N_DECLARACION,
         N_COMA_ID, //a,b,c,d,e...
     N_VALOR_VARIABLE,
     N_MATRIZ,
+        N_TIPOS_DECLARACION_MATRIZ,
     N_ARREGLO,
     N_BOOLEAN_ID,
         N_BOOLEAN_VALUE,
@@ -460,28 +461,51 @@ N_SENTENCIA_BOOLEANA_ANIDADA ::=
     ;
 
 N_DECLARACION ::= 
+    //TIPO id,id,id
     INTENGER N_DECLARACION_ID|
     BOOLEAN N_DECLARACION_ID |
     CHAR N_DECLARACION_ID |
 
+    //int id: 2+3+5/2*4...
     INTENGER ID COLON EXPR_LIST |
+    //bln id: ((4=7)and("hola"=id))
     N_BOOLEAN_ID N_BOOLEAN_VALUE |
+    //chr id: 'a'
     CHAR ID COLON CHAR_ELEMENT |
+    
     /*Arreglos*/
-    ARRAY ID COLON 
-        OPEN_SQR_BRACKET
-        N_ARREGLO
-            
+    //solo declaracion variable: arr [1] Int id
+    ARRAY 
+        OPEN_SQR_BRACKET NUMBER CLOSE_SQR_BRACKET
+        N_TIPOS_DECLARACION_MATRIZ
+        ID
     |
-    //ARRAY ID COLON N_MATRIZ  |
+    //Con valor de una vez: arr Int id: [1,2,3,4...]
+    ARRAY 
+        N_TIPOS_DECLARACION_MATRIZ
+            ID COLON 
+            OPEN_SQR_BRACKET
+            N_ARREGLO
+        |
 
     /*Matriz*/
-    MATRIX ID COLON 
+    //solo declaracion variable: mtx [1][1] TIPO matriz
+    MATRIX
+        OPEN_SQR_BRACKET NUMBER CLOSE_SQR_BRACKET
+        OPEN_SQR_BRACKET NUMBER CLOSE_SQR_BRACKET
+        N_TIPOS_DECLARACION_MATRIZ 
+            ID
+    |
+    //Con valor de una vez: mtx TIPO matriz:[...[A],[a],[B],b...]
+    MATRIX 
+        N_TIPOS_DECLARACION_MATRIZ 
+            ID COLON 
         OPEN_SQR_BRACKET
         N_MATRIZ  
     CLOSE_SQR_BRACKET
     |
     /*FUNCIONES*/
+    //id:funcion(p1,p2,p3)
     ID:e1 COLON N_CALL_FUNCTION:e2
         /*{:
             DefaultMutableTreeNode nodo = parser.createNodo("DECLARACION");
@@ -490,14 +514,17 @@ N_DECLARACION ::=
             RESULT = nodo;
         :}*/ 
     |
+    //int id: funcion(p1,p2,p3...)
     INTENGER ID COLON N_CALL_FUNCTION 
     |
-    
-    MATRIX ID COLON N_CALL_FUNCTION 
+    //mtx TIPO id: funcion(p1,p2,p3...)
+    MATRIX N_TIPOS_DECLARACION_MATRIZ ID COLON N_CALL_FUNCTION 
     |
-    
-    ARRAY ID COLON N_CALL_FUNCTION 
+
+    //arr TIPO id: funcion(p1,p2,p3...)
+    ARRAY N_TIPOS_DECLARACION_MATRIZ ID COLON N_CALL_FUNCTION 
     |
+    //char id: funcion(p1,p2,p3...)
     CHAR ID COLON N_CALL_FUNCTION
 ;
 
@@ -520,8 +547,17 @@ N_DECLARACION ::=
         |
         CHAR_ELEMENT:e1 /*{: RESULT = (parser.createNodo(e1+"")); :}*/
         |
+        TRUE
+        |
+        FALSE
+        |
     ;
-
+    N_TIPOS_DECLARACION_MATRIZ ::=
+        INTENGER |
+        BOOLEAN |
+        CHAR
+    ;
+    //solo matrices de dos dimensiones
     N_MATRIZ ::= 
         OPEN_SQR_BRACKET N_ARREGLO |
         OPEN_SQR_BRACKET N_ARREGLO COMA N_MATRIZ |
@@ -531,8 +567,6 @@ N_DECLARACION ::=
     N_ARREGLO ::=
         N_VALOR_VARIABLE COMA N_ARREGLO 
         | N_VALOR_VARIABLE CLOSE_SQR_BRACKET
-        
-        /*N_VALOR_VARIABLE COMA N_ARREGLO | */
     ;
 
     N_BOOLEAN_ID ::=
