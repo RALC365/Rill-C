@@ -19,6 +19,12 @@ parser code
         this.s = s;
         System.out.println("Error Sintáctico recuperable en la Línea " + (s.right) +
         " Columna "+s.left+ ". No se esperaba este componente: " +s.value+".");
+
+        String report = "Syntax error in line " + getS().right + " Column " + getS().left + ". No se esperaba este componente: " + getS().value;
+        if(getS().value == null){
+            report = "You didn't close your last code structure";
+        }
+        addError(report + "\n");
     }
 
     /**
@@ -35,11 +41,23 @@ parser code
     }
     //Guardar los errores encontrados
     private String ERRORES = "";
+    private int cERRORES = 0;
     public void addError(String error){
         this.ERRORES += error;
+        this.cERRORES++;
     }
     public String getERRORES(){
         return this.ERRORES;
+    }
+    public void setERRORES(String err){
+        this.ERRORES = err;
+    }
+
+    public int getcERRORES(){
+        return this.cERRORES;
+    }
+    public void setcERRORES(int err){
+        this.cERRORES = err;
     }
 
     //Se vino el arbolito papa
@@ -203,6 +221,11 @@ N_INICIO ::=
             parser.agregarNodo((DefaultMutableTreeNode)e1);
         :}*/
     |
+    error:e {: 
+        String report = "Syntax error in line " + parser.getS().right + " Column " + parser.getS().left + ". No se esperaba este componente: " +parser.getS().value;
+        //parser.addError(report + "\n");
+        parser.report_error(report,e); 
+    :}
 ;
 
 N_MAIN ::=
@@ -228,6 +251,7 @@ N_MAIN ::=
         /*{:
             RESULT = parser.createNodo("MAIN");
         :}*/
+        
 ;
 
 N_FUNCTIONS::=
@@ -272,6 +296,12 @@ N_FUNCTION ::=
     N_RETORNO_FUNCTION 
     RETURN N_VALOR_VARIABLE PYC
     CLOSE_BLOCK 
+    |
+    error:e {: 
+        String report = "Syntax error in line " + parser.getS().right + " Column " + parser.getS().left + ". No se esperaba este componente: " +parser.getS().value;
+        //parser.addError(report + "\n");
+        parser.report_error(report,e); 
+    :}
 ;
 
     N_PARAMETRO ::=
@@ -312,7 +342,7 @@ N_SENTENCIA ::=
     N_CALL_FUNCTION PYC |
     error:e {: 
         String report = "Syntax error in line " + parser.getS().right + " Column " + parser.getS().left + ". No se esperaba este componente: " +parser.getS().value;
-        parser.addError(report + "\n");
+        //parser.addError(report + "\n");
         parser.report_error(report,e); 
     :}
 ;
