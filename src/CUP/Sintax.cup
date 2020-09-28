@@ -151,51 +151,49 @@ terminal
 
 /* Non terminals */
 non terminal 
-
-/* code blocks */
-N_INICIO, 
+    /* code blocks */
+    N_INICIO, 
     N_MAIN,
     N_FUNCTIONS,
-        N_FUNCTION,
-            N_PARAMETRO,
-            N_PARAMETRO_FUNCTION, 
-            N_RETORNO_FUNCTION,
+    N_FUNCTION,
+    N_PARAMETRO,
+    N_PARAMETRO_FUNCTION, 
+    N_RETORNO_FUNCTION,
 
-/* control statement */
-N_SENTENCIA,
+    /* control statement */
+    N_SENTENCIA,
     N_WHILE,
     N_FOR,
     N_IF,
     N_SWITCH,
-        N_SWITCH_CASE,
-            N_SENTENCIA_BOOLEANA_SWITCH,
+    N_SWITCH_CASE,
+    N_SENTENCIA_BOOLEANA_SWITCH,
     N_CALL_FUNCTION,
-        N_CALL_FUNCTION_PARAMETROS,
+    N_CALL_FUNCTION_PARAMETROS,
 
-/*variable definition*/
-N_SENTENCIA_BOOLEANA_ANIDADA,
+    /*variable definition*/
+    N_SENTENCIA_BOOLEANA_ANIDADA,
     N_SENTENCIA_BOOLEANA,   
     N_AND_OR,
-
-N_DECLARACION,
+    N_DECLARACION,
     N_DECLARACION_ID, //Para las declaraciones int a,b,c,d.,
     N_VALOR_VARIABLE,
     N_MATRIZ,
-        N_TIPOS_DECLARACION_MATRIZ,
+    N_TIPOS_DECLARACION_MATRIZ,
     N_ARREGLO,
     N_BOOLEAN_ID,
-        N_BOOLEAN_VALUE,
-        N_ARGUMENTOS,
+    N_BOOLEAN_VALUE,
+    N_ARGUMENTOS,
 
-/*Opetators*/
-N_PRINT,
+    /*Opetators*/
+    N_PRINT,
     N_PRINT_IMPRESS,
-N_CIN,
+    N_CIN,
 
-/*MATHEMATICS*/
-EXPR_LIST,
+    /*MATHEMATICS*/
+    EXPR_LIST,
     EXPR
-;
+    ;
 
 /*Preferences*/
 precedence left CON_AND;
@@ -207,9 +205,9 @@ precedence left OPEN_PARENTESIS, CLOSE_PARENTESIS;
 /* -------------------------CODE BLOCKS------------------------------------- */
 N_INICIO ::= 
     N_MAIN:e1
-        /*{:
+        {:
             parser.agregarNodo((DefaultMutableTreeNode)e1);
-        :}*/ 
+        :}
     |
     N_MAIN:e1 N_FUNCTIONS
         /*{:
@@ -234,13 +232,16 @@ N_MAIN ::=
     OPEN_PARENTESIS 
     MAIN 
     COLON 
-        N_SENTENCIA:e1
+    N_SENTENCIA:e
     CLOSE_BLOCK
-        /*{:
-            DefaultMutableTreeNode nodo = parser.createNodo("MAIN");
-            parser.agregarNodo((DefaultMutableTreeNode)e1);
-            RESULT = nodo;
-        :}*/
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("MAIN");
+        /*for (int i = 0; i < ((DefaultMutableTreeNode)e).getChildCount(); i++) {
+            nodo.add(((DefaultMutableTreeNode)((DefaultMutableTreeNode)e).getChildAt(i)));
+        }*/
+        nodo.add((DefaultMutableTreeNode)e);
+        RESULT = nodo;
+    :}
     |
     OPEN_PARENTESIS 
     CLOSE_PARENTESIS 
@@ -248,22 +249,22 @@ N_MAIN ::=
     MAIN 
     COLON 
     CLOSE_BLOCK
-        /*{:
-            RESULT = parser.createNodo("MAIN");
-        :}*/
+    {:
+        RESULT = parser.createNodo("MAIN");
+    :}
         
 ;
 
 N_FUNCTIONS::=
     N_FUNCTIONS N_FUNCTION:e1
-        /*{:
-            parser.agregarNodo((DefaultMutableTreeNode)e1);
-        :}*/
+    /*{:
+        parser.agregarNodo((DefaultMutableTreeNode)e1);
+    :}*/
     | 
     N_FUNCTION:e1
-        /*{:
+    /*{:
             parser.agregarNodo((DefaultMutableTreeNode)e1);
-        :}*/
+    :}*/
 ;
 
 N_FUNCTION ::=
@@ -309,42 +310,156 @@ N_FUNCTION ::=
     :}
 ;
     
-    N_PARAMETRO ::=
-        OPEN_PARENTESIS CLOSE_PARENTESIS|
-        OPEN_PARENTESIS N_PARAMETRO_FUNCTION CLOSE_PARENTESIS
-    ;
-    N_PARAMETRO_FUNCTION ::=
-        N_RETORNO_FUNCTION ID COMA N_PARAMETRO_FUNCTION |
-        N_RETORNO_FUNCTION ID
-    ;
+N_PARAMETRO ::=
+    OPEN_PARENTESIS CLOSE_PARENTESIS|
+    OPEN_PARENTESIS N_PARAMETRO_FUNCTION CLOSE_PARENTESIS
+;
+
+N_PARAMETRO_FUNCTION ::=
+    N_RETORNO_FUNCTION ID COMA N_PARAMETRO_FUNCTION |
+    N_RETORNO_FUNCTION ID
+;
     
-    N_RETORNO_FUNCTION ::=
-        INTENGER |
-        BOOLEAN |
-        CHAR |
-        ARRAY |
-        MATRIX
-        /*Vacio significa void o procedimiento*/
+N_RETORNO_FUNCTION ::=
+    INTENGER |
+    BOOLEAN |
+    CHAR |
+    ARRAY |
+    MATRIX
+    /*Vacio significa void o procedimiento*/
     ;
 
 /* -------------------------CONTROL STAMENTS------------------------- */
 N_SENTENCIA ::= 
-    N_SENTENCIA N_WHILE |
-    N_WHILE |
-    N_SENTENCIA N_FOR |
-    N_FOR |
-    N_SENTENCIA N_IF |
-    N_IF |
-    N_SENTENCIA N_SWITCH |
-    N_SWITCH |
-    N_SENTENCIA N_DECLARACION PYC |
-    N_DECLARACION PYC |
-    N_SENTENCIA N_PRINT|
-    N_PRINT  |
-    N_SENTENCIA N_CIN |
-    N_CIN |
-    N_SENTENCIA N_CALL_FUNCTION PYC |
-    N_CALL_FUNCTION PYC |
+    N_SENTENCIA:e N_WHILE
+    {:
+        System.out.println("N_SENTENCIA:e N_WHILE");
+        DefaultMutableTreeNode nodo = parser.createNodo("N_SENTENCIA N_WHILE");
+        nodo.add((DefaultMutableTreeNode)e);
+        RESULT = nodo;
+    :}
+    |
+    N_WHILE 
+    {:
+        System.out.println("N_WHILE ");
+        DefaultMutableTreeNode nodo = parser.createNodo("N_WHILE ");
+        RESULT = nodo;
+    :}
+    |
+    N_SENTENCIA:e N_FOR 
+    {:
+        System.out.println("N_SENTENCIA:e N_FOR ");
+        DefaultMutableTreeNode nodo = parser.createNodo("N_SENTENCIA N_FOR ");
+        nodo.add((DefaultMutableTreeNode)e);
+        RESULT = nodo;
+    :}
+    |
+    N_FOR
+    {:
+        System.out.println("N_FOR");
+        DefaultMutableTreeNode nodo = parser.createNodo("N_FOR");
+        RESULT = nodo;
+    :}
+    |
+    N_SENTENCIA:e N_IF
+    {:
+        System.out.println("N_SENTENCIA:e N_IF");
+        DefaultMutableTreeNode nodo = parser.createNodo("N_SENTENCIA N_IF");
+        nodo.add((DefaultMutableTreeNode)e);
+        RESULT = nodo;
+    :}
+    |
+    N_IF 
+    {:
+        System.out.println("N_IF");
+        DefaultMutableTreeNode nodo = parser.createNodo("N_IF ");
+        RESULT = nodo;
+    :}
+    |
+    N_SENTENCIA:e N_SWITCH:n 
+    {:
+        System.out.println("N_SENTENCIA:e N_SWITCH ");
+        DefaultMutableTreeNode nodo = parser.createNodo("N_SENTENCIA N_SWITCH ");
+        /*for (int i = 0; i < ((DefaultMutableTreeNode)e).getChildCount(); i++) {
+            nodo.add(((DefaultMutableTreeNode)((DefaultMutableTreeNode)e).getChildAt(i)));
+        }*/
+        nodo.add((DefaultMutableTreeNode)e);
+        nodo.add((DefaultMutableTreeNode)n);
+        RESULT = nodo;
+        RESULT = nodo;
+    :}
+    |
+    N_SWITCH: n
+    {:
+        RESULT = (DefaultMutableTreeNode)n;
+    :}
+    |
+    N_SENTENCIA:e N_DECLARACION:n PYC 
+    {:
+        System.out.println("N_SENTENCIA:e N_DECLARACION PYC ");
+        DefaultMutableTreeNode nodo = parser.createNodo("N_SENTENCIA N_DECLARACION PYC ");
+        /*for (int i = 0; i < ((DefaultMutableTreeNode)e).getChildCount(); i++) {
+            nodo.add(((DefaultMutableTreeNode)((DefaultMutableTreeNode)e).getChildAt(i)));
+        }*/
+        nodo.add((DefaultMutableTreeNode)e);
+        nodo.add((DefaultMutableTreeNode)n);
+        RESULT = nodo;
+    :}
+    |
+    N_DECLARACION:n PYC 
+    {:
+        RESULT = (DefaultMutableTreeNode)n;
+    :}
+    |
+    N_SENTENCIA:e N_PRINT:n
+    {:
+        System.out.println("N_SENTENCIA:e N_PRINT");
+        DefaultMutableTreeNode nodo = parser.createNodo("N_SENTENCIA N_PRINT");
+        /*for (int i = 0; i < ((DefaultMutableTreeNode)e).getChildCount(); i++) {
+            nodo.add(((DefaultMutableTreeNode)((DefaultMutableTreeNode)e).getChildAt(i)));
+        }*/
+        nodo.add((DefaultMutableTreeNode)e);
+        nodo.add((DefaultMutableTreeNode)n);
+        RESULT = nodo;
+    :}
+    |
+    N_PRINT: n
+    {:
+        RESULT = (DefaultMutableTreeNode)n;
+    :}
+    |
+    N_SENTENCIA:e N_CIN:n
+    {:
+        System.out.println("N_SENTENCIA:e N_CIN ");
+        DefaultMutableTreeNode nodo = parser.createNodo("N_SENTENCIA N_CIN ");
+        /*for (int i = 0; i < ((DefaultMutableTreeNode)e).getChildCount(); i++) {
+            nodo.add(((DefaultMutableTreeNode)((DefaultMutableTreeNode)e).getChildAt(i)));
+        }*/
+        nodo.add((DefaultMutableTreeNode)e);
+        nodo.add((DefaultMutableTreeNode)n);
+        RESULT = nodo;
+    :}
+    |
+    N_CIN:n
+    {:
+        RESULT = (DefaultMutableTreeNode)n;
+    :}
+    |
+    N_SENTENCIA:e N_CALL_FUNCTION PYC 
+    {:
+        System.out.println("N_SENTENCIA:e N_CALL_FUNCTION PYC ");
+        DefaultMutableTreeNode nodo = parser.createNodo("N_SENTENCIA N_CALL_FUNCTION PYC ");
+        nodo.add((DefaultMutableTreeNode)e);
+        RESULT = nodo;
+    :}
+    |
+    N_CALL_FUNCTION PYC 
+    {:
+        System.out.println("N_CALL_FUNCTION PYC ");
+        DefaultMutableTreeNode nodo = parser.createNodo("N_CALL_FUNCTION PYC ");
+        RESULT = nodo;
+    :}
+    |
     error:e {: 
         String report = "Syntax error in line " + parser.getS().right + " Column " + parser.getS().left + ". No se esperaba este componente: " +parser.getS().value;
         //parser.addError(report + "\n");
@@ -352,80 +467,96 @@ N_SENTENCIA ::=
     :}
 ;
 
-    N_WHILE ::= 
-        //OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS WHILE COLON N_SENTENCIA CLOSE_BLOCK
-        OPEN_PARENTESIS:e1
-        N_SENTENCIA_BOOLEANA_ANIDADA:e2
-        CLOSE_PARENTESIS:e3
-        OPEN_PARENTESIS:e4
-        WHILE:e5
-        COLON:e6
-        N_SENTENCIA:e7
-        CLOSE_BLOCK:e8
-        |
-        /*While vacio*/
-        OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS WHILE COLON CLOSE_BLOCK
-    ;
+N_WHILE ::= 
+    //OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS WHILE COLON N_SENTENCIA CLOSE_BLOCK
+    OPEN_PARENTESIS:e1
+    N_SENTENCIA_BOOLEANA_ANIDADA:e2
+    CLOSE_PARENTESIS:e3
+    OPEN_PARENTESIS:e4
+    WHILE:e5
+    COLON:e6
+    N_SENTENCIA:e7
+    CLOSE_BLOCK:e8
+    |
+    /*While vacio*/
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS WHILE COLON CLOSE_BLOCK
+;
 
-    N_FOR ::= 
-        OPEN_PARENTESIS 
-        ID 
-        COMA 
-        NUMBER 
-        TO 
-        NUMBER 
-        COMA 
-        INCREMENT 
-        CLOSE_PARENTESIS 
-        OPEN_PARENTESIS 
-        FOR 
-        COLON 
-        N_SENTENCIA 
-        CLOSE_BLOCK
-        | 
-        /*For vacio*/
-        OPEN_PARENTESIS  ID  COMA  NUMBER  TO  NUMBER  COMA  INCREMENT  CLOSE_PARENTESIS  OPEN_PARENTESIS  FOR  COLON  CLOSE_BLOCK
-    ;
+N_FOR ::= 
+    OPEN_PARENTESIS 
+    ID:id
+    COMA 
+    NUMBER:n1
+    TO 
+    NUMBER:n2
+    COMA
+    OP_SUM:o
+    NUMBER:n3
+    CLOSE_PARENTESIS 
+    OPEN_PARENTESIS 
+    FOR 
+    COLON 
+    N_SENTENCIA:e
+    CLOSE_BLOCK
+    {:
+        System.out.println("FOR");
+        DefaultMutableTreeNode nodo = parser.createNodo("FOR");
+        nodo.add(parser.createNodo(id+""));
+        nodo.add(parser.createNodo("from: "+n1));
+        nodo.add(parser.createNodo("to: "+n2));
+        nodo.add(parser.createNodo(""+o+n3));
+        DefaultMutableTreeNode nodoS = parser.createNodo("Sentencias");
+        nodoS.add((DefaultMutableTreeNode)e);
+        nodo.add(nodoS);
+        RESULT = nodo;
+    :}
+    | 
+    /*For vacio*/
+    OPEN_PARENTESIS  ID  COMA  NUMBER  TO  NUMBER  COMA  OP_SUM NUMBER  CLOSE_PARENTESIS  OPEN_PARENTESIS  FOR  COLON  CLOSE_BLOCK
+;
 
-    N_IF ::= 
-        OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON 
-            N_SENTENCIA 
-        CLOSE_BLOCK
-        |
-        OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON 
-            N_SENTENCIA 
-        OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON  
-            N_SENTENCIA 
-        CLOSE_BLOCK
+N_IF ::= 
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON 
+    N_SENTENCIA 
+    CLOSE_BLOCK
+    |
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON 
+    N_SENTENCIA 
+    OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON  
+    N_SENTENCIA 
+    CLOSE_BLOCK
+    | /*If vacio*/
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON CLOSE_BLOCK
+    |
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON 
+    OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON CLOSE_BLOCK
+;
 
-        | /*If vacio*/
-        OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON CLOSE_BLOCK
-        |
-        OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON 
-        OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON CLOSE_BLOCK
-    ;
+N_SWITCH ::=
+    OPEN_PARENTESIS ID CLOSE_PARENTESIS OPEN_PARENTESIS 
+    IF_SWITCH COLON 
+    N_SWITCH_CASE 
+    CLOSE_BLOCK
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("SWITCH");
+        RESULT = nodo;
+    :}
+;
 
-    N_SWITCH ::=
-        OPEN_PARENTESIS ID CLOSE_PARENTESIS OPEN_PARENTESIS 
-            IF_SWITCH COLON 
-                N_SWITCH_CASE 
-        CLOSE_BLOCK
-    ;
-
-        N_SWITCH_CASE ::=
-            OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_SWITCH CLOSE_PARENTESIS COLON 
-                N_SENTENCIA 
-                N_SWITCH_CASE 
-            |
-            /*Switch vacio*/
-            OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_SWITCH CLOSE_PARENTESIS COLON 
-                N_SWITCH_CASE 
-            |
-            OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON 
-                N_SENTENCIA
-            |/*Else vacío*/
-            OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON 
-        ;
+N_SWITCH_CASE ::=
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_SWITCH CLOSE_PARENTESIS COLON 
+    N_SENTENCIA 
+    N_SWITCH_CASE 
+    |
+    /*Switch vacio*/
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_SWITCH CLOSE_PARENTESIS COLON 
+    N_SWITCH_CASE 
+    |
+    OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON 
+    N_SENTENCIA
+    |/*Else vacío*/
+    OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON 
+;
 
 /* -------------------------VARIABLE DEFINITION------------------------------ */
 N_CALL_FUNCTION::=
@@ -439,247 +570,354 @@ N_CALL_FUNCTION_PARAMETROS::=
 ;
 N_SENTENCIA_BOOLEANA_ANIDADA ::=
     N_SENTENCIA_BOOLEANA
-        N_AND_OR
+    N_AND_OR
     |
     N_SENTENCIA_BOOLEANA
     |
     OPEN_PARENTESIS
-        N_SENTENCIA_BOOLEANA_ANIDADA
+    N_SENTENCIA_BOOLEANA_ANIDADA
     CLOSE_PARENTESIS
     N_AND_OR
     |
     OPEN_PARENTESIS
-        N_SENTENCIA_BOOLEANA_ANIDADA
+    N_SENTENCIA_BOOLEANA_ANIDADA
     CLOSE_PARENTESIS
 ;
 
-    N_AND_OR::=
-        CON_AND
-            N_SENTENCIA_BOOLEANA_ANIDADA
-        |
-        CON_OR
-            N_SENTENCIA_BOOLEANA_ANIDADA
-    ;
+N_AND_OR::=
+    CON_AND
+    N_SENTENCIA_BOOLEANA_ANIDADA
+    |
+    CON_OR
+    N_SENTENCIA_BOOLEANA_ANIDADA
+;
 
-    N_SENTENCIA_BOOLEANA ::= 
-        /*ID*/
-        ID OP_REL ID |
-        ID OP_REL NUMBER |
-        ID OP_REL STRING  |
-        ID OP_REL FALSE  |
-        ID OP_REL TRUE  |
-            /* AL REVES */
-        NUMBER OP_REL ID  |
-        STRING OP_REL ID  |
-        FALSE OP_REL ID  |
-        TRUE OP_REL ID  
+N_SENTENCIA_BOOLEANA ::= 
+    /*ID*/
+    ID OP_REL ID |
+    ID OP_REL NUMBER |
+    ID OP_REL STRING  |
+    ID OP_REL FALSE  |
+    ID OP_REL TRUE  |
+    /* AL REVES */
+    NUMBER OP_REL ID  |
+    STRING OP_REL ID  |
+    FALSE OP_REL ID  |
+    TRUE OP_REL ID  
+    /*Number*/
+    NUMBER OP_REL NUMBER |
+    NUMBER OP_REL STRING |
+    NUMBER OP_REL FALSE |
+    NUMBER OP_REL TRUE |
+    /* AL REVES */
+    STRING OP_REL NUMBER |
+    FALSE OP_REL NUMBER |
+    TRUE OP_REL NUMBER  
+    /*STRING*/
+    STRING OP_REL STRING |
+    STRING OP_REL FALSE |
+    STRING OP_REL TRUE |
+    /* AL REVES */
+    FALSE OP_REL STRING |
+    TRUE OP_REL STRING  
+    /*TRUE - FALSE*/
+    TRUE OP_REL FALSE |
+    TRUE OP_REL TRUE |
+    FALSE OP_REL FALSE |
+    FALSE OP_REL TRUE  
+;
 
-        /*Number*/
-        NUMBER OP_REL NUMBER |
-        NUMBER OP_REL STRING |
-        NUMBER OP_REL FALSE |
-        NUMBER OP_REL TRUE |
-            /* AL REVES */
-        STRING OP_REL NUMBER |
-        FALSE OP_REL NUMBER |
-        TRUE OP_REL NUMBER  
-
-        /*STRING*/
-        STRING OP_REL STRING |
-        STRING OP_REL FALSE |
-        STRING OP_REL TRUE |
-            /* AL REVES */
-        FALSE OP_REL STRING |
-        TRUE OP_REL STRING  
-
-
-        /*TRUE - FALSE*/
-        TRUE OP_REL FALSE |
-        TRUE OP_REL TRUE |
-        FALSE OP_REL FALSE |
-        FALSE OP_REL TRUE  
-    ;
-    N_SENTENCIA_BOOLEANA_SWITCH::=
-        ID OP_REL |
-        OP_REL ID |
-        STRING OP_REL |
-        OP_REL STRING |
-        OP_REL NUMBER |
-        OP_REL FALSE |
-        OP_REL TRUE |
-        NUMBER OP_REL |
-        NUMBER BETWEEN NUMBER |
-        ID BETWEEN ID |
-        TRUE | FALSE 
-    ;
+N_SENTENCIA_BOOLEANA_SWITCH::=
+    ID OP_REL |
+    OP_REL ID |
+    STRING OP_REL |
+    OP_REL STRING |
+    OP_REL NUMBER |
+    OP_REL FALSE |
+    OP_REL TRUE |
+    NUMBER OP_REL |
+    NUMBER BETWEEN NUMBER |
+    ID BETWEEN ID |
+    TRUE | FALSE 
+;
 
 N_DECLARACION ::= 
-    ID COLON ID |
-    //ID COLON NULL |
-    ID COLON N_SENTENCIA_BOOLEANA_ANIDADA |
-    ID COLON EXPR_LIST |
+    ID COLON ID 
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        RESULT = nodo;
+    :}
+    |
+    //ID COLON NULL 
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        RESULT = nodo;
+    :}
+    |
+    ID COLON N_SENTENCIA_BOOLEANA_ANIDADA 
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        RESULT = nodo;
+    :}
+    |
+    ID COLON EXPR_LIST 
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        RESULT = nodo;
+    :}
+    |
     //TIPO id,id,id
-    INTENGER N_DECLARACION_ID|
-    BOOLEAN N_DECLARACION_ID |
-    CHAR N_DECLARACION_ID |
-
+    INTENGER N_DECLARACION_ID
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        RESULT = nodo;
+    :}
+    |
+    BOOLEAN N_DECLARACION_ID
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        RESULT = nodo;
+    :}
+    |
+    CHAR N_DECLARACION_ID 
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        RESULT = nodo;
+    :}
+    |
     //int id: 2+3+5/2*4...
-    INTENGER ID COLON EXPR_LIST |
+    INTENGER ID COLON EXPR_LIST 
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        RESULT = nodo;
+    :}
+    |
     //bln id: ((4=7)and("hola"=id))
-    N_BOOLEAN_ID N_BOOLEAN_VALUE |
+    N_BOOLEAN_ID N_BOOLEAN_VALUE 
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        RESULT = nodo;
+    :}
+    |
     //chr id: 'a'
-    CHAR ID COLON CHAR_ELEMENT |
-    
+    CHAR ID COLON CHAR_ELEMENT 
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        RESULT = nodo;
+    :}
+    |    
     /*Arreglos*/
     //solo declaracion variable: arr [1] Int id
     ARRAY 
-        OPEN_SQR_BRACKET NUMBER CLOSE_SQR_BRACKET
-        N_TIPOS_DECLARACION_MATRIZ
-        ID
+    OPEN_SQR_BRACKET NUMBER CLOSE_SQR_BRACKET
+    N_TIPOS_DECLARACION_MATRIZ
+    ID
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        RESULT = nodo;
+    :}
     |
     //Con valor de una vez: arr Int id: [1,2,3,4...]
     ARRAY 
-        N_TIPOS_DECLARACION_MATRIZ
-            ID COLON 
-            OPEN_SQR_BRACKET
-            N_ARREGLO
-        |
-
+    N_TIPOS_DECLARACION_MATRIZ
+    ID COLON 
+    OPEN_SQR_BRACKET
+    N_ARREGLO
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        RESULT = nodo;
+    :}
+    |
     /*Matriz*/
     //solo declaracion variable: mtx [1][1] TIPO matriz
     MATRIX
-        OPEN_SQR_BRACKET NUMBER CLOSE_SQR_BRACKET
-        OPEN_SQR_BRACKET NUMBER CLOSE_SQR_BRACKET
-        N_TIPOS_DECLARACION_MATRIZ 
-            ID
+    OPEN_SQR_BRACKET NUMBER CLOSE_SQR_BRACKET
+    OPEN_SQR_BRACKET NUMBER CLOSE_SQR_BRACKET
+    N_TIPOS_DECLARACION_MATRIZ 
+    ID
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        RESULT = nodo;
+    :}
     |
     //Con valor de una vez: mtx TIPO matriz:[...[A],[a],[B],b...]
     MATRIX 
-        N_TIPOS_DECLARACION_MATRIZ 
-            ID COLON 
-        OPEN_SQR_BRACKET
-        N_MATRIZ  
+    N_TIPOS_DECLARACION_MATRIZ 
+    ID COLON 
+    OPEN_SQR_BRACKET
+    N_MATRIZ  
     CLOSE_SQR_BRACKET
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        RESULT = nodo;
+    :}
     |
     /*FUNCIONES*/
     //id:funcion(p1,p2,p3)
     ID:e1 COLON N_CALL_FUNCTION:e2
-        /*{:
-            DefaultMutableTreeNode nodo = parser.createNodo("DECLARACION");
-                    nodo.add((parser.createNodo(e1+"")));
-                    nodo.add((DefaultMutableTreeNode)e2);
-            RESULT = nodo;
-        :}*/ 
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        RESULT = nodo;
+    :}
     |
     //int id: funcion(p1,p2,p3...)
     INTENGER ID COLON N_CALL_FUNCTION 
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        RESULT = nodo;
+    :}
     |
     //mtx TIPO id: funcion(p1,p2,p3...)
     MATRIX N_TIPOS_DECLARACION_MATRIZ ID COLON N_CALL_FUNCTION 
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        RESULT = nodo;
+    :}
     |
-
     //arr TIPO id: funcion(p1,p2,p3...)
     ARRAY N_TIPOS_DECLARACION_MATRIZ ID COLON N_CALL_FUNCTION 
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        RESULT = nodo;
+    :}
     |
     //char id: funcion(p1,p2,p3...)
     CHAR ID COLON N_CALL_FUNCTION
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        RESULT = nodo;
+    :}   
 ;
 
-    N_DECLARACION_ID::=
-        ID COMA N_DECLARACION_ID | ID
-    ;
+N_DECLARACION_ID::=
+    ID COMA N_DECLARACION_ID | ID
+;
 
-    N_VALOR_VARIABLE ::=
-        NUMBER:e1 /*{: RESULT = (parser.createNodo(e1+"")); :}*/
-        | 
-        ID:e1 /*{: RESULT = (parser.createNodo(e1+"")); :}*/
-        | 
-        STRING:e1 /*{: RESULT = (parser.createNodo(e1+"")); :}*/
-        |
-        NULL:e1  /*{: RESULT = (parser.createNodo(e1+"")); :}*/
-        |
-        CHAR_ELEMENT:e1 /*{: RESULT = (parser.createNodo(e1+"")); :}*/
-        |
-        TRUE
-        |
-        FALSE
-        |
-    ;
-    N_TIPOS_DECLARACION_MATRIZ ::=
-        INTENGER |
-        BOOLEAN |
-        CHAR
-    ;
-    //solo matrices de dos dimensiones
-    N_MATRIZ ::=  
-        OPEN_SQR_BRACKET N_ARREGLO |
-        OPEN_SQR_BRACKET N_ARREGLO COMA N_MATRIZ |
-        N_VALOR_VARIABLE COMA N_MATRIZ | N_VALOR_VARIABLE
-    ;
+N_VALOR_VARIABLE ::=
+    NUMBER:e1 /*{: RESULT = (parser.createNodo(e1+"")); :}*/
+    | 
+    ID:e1 /*{: RESULT = (parser.createNodo(e1+"")); :}*/
+    | 
+    STRING:e1 /*{: RESULT = (parser.createNodo(e1+"")); :}*/
+    |
+    NULL:e1  /*{: RESULT = (parser.createNodo(e1+"")); :}*/
+    |
+    CHAR_ELEMENT:e1 /*{: RESULT = (parser.createNodo(e1+"")); :}*/
+    |
+    TRUE
+    |
+    FALSE
+    |
+;
 
-    N_ARREGLO ::=
-        N_VALOR_VARIABLE COMA N_ARREGLO 
-        | N_VALOR_VARIABLE CLOSE_SQR_BRACKET
-    ;
+N_TIPOS_DECLARACION_MATRIZ ::=
+    INTENGER |
+    BOOLEAN |
+    CHAR
+;
 
-    N_BOOLEAN_ID ::=
-        BOOLEAN ID COLON
-    ;
+//solo matrices de dos dimensiones
+N_MATRIZ ::=  
+    OPEN_SQR_BRACKET N_ARREGLO |
+    OPEN_SQR_BRACKET N_ARREGLO COMA N_MATRIZ |
+    N_VALOR_VARIABLE COMA N_MATRIZ | N_VALOR_VARIABLE
+;
+N_ARREGLO ::=
+    N_VALOR_VARIABLE COMA N_ARREGLO 
+    | N_VALOR_VARIABLE CLOSE_SQR_BRACKET
+;
 
-        N_BOOLEAN_VALUE::=
-            FALSE | TRUE | N_SENTENCIA_BOOLEANA_ANIDADA | 
-            ID OPEN_PARENTESIS N_ARGUMENTOS CLOSE_PARENTESIS | ID OPEN_PARENTESIS CLOSE_PARENTESIS
-        ;
+N_BOOLEAN_ID ::=
+    BOOLEAN ID COLON
+;
 
-        N_ARGUMENTOS ::=
-            ID COMA N_ARGUMENTOS | ID PYC
-        ;
+N_BOOLEAN_VALUE::=
+    FALSE | TRUE | N_SENTENCIA_BOOLEANA_ANIDADA | 
+    ID OPEN_PARENTESIS N_ARGUMENTOS CLOSE_PARENTESIS | ID OPEN_PARENTESIS CLOSE_PARENTESIS
+;
 
-/* ------------------------------OPERATORS--------------------------------- */
-
+N_ARGUMENTOS ::=
+    ID COMA N_ARGUMENTOS | ID PYC
+;
+/* -----------------------------OPERATORS--------------------------------- */
 N_PRINT ::=
     OPEN_PARENTESIS
     PRINT 
     COLON 
-    STRING:e1
-    N_PRINT_IMPRESS
+    STRING:e
+    N_PRINT_IMPRESS:n
     CLOSE_BLOCK 
     PYC
-    /*{:
+    {:
         DefaultMutableTreeNode nodo = parser.createNodo("PRINT");
-            nodo.add(parser.createNodo(e1+""));
+        nodo.add(parser.createNodo(e+""));
+        nodo.add((DefaultMutableTreeNode)n);
         RESULT = nodo;
-    :}*/
+    :}
     |
     OPEN_PARENTESIS
     PRINT 
     COLON 
-    ID
-    N_PRINT_IMPRESS
+    ID:id
+    N_PRINT_IMPRESS:n
     CLOSE_BLOCK 
     PYC
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("PRINT");
+        nodo.add(parser.createNodo(id+""));
+        nodo.add((DefaultMutableTreeNode)n);
+        RESULT = nodo;
+    :}
     | /*Print vacio*/
     OPEN_PARENTESIS PRINT  COLON  CLOSE_BLOCK  PYC
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("PRINT");
+        RESULT = nodo;
+    :}
 ;
+
 N_PRINT_IMPRESS::=
-    N_PRINT_IMPRESS OP_SUM N_VALOR_VARIABLE |
-    OP_SUM N_VALOR_VARIABLE |
-    N_PRINT_IMPRESS OP_SUM NEW_LINE |
-    OP_SUM NEW_LINE |
+    N_PRINT_IMPRESS OP_SUM N_VALOR_VARIABLE 
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("N_PRINT_IMPRESS");
+        RESULT = nodo;
+    :}
+    |
+    OP_SUM N_VALOR_VARIABLE 
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("N_PRINT_IMPRESS");
+        RESULT = nodo;
+    :}
+    |
+    N_PRINT_IMPRESS OP_SUM NEW_LINE 
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("N_PRINT_IMPRESS");
+        RESULT = nodo;
+    :}
+    |
+    OP_SUM NEW_LINE 
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("N_PRINT_IMPRESS");
+        RESULT = nodo;
+    :}
+    |
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("N_PRINT_IMPRESS");
+        RESULT = nodo;
+    :}
 ;
 
 N_CIN ::=
     OPEN_PARENTESIS 
     CIN
     COLON 
-    ID:e1
+    ID:id
     CLOSE_BLOCK 
     PYC 
-    /*{:
-        DefaultMutableTreeNode nodo = parser.createNodo("CIN");
-            nodo.add(parser.createNodo(e1+""));
+    {:
+        DefaultMutableTreeNode nodo = parser.createNodo("IN: "+id);
         RESULT = nodo;
-    :}*/ 
+    :}
 ;
 
 /* ------------------------------MATHEMATICS--------------------------------- */

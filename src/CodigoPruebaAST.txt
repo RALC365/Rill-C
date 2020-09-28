@@ -1,0 +1,26 @@
+()(main:
+	chr nota.,
+	int puntaje.,
+	(pp: "Ingrese un puntaje: ":).,
+	(in: puntaje:).,
+	(puntaje)(if:
+		(0 ... 59):
+			|La nota es ‘F’ (Reprobado)|
+		nota: ‘F’ .,
+		(60 ... 69):
+				|La nota es ‘D’ (Deficiente)|
+		nota: ‘D’ .,
+		(70 ... 79):
+				|La nota es ‘C’ (Suficiente)|
+		nota: ‘C’ .,
+		(80 ... 90):
+				|La nota es ‘B’ (Bien)|
+		nota: ‘B’ .,
+		(90 ... 100):
+				|La nota es ‘A’ (Excelente)|
+		nota: ‘A’ .,
+			(els):
+				|La nota no es válida ‘E’ (errónea)|
+		nota: ‘E’ .,
+		:)
+:)
