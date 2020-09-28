@@ -293,8 +293,8 @@ N_FUNCTION ::=
     OPEN_PARENTESIS 
     FUNCTION 
     COLON 
-    N_RETORNO_FUNCTION 
-    RETURN N_VALOR_VARIABLE PYC
+    NULL
+    N_SENTENCIA
     CLOSE_BLOCK 
     |
     error:e {: 
@@ -303,7 +303,7 @@ N_FUNCTION ::=
         parser.report_error(report,e); 
     :}
 ;
-
+    
     N_PARAMETRO ::=
         OPEN_PARENTESIS CLOSE_PARENTESIS|
         OPEN_PARENTESIS N_PARAMETRO_FUNCTION CLOSE_PARENTESIS
