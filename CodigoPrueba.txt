@@ -65,3 +65,14 @@ int nota: 100.,
 	|esto no retorna nada|
 	int esta,es,una,declaracion,anidada.,
 :)
+
+|bloques de código vacio|
+()funcionVacia(fun:nll
+	(hola=hola)(wh:
+	:)
+	(variable)(if:
+	(els):
+	:)
+	(condicion=cualquiera)(if:
+	:)
+:)
