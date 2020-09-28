@@ -405,24 +405,27 @@ public class FrmPrincipal extends javax.swing.JFrame {
             if(s.getERRORES().equalsIgnoreCase("")){
                 /*txtAnalizarSin.setText("Analisis realizado correctamente");
                 txtAnalizarSin.setForeground(new Color(25, 111, 61));*/
-                txtAnalizarSin.setText("Errores: \n" + s.getERRORES());
-                txtAnalizarSin.setForeground(Color.red);
-                System.out.println("Se completo el análisis sintáctico");
+                    txtAnalizarSin.setText("Se completó el análisis sin errores");
+                    txtAnalizarSin.setForeground(new Color(25, 111, 61));
+                    SwingDemo sintaxTree = new SwingDemo(s.getTreeSintaxModel());
+                    sintaxTree.showTree();
+                    jtSintactico.setModel(s.getTreeSintaxModel());
+                System.out.println("Se completo el análisis sintáctico sin errores");
                 
             }else{
-                txtAnalizarSin.setText(s.getERRORES());
+                txtAnalizarSin.setText("Cantidad de Errores: " + s.getcERRORES() + "\n" + s.getERRORES());
                 txtAnalizarSin.setForeground(Color.red);
-                System.out.println("Se completo el análisis sintáctico");
+                System.out.println("Se completo el análisis sintáctico con errores");
             }
-            SwingDemo sintaxTree = new SwingDemo(s.getTreeSintaxModel());
-            sintaxTree.showTree();
-            jtSintactico.setModel(s.getTreeSintaxModel());
+            
         } catch (Exception ex) {
             System.out.println("Entro al exeption que pinta en rojo");
             Symbol sym = s.getS();
             txtAnalizarSin.setText("Error de sintaxis. Linea: " + (sym.right + 1) + " Columna: " + (sym.left + 1) + ", Texto: \"" + sym.value + "\"");
             txtAnalizarSin.setForeground(Color.red);
         }
+        //Setearear errores
+        s.setERRORES("");
     }//GEN-LAST:event_btnAnalizarSinActionPerformed
 
     private void btnArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnArchivoActionPerformed
