@@ -1,26 +1,34 @@
 ()(main:
 int nota: 100.,
 	(peggo)(if:
-		(id=1):
-			int peggo: 1.,
-		(id=hola and xD < XD):
-			arr peggo: ["no","se", "diga", mas, nll].,
+		(=1):
+			int peggo, variable2, variable3.,
+		(=hola):
+			arr chr peggo: ["no","se", "diga", mas, nll].,
 		(>1):
 			bln peggo: true.,
-			vb miVida.,
+			int m: 2.,
 		|IGNORAME JFLEX| 
 		(50...10):|VOLVEME A IGNORAR JAJAJA XD|	
 			int peggo: 1.,
 		(<hola):
 			int peggo: 1.,
 			(peggo)(if:
-				(id=1):
+				(=1):
 					int peggo: 1.,
-					(pp: "Salve Will!":).,
+					(pp: "Salve Will!" - var1 - var2 -"texto" -84 -ln:).,
 				(els):
 					int peggo:2.,
 					(in:entrada:).,
 			:)
+		|matrices|
+		mtx int matriz: [1,2,3,[4,5,6],[7,8,9],10].,
+		mtx [4][6] int matriz2.,
+		mtx int matriz3: unaFuncion(1,2,3,4).,
+		|arreglo|
+		arr bln arreglo: [true, false, true].,
+		arr [8] chr arreglo2.,
+		arr int arreglo3: otraFuncion(id1,id2,id3).,
 	(els):
 		int peggo:2.,
 	:)
@@ -28,12 +36,15 @@ int nota: 100.,
 		int hola: 1.,
 	:)
 	(a,1 -> 19,++)(fr:
-		mtx noMames: [[1,2,xD,4],2,4,3,['A',"hola",3]].,
+		mtx int noMames: [[1,2,xD,4],2,4,3,['A',"hola",3]].,
 		(noMames,1 to 19,--)(fr:
-			mtx noMames: [[1,2,xD,4],2,4,3,[1,"hola",3]].,
+			mtx bln noMames: [[1,2,xD,4],2,4,3,[1,"hola",3]].,
 		:)
 
 	:)
+	int h: prueba().,
+	h: prueba().,
+	prueba().,
 :)
 
 (int a, int b, int c)funcionMagica(fun:mtx
@@ -47,4 +58,10 @@ int nota: 100.,
 		int peggo:2.,
 	:)
 	ret hola.,
+:)
+
+
+(int a, mtx b, arr c)ProcedimientoMagica(fun:null
+	|esto no retorna nada|
+	int esta,es,una,declaracion,anidada.,
 :)
