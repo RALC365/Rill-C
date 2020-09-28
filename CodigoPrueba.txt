@@ -61,7 +61,7 @@ int nota: 100.,
 :)
 
 
-(int a, mtx b, arr c)ProcedimientoMagica(fun:null
+(int a, mtx b, arr c)ProcedimientoMagica(fun:nll
 	|esto no retorna nada|
 	int esta,es,una,declaracion,anidada.,
 :)
