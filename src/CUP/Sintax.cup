@@ -179,7 +179,6 @@ N_SENTENCIA_BOOLEANA_ANIDADA,
 
 N_DECLARACION,
     N_DECLARACION_ID, //Para las declaraciones int a,b,c,d.,
-        N_COMA_ID, //a,b,c,d,e...
     N_VALOR_VARIABLE,
     N_MATRIZ,
         N_TIPOS_DECLARACION_MATRIZ,
@@ -189,7 +188,8 @@ N_DECLARACION,
         N_ARGUMENTOS,
 
 /*Opetators*/
-N_PRINT,  
+N_PRINT,
+    N_PRINT_IMPRESS,
 N_CIN,
 
 /*MATHEMATICS*/
@@ -562,10 +562,6 @@ N_DECLARACION ::=
         ID COMA N_DECLARACION_ID | ID
     ;
 
-        N_COMA_ID ::=
-            ID COMA
-        ;
-
     N_VALOR_VARIABLE ::=
         NUMBER:e1 /*{: RESULT = (parser.createNodo(e1+"")); :}*/
         | 
@@ -619,6 +615,7 @@ N_PRINT ::=
     PRINT 
     COLON 
     STRING:e1
+    N_PRINT_IMPRESS
     CLOSE_BLOCK 
     PYC
     /*{:
@@ -626,6 +623,20 @@ N_PRINT ::=
             nodo.add(parser.createNodo(e1+""));
         RESULT = nodo;
     :}*/
+    |
+    OPEN_PARENTESIS
+    PRINT 
+    COLON 
+    ID
+    N_PRINT_IMPRESS
+    CLOSE_BLOCK 
+    PYC
+;
+N_PRINT_IMPRESS::=
+    N_PRINT_IMPRESS OP_SUM N_VALOR_VARIABLE |
+    OP_SUM N_VALOR_VARIABLE |
+    N_PRINT_IMPRESS OP_SUM NEW_LINE |
+    OP_SUM NEW_LINE |
 ;
 
 N_CIN ::=
