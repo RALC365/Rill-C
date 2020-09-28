@@ -207,19 +207,19 @@ precedence left OPEN_PARENTESIS, CLOSE_PARENTESIS;
 /* -------------------------CODE BLOCKS------------------------------------- */
 N_INICIO ::= 
     N_MAIN:e1
-        /*{:
+        {:
             parser.agregarNodo((DefaultMutableTreeNode)e1);
-        :}*/ 
+        :} 
     |
     N_MAIN:e1 N_FUNCTIONS
-        /*{:
+        {:
             parser.agregarNodo((DefaultMutableTreeNode)e1);
-        :}*/ 
+        :} 
     |
     N_FUNCTIONS N_MAIN:e1
-        /*{:
+        {:
             parser.agregarNodo((DefaultMutableTreeNode)e1);
-        :}*/
+        :}
     |
     error:e {: 
         String report = "Syntax error in line " + parser.getS().right + " Column " + parser.getS().left + ". No se esperaba este componente: " +parser.getS().value;
@@ -236,11 +236,11 @@ N_MAIN ::=
     COLON 
         N_SENTENCIA:e1
     CLOSE_BLOCK
-        /*{:
+        {:
             DefaultMutableTreeNode nodo = parser.createNodo("MAIN");
             parser.agregarNodo((DefaultMutableTreeNode)e1);
             RESULT = nodo;
-        :}*/
+        :}
     |
     OPEN_PARENTESIS 
     CLOSE_PARENTESIS 
@@ -248,22 +248,22 @@ N_MAIN ::=
     MAIN 
     COLON 
     CLOSE_BLOCK
-        /*{:
+        {:
             RESULT = parser.createNodo("MAIN");
-        :}*/
+        :}
         
 ;
 
 N_FUNCTIONS::=
     N_FUNCTIONS N_FUNCTION:e1
-        /*{:
+        {:
             parser.agregarNodo((DefaultMutableTreeNode)e1);
-        :}*/
+        :}
     | 
     N_FUNCTION:e1
-        /*{:
+        {:
             parser.agregarNodo((DefaultMutableTreeNode)e1);
-        :}*/
+        :}
 ;
 
 N_FUNCTION ::=
@@ -278,7 +278,7 @@ N_FUNCTION ::=
         N_VALOR_VARIABLE 
     PYC
     CLOSE_BLOCK 
-        /*{:
+        {:
             DefaultMutableTreeNode nodo = parser.createNodo(e2+""+":"+e3+"");
                 nodo.add((DefaultMutableTreeNode)e1);
                 for (int i = 0; i < ((DefaultMutableTreeNode)e4).getChildCount(); i++) {
@@ -286,7 +286,7 @@ N_FUNCTION ::=
                 }
                 nodo.add(((DefaultMutableTreeNode)e4));
             RESULT = nodo;
-        :}*/
+        :}
     |
     N_PARAMETRO
     ID 
@@ -537,12 +537,12 @@ N_DECLARACION ::=
     /*FUNCIONES*/
     //id:funcion(p1,p2,p3)
     ID:e1 COLON N_CALL_FUNCTION:e2
-        /*{:
+        {:
             DefaultMutableTreeNode nodo = parser.createNodo("DECLARACION");
                     nodo.add((parser.createNodo(e1+"")));
                     nodo.add((DefaultMutableTreeNode)e2);
             RESULT = nodo;
-        :}*/ 
+        :} 
     |
     //int id: funcion(p1,p2,p3...)
     INTENGER ID COLON N_CALL_FUNCTION 
@@ -563,15 +563,15 @@ N_DECLARACION ::=
     ;
 
     N_VALOR_VARIABLE ::=
-        NUMBER:e1 /*{: RESULT = (parser.createNodo(e1+"")); :}*/
+        NUMBER:e1 {: RESULT = (parser.createNodo(e1+"")); :}
         | 
-        ID:e1 /*{: RESULT = (parser.createNodo(e1+"")); :}*/
+        ID:e1 {: RESULT = (parser.createNodo(e1+"")); :}
         | 
-        STRING:e1 /*{: RESULT = (parser.createNodo(e1+"")); :}*/
+        STRING:e1 {: RESULT = (parser.createNodo(e1+"")); :}
         |
-        NULL:e1  /*{: RESULT = (parser.createNodo(e1+"")); :}*/
+        NULL:e1  {: RESULT = (parser.createNodo(e1+"")); :}
         |
-        CHAR_ELEMENT:e1 /*{: RESULT = (parser.createNodo(e1+"")); :}*/
+        CHAR_ELEMENT:e1 {: RESULT = (parser.createNodo(e1+"")); :}
         |
         TRUE
         |
@@ -618,11 +618,11 @@ N_PRINT ::=
     N_PRINT_IMPRESS
     CLOSE_BLOCK 
     PYC
-    /*{:
+    {:
         DefaultMutableTreeNode nodo = parser.createNodo("PRINT");
             nodo.add(parser.createNodo(e1+""));
         RESULT = nodo;
-    :}*/
+    :}
     |
     OPEN_PARENTESIS
     PRINT 
@@ -646,11 +646,11 @@ N_CIN ::=
     ID:e1
     CLOSE_BLOCK 
     PYC 
-    /*{:
+    {:
         DefaultMutableTreeNode nodo = parser.createNodo("CIN");
             nodo.add(parser.createNodo(e1+""));
         RESULT = nodo;
-    :}*/ 
+    :} 
 ;
 
 /* ------------------------------MATHEMATICS--------------------------------- */
