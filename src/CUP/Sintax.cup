@@ -559,7 +559,7 @@ N_DECLARACION ::=
 ;
 
     N_DECLARACION_ID::=
-        ID COMA N_DECLARACION_ID COMA ID 
+        ID COMA N_DECLARACION_ID | ID
     ;
 
         N_COMA_ID ::=
@@ -588,7 +588,7 @@ N_DECLARACION ::=
         CHAR
     ;
     //solo matrices de dos dimensiones
-    N_MATRIZ ::= 
+    N_MATRIZ ::=  
         OPEN_SQR_BRACKET N_ARREGLO |
         OPEN_SQR_BRACKET N_ARREGLO COMA N_MATRIZ |
         N_VALOR_VARIABLE COMA N_MATRIZ | N_VALOR_VARIABLE
