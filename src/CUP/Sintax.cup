@@ -172,6 +172,7 @@ non terminal
     N_WHILE,
     N_FOR,
     N_IF,
+        N_ELSE_IF,
     N_SWITCH,
     N_SWITCH_CASE,
     N_SENTENCIA_BOOLEANA_SWITCH,
@@ -550,45 +551,96 @@ N_FOR ::=
 N_IF ::= 
     OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:bn CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON 
     N_SENTENCIA:e
+    N_ELSE_IF:el
     CLOSE_BLOCK
     {:
         System.out.println("IF");
         DefaultMutableTreeNode nodo = parser.createNodo("IF");
         nodo.add((DefaultMutableTreeNode)bn);
-        nodo.add((DefaultMutableTreeNode)e);
-        RESULT = nodo;
-    :}
-    |
-    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:bn CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON 
-    N_SENTENCIA:e
-    OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON  
-    N_SENTENCIA:e2 
-    CLOSE_BLOCK
-    {:
-        System.out.println("IF");
-        DefaultMutableTreeNode nodo = parser.createNodo("IF");
-        nodo.add((DefaultMutableTreeNode)bn);
-        nodo.add((DefaultMutableTreeNode)e);
-        nodo.add((DefaultMutableTreeNode)e2);
+        //cambiar nombre, brutal!!!
+        DefaultMutableTreeNode node = ((DefaultMutableTreeNode)e);
+        node.setUserObject("IF Instructions");
+        ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(node);
+        nodo.add(node);
+        //N_Else_if
+        DefaultMutableTreeNode node2 = ((DefaultMutableTreeNode)el);
+        node2.setUserObject("Other Conditions");
+        ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(node2);
+        nodo.add(node2);
         RESULT = nodo;
     :}
     | /*If vacio*/
-    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:bn CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON CLOSE_BLOCK
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:bn CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON 
+    N_ELSE_IF:el
+    CLOSE_BLOCK
     {:
         System.out.println("IF");
-        DefaultMutableTreeNode nodo = parser.createNodo("IF empy");
+        DefaultMutableTreeNode nodo = parser.createNodo("IF");
         nodo.add((DefaultMutableTreeNode)bn);
+        //N_Else_if
+        DefaultMutableTreeNode node2 = ((DefaultMutableTreeNode)el);
+        node2.setUserObject("Other Conditions");
+        ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(node2);
+        nodo.add(node2);
+        RESULT = nodo;
+    :}
+;
+
+N_ELSE_IF ::=
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:bn CLOSE_PARENTESIS COLON 
+    N_SENTENCIA:e
+    N_ELSE_IF:sw
+    {:
+        System.out.println("N_SWITCH_CASE");
+        DefaultMutableTreeNode nodo = parser.createNodo("SWITCH_CASE");
+        nodo.add((DefaultMutableTreeNode)bn);
+        //cambiando nombre
+        DefaultMutableTreeNode node2 = ((DefaultMutableTreeNode)e);
+        node2.setUserObject("Instructions");
+        ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(node2);
+        nodo.add(node2);
+        //nodo.add((DefaultMutableTreeNode)e);
+        //nodo.add((DefaultMutableTreeNode)sw);
+        ((DefaultMutableTreeNode)sw).add(nodo);
+        //RESULT = nodo;
+        RESULT = sw;
+    :}
+    |
+    /*Switch vacio*/
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:bn CLOSE_PARENTESIS COLON 
+    N_ELSE_IF:sw
+    {:
+        System.out.println("N_SWITCH_CASE");
+        DefaultMutableTreeNode nodo = parser.createNodo("SWITCH_CASE empy");
+        nodo.add((DefaultMutableTreeNode)bn);
+        ((DefaultMutableTreeNode)sw).add(nodo);
+        //RESULT = nodo;
+        RESULT = sw;
+    :}
+    |
+    OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON 
+    N_SENTENCIA:e
+    {:
+        System.out.println("ELSE");
+        DefaultMutableTreeNode nodo = parser.createNodo("ELSE");
+        //nodo.add(parser.createNodo(id+""));
+        //cambiando nombre
+        DefaultMutableTreeNode node2 = ((DefaultMutableTreeNode)e);
+        node2.setUserObject("ELSE");
+        ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(node2);
+        nodo.add(node2);
+        //nodo.add((DefaultMutableTreeNode)e);
+        RESULT = nodo;
+    :}
+    |/*Else vacío*/
+    OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON 
+    {:
+        System.out.println("ELSE");
+        DefaultMutableTreeNode nodo = parser.createNodo("ELSE empy");
         RESULT = nodo;
     :}
     |
-    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:bn CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON 
-    OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON CLOSE_BLOCK
-    {:
-        System.out.println("IF");
-        DefaultMutableTreeNode nodo = parser.createNodo("IF empy");
-        nodo.add((DefaultMutableTreeNode)bn);
-        RESULT = nodo;
-    :}
+    {:RESULT = parser.createNodo("");:}
 ;
 
 N_SWITCH ::=
@@ -679,7 +731,7 @@ N_SENTENCIA_BOOLEANA_ANIDADA ::=
     N_SENTENCIA_BOOLEANA:e1
     N_AND_OR:e2
         {:
-            ((DefaultMutableTreeNode)e1).add((DefaultMutableTreeNode)e1); 
+            ((DefaultMutableTreeNode)e1).add((DefaultMutableTreeNode)e2); 
             RESULT = e1;
         :}
     |
@@ -715,15 +767,17 @@ N_AND_OR::=
     CON_AND:nd
     N_SENTENCIA_BOOLEANA_ANIDADA:bl
         {:
-            ((DefaultMutableTreeNode) nd).add((DefaultMutableTreeNode)bl);
-            RESULT = nd;
+            DefaultMutableTreeNode nodo = parser.createNodo(nd+"");
+            ((DefaultMutableTreeNode) nodo).add((DefaultMutableTreeNode)bl);
+            RESULT = nodo;
         :}
     |
     CON_OR:nd
     N_SENTENCIA_BOOLEANA_ANIDADA:bl
         {:
-            ((DefaultMutableTreeNode) nd).add((DefaultMutableTreeNode)bl);
-            RESULT = nd;
+            DefaultMutableTreeNode nodo = parser.createNodo(nd+"");
+            ((DefaultMutableTreeNode) nodo).add((DefaultMutableTreeNode)bl);
+            RESULT = nodo;
         :}
 ;
 
