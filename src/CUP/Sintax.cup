@@ -755,11 +755,16 @@ N_SWITCH_CASE ::=
 
 /* -------------------------VARIABLE DEFINITION------------------------------ */
 N_CALL_FUNCTION::=
-    ID:id OPEN_PARENTESIS N_CALL_FUNCTION_PARAMETROS:p CLOSE_PARENTESIS 
+    ID:id OPEN_PARENTESIS N_CALL_FUNCTION_PARAMETROS:n CLOSE_PARENTESIS 
         {:
-            DefaultMutableTreeNode node = parser.createNodo(id+":fun");
+            ((DefaultMutableTreeNode)n).setUserObject(id+":fun");
+            ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
+            RESULT = (DefaultMutableTreeNode)n;
+            
+            
+            /*DefaultMutableTreeNode node = parser.createNodo(id+":fun");
             node.add((DefaultMutableTreeNode) p);
-            RESULT = node;
+            RESULT = node;*/
         :}
     |
     ID:id OPEN_PARENTESIS CLOSE_PARENTESIS
@@ -779,7 +784,9 @@ N_CALL_FUNCTION_PARAMETROS::=
     
     N_VALOR_VARIABLE:e
         {:
-            RESULT = e;
+            DefaultMutableTreeNode nodo = parser.createNodo("Parametros");
+            nodo.add((DefaultMutableTreeNode)e);
+            RESULT = nodo;
         :}
 ;
 N_SENTENCIA_BOOLEANA_ANIDADA ::=
@@ -1274,15 +1281,23 @@ N_DECLARACION ::=
     :}
     |
     //Con valor de una vez: mtx TIPO matriz:[...[A],[a],[B],b...]
-    MATRIX 
-    N_TIPOS_DECLARACION_MATRIZ 
-    ID COLON 
+    MATRIX:i
+    N_TIPOS_DECLARACION_MATRIZ:t
+    ID:id COLON 
     OPEN_SQR_BRACKET
-    N_MATRIZ  
+    N_MATRIZ:m  
     CLOSE_SQR_BRACKET
     {:
         DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        nodo.add(parser.createNodo(i+""));
+        nodo.add((DefaultMutableTreeNode)t);
+        nodo.add(parser.createNodo(id+""));
+        nodo.add((DefaultMutableTreeNode)m);
         RESULT = nodo;
+         /*((DefaultMutableTreeNode)n).insert(parser.createNodo(i+""),0);
+        ((DefaultMutableTreeNode)n).setUserObject("FOR");
+        ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
+        RESULT = (DefaultMutableTreeNode)n;*/
     :}
     |
     /*FUNCIONES*/
@@ -1312,16 +1327,23 @@ N_DECLARACION ::=
     :}
     |
     //arr TIPO id: funcion(p1,p2,p3...)
-    ARRAY N_TIPOS_DECLARACION_MATRIZ ID COLON N_CALL_FUNCTION 
+    ARRAY:a N_TIPOS_DECLARACION_MATRIZ:t ID:id COLON N_CALL_FUNCTION:f 
     {:
-        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        DefaultMutableTreeNode nodo = parser.createNodo("Declaracion");
+        nodo.add(parser.createNodo(a+""));
+        nodo.add((DefaultMutableTreeNode) t);
+        nodo.add(parser.createNodo(id+""));
+        nodo.add((DefaultMutableTreeNode) f);
         RESULT = nodo;
     :}
     |
     //char id: funcion(p1,p2,p3...)
-    CHAR ID COLON N_CALL_FUNCTION
+    CHAR:c ID:i COLON N_CALL_FUNCTION:f
     {:
         DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        nodo.add(parser.createNodo(c+""));
+        nodo.add(parser.createNodo(i+""));
+        nodo.add((DefaultMutableTreeNode) f);
         RESULT = nodo;
     :}   
 ;
@@ -1359,20 +1381,44 @@ N_VALOR_VARIABLE ::=
 ;
 
 N_TIPOS_DECLARACION_MATRIZ ::=
-    INTENGER |
-    BOOLEAN |
-    CHAR
+    INTENGER:e {: RESULT = (parser.createNodo(e+"")); :}
+    |
+    BOOLEAN:e {: RESULT = (parser.createNodo(e+"")); :}
+    |
+    CHAR:e {: RESULT = (parser.createNodo(e+"")); :}
 ;
 
 //solo matrices de dos dimensiones
 N_MATRIZ ::=  
-    OPEN_SQR_BRACKET N_ARREGLO |
-    OPEN_SQR_BRACKET N_ARREGLO COMA N_MATRIZ |
-    N_VALOR_VARIABLE COMA N_MATRIZ | N_VALOR_VARIABLE
+    OPEN_SQR_BRACKET N_ARREGLO:n
+    {:RESULT= n;:}
+    |
+    OPEN_SQR_BRACKET N_ARREGLO:a COMA N_MATRIZ:n 
+        {:
+        ((DefaultMutableTreeNode)n).add((DefaultMutableTreeNode)a);
+        RESULT = n;
+        :}
+    |
+    N_VALOR_VARIABLE:a COMA N_MATRIZ:n 
+        {:
+        ((DefaultMutableTreeNode)n).add((DefaultMutableTreeNode)a);
+        RESULT = n;
+        :}
+    | 
+    N_VALOR_VARIABLE:n
+        {:RESULT= n;:}
 ;
 N_ARREGLO ::=
-    N_VALOR_VARIABLE COMA N_ARREGLO 
-    | N_VALOR_VARIABLE CLOSE_SQR_BRACKET
+    N_VALOR_VARIABLE:a COMA N_ARREGLO:n 
+        {:
+            ((DefaultMutableTreeNode)n).add((DefaultMutableTreeNode)a);
+            RESULT = n;
+        :}
+    | 
+    N_VALOR_VARIABLE:a CLOSE_SQR_BRACKET
+        {:
+            RESULT = a;
+        :}
 ;
 
 N_BOOLEAN_ID ::=
