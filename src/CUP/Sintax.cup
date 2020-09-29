@@ -171,6 +171,7 @@ non terminal
     N_SENTENCIA,
     N_WHILE,
     N_FOR,
+        N_TO_FOR,
     N_IF,
         N_ELSE_IF,
     N_SWITCH,
@@ -541,12 +542,12 @@ N_FOR ::=
     OPEN_PARENTESIS 
     ID:id
     COMA 
-    NUMBER:n1
+    N_TO_FOR:n1
     TO 
-    NUMBER:n2
+    N_TO_FOR:n2
     COMA
     OP_SUM:o
-    NUMBER:n3
+    N_TO_FOR:n3
     CLOSE_PARENTESIS 
     OPEN_PARENTESIS 
     FOR 
@@ -576,7 +577,7 @@ N_FOR ::=
     :}
     | 
     /*For vacio*/
-    OPEN_PARENTESIS  ID:id  COMA  NUMBER:n1  TO  NUMBER:n2  COMA  OP_SUM:o NUMBER:n3  CLOSE_PARENTESIS  OPEN_PARENTESIS  FOR  COLON  CLOSE_BLOCK
+    OPEN_PARENTESIS  ID:id  COMA  N_TO_FOR:n1  TO  N_TO_FOR:n2  COMA  OP_SUM:o N_TO_FOR:n3  CLOSE_PARENTESIS  OPEN_PARENTESIS  FOR  COLON  CLOSE_BLOCK
         {:
         System.out.println("FOR");
         DefaultMutableTreeNode nodo = parser.createNodo("FOR");
@@ -584,6 +585,15 @@ N_FOR ::=
         nodo.add(parametros);
         RESULT = nodo;
     :}
+;
+
+N_TO_FOR::=
+    NUMBER:n
+        {:RESULT = n;:}
+    | 
+    
+    ID:id
+        {:RESULT = id;:}
 ;
 
 N_IF ::= 
@@ -760,8 +770,7 @@ N_CALL_FUNCTION::=
             ((DefaultMutableTreeNode)n).setUserObject(id+":fun");
             ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
             RESULT = (DefaultMutableTreeNode)n;
-            
-            
+
             /*DefaultMutableTreeNode node = parser.createNodo(id+":fun");
             node.add((DefaultMutableTreeNode) p);
             RESULT = node;*/
@@ -1248,35 +1257,50 @@ N_DECLARACION ::=
     |    
     /*Arreglos*/
     //solo declaracion variable: arr [1] Int id
-    ARRAY 
-    OPEN_SQR_BRACKET NUMBER CLOSE_SQR_BRACKET
-    N_TIPOS_DECLARACION_MATRIZ
-    ID
+    ARRAY :i
+    OPEN_SQR_BRACKET NUMBER:n1 CLOSE_SQR_BRACKET
+    N_TIPOS_DECLARACION_MATRIZ:t
+    ID:id
     {:
         DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        DefaultMutableTreeNode ar = parser.createNodo(i+"");
+        ar.add(parser.createNodo(n1+""));
+        nodo.add(ar);
+        nodo.add((DefaultMutableTreeNode)t);
+        nodo.add(parser.createNodo(id+""));
         RESULT = nodo;
     :}
     |
     //Con valor de una vez: arr Int id: [1,2,3,4...]
-    ARRAY 
-    N_TIPOS_DECLARACION_MATRIZ
-    ID COLON 
+    ARRAY:i
+    N_TIPOS_DECLARACION_MATRIZ:t
+    ID:id COLON 
     OPEN_SQR_BRACKET
-    N_ARREGLO
+    N_ARREGLO:ar
     {:
         DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        nodo.add(parser.createNodo(i+""));
+        nodo.add((DefaultMutableTreeNode)t);
+        nodo.add(parser.createNodo(id+""));
+        nodo.add((DefaultMutableTreeNode)ar);
         RESULT = nodo;
     :}
     |
     /*Matriz*/
     //solo declaracion variable: mtx [1][1] TIPO matriz
-    MATRIX
-    OPEN_SQR_BRACKET NUMBER CLOSE_SQR_BRACKET
-    OPEN_SQR_BRACKET NUMBER CLOSE_SQR_BRACKET
-    N_TIPOS_DECLARACION_MATRIZ 
-    ID
+    MATRIX:i
+    OPEN_SQR_BRACKET NUMBER:n1 CLOSE_SQR_BRACKET
+    OPEN_SQR_BRACKET NUMBER:n2 CLOSE_SQR_BRACKET
+    N_TIPOS_DECLARACION_MATRIZ:t
+    ID:id
     {:
         DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        DefaultMutableTreeNode mt = parser.createNodo(i+"");
+        mt.add(parser.createNodo(n1+""));
+        mt.add(parser.createNodo(n2+""));
+        nodo.add(mt);
+        nodo.add((DefaultMutableTreeNode)t);
+        nodo.add(parser.createNodo(id+""));
         RESULT = nodo;
     :}
     |
@@ -1320,9 +1344,13 @@ N_DECLARACION ::=
     :}
     |
     //mtx TIPO id: funcion(p1,p2,p3...)
-    MATRIX N_TIPOS_DECLARACION_MATRIZ ID COLON N_CALL_FUNCTION 
+    MATRIX:i N_TIPOS_DECLARACION_MATRIZ:t ID:id COLON N_CALL_FUNCTION:f 
     {:
         DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        nodo.add(parser.createNodo(i+""));
+        nodo.add((DefaultMutableTreeNode)t);
+        nodo.add(parser.createNodo(id+""));
+        nodo.add((DefaultMutableTreeNode)f);
         RESULT = nodo;
     :}
     |
