@@ -278,19 +278,28 @@ N_FUNCTION ::=
     FUNCTION 
     COLON 
     N_RETORNO_FUNCTION:e3
-    N_SENTENCIA:e4
+    N_SENTENCIA:n
     RETURN 
-        N_VALOR_VARIABLE 
+        N_VALOR_VARIABLE:vb
     PYC
     CLOSE_BLOCK 
         {:
-            DefaultMutableTreeNode nodo = parser.createNodo(e2+""+":"+e3+"");
+            ((DefaultMutableTreeNode)n).insert((DefaultMutableTreeNode)e1, 0);
+            DefaultMutableTreeNode ret = parser.createNodo("ret " + "" +vb+ "");
+            ((DefaultMutableTreeNode)n).add((DefaultMutableTreeNode)ret);
+            ((DefaultMutableTreeNode)n).setUserObject(e2+":"+e3+"");
+            ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
+            RESULT = (DefaultMutableTreeNode)n;
+
+            /*DefaultMutableTreeNode nodo = parser.createNodo(e2+""+":"+e3+"");
                 nodo.add((DefaultMutableTreeNode)e1);
-                /*for (int i = 0; i < ((DefaultMutableTreeNode)e4).getChildCount(); i++) {
-                    nodo.add(((DefaultMutableTreeNode)((DefaultMutableTreeNode)e4).getChildAt(i)));
-                }*/
-                nodo.add(((DefaultMutableTreeNode)e4));
-            RESULT = nodo;
+                //cambiar nombre, brutal!!!
+                DefaultMutableTreeNode node = ((DefaultMutableTreeNode)e4);
+                node.setUserObject("Instructions");
+                ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(node);
+                nodo.add(node);
+               // nodo.add(((DefaultMutableTreeNode)e4));
+            RESULT = nodo;*/
             //RESULT = ((DefaultMutableTreeNode)e4);
         :}
     |
@@ -300,21 +309,37 @@ N_FUNCTION ::=
     FUNCTION 
     COLON 
     NULL:e3
-    N_SENTENCIA:e4
+    N_SENTENCIA:n
     CLOSE_BLOCK 
     //{:RESULT = ((DefaultMutableTreeNode)e4);:}
        {:
-                DefaultMutableTreeNode nodo = parser.createNodo(e2+""+":"+e3+"");
+            ((DefaultMutableTreeNode)n).insert((DefaultMutableTreeNode)e1, 0);
+            ((DefaultMutableTreeNode)n).setUserObject(e2+":"+e3+"");
+            ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
+            RESULT = (DefaultMutableTreeNode)n;
+
+                /*DefaultMutableTreeNode nodo = parser.createNodo(e2+""+":"+e3+"");
                 nodo.add((DefaultMutableTreeNode)e1);
                 nodo.add(((DefaultMutableTreeNode)e4));
-            RESULT = nodo;
+            RESULT = nodo;*/
             //RESULT = ((DefaultMutableTreeNode)e4);
         :}
     |
     /*Funciones y procedimientos vacios*/
-    N_PARAMETRO ID  OPEN_PARENTESIS  FUNCTION  COLON  NULL CLOSE_BLOCK 
+    N_PARAMETRO:e ID:id  OPEN_PARENTESIS  FUNCTION  COLON  NULL:nl CLOSE_BLOCK 
+        {:
+            DefaultMutableTreeNode nodo = parser.createNodo(id+":"+nl+"");
+            nodo.add((DefaultMutableTreeNode)e);
+            RESULT = nodo;
+        :}
     |
-    N_PARAMETRO:e1 ID:e2 OPEN_PARENTESIS  FUNCTION  COLON  N_RETORNO_FUNCTION:e3 RETURN N_VALOR_VARIABLE  PYC CLOSE_BLOCK 
+    N_PARAMETRO:e1 ID:id OPEN_PARENTESIS  FUNCTION  COLON  N_RETORNO_FUNCTION:e3 RETURN N_VALOR_VARIABLE:vb  PYC CLOSE_BLOCK 
+        {:
+            DefaultMutableTreeNode nodo = parser.createNodo(id+":"+e3+"");
+            nodo.add((DefaultMutableTreeNode)e1);
+            nodo.add(parser.createNodo("ret " + "" +vb+ ""));
+            RESULT = nodo;
+        :}
     |
     error:e {: 
         String report = "Syntax error in line " + parser.getS().right + " Column " + parser.getS().left + ". No se esperaba este componente: " +parser.getS().value;
@@ -474,23 +499,32 @@ N_SENTENCIA ::=
 N_WHILE ::= 
     //OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS WHILE COLON N_SENTENCIA CLOSE_BLOCK
     OPEN_PARENTESIS:e1
-    N_SENTENCIA_BOOLEANA_ANIDADA:e2
+    N_SENTENCIA_BOOLEANA_ANIDADA:e
     CLOSE_PARENTESIS:e3
     OPEN_PARENTESIS:e4
     WHILE:e5
     COLON:e6
-    N_SENTENCIA:e7
+    N_SENTENCIA:n
     CLOSE_BLOCK:e8
         {:
+        //Código mágico
+        ((DefaultMutableTreeNode)n).insert((DefaultMutableTreeNode)e, 0);
+        //DefaultMutableTreeNode node3 = new DefaultMutableTreeNode(((DefaultMutableTreeNode)n).getUserObject());
+        //((DefaultMutableTreeNode)n).insert(node3, 1);
+        //cambiar nombre, brutal!!!
+        ((DefaultMutableTreeNode)n).setUserObject("WHILE");
+        ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
+        RESULT = (DefaultMutableTreeNode)n;
+
         System.out.println("WHILE");
-        DefaultMutableTreeNode nodo = parser.createNodo("WHILE");
+        /*DefaultMutableTreeNode nodo = parser.createNodo("WHILE");
         nodo.add((DefaultMutableTreeNode)e2);
         //cambiar nombre, brutal!!!
         DefaultMutableTreeNode node = ((DefaultMutableTreeNode)e7);
         node.setUserObject("While Instructions");
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(node);
         nodo.add(node);
-        RESULT = nodo;
+        RESULT = nodo;*/
     :}
     |
     /*While vacio*/
@@ -517,10 +551,16 @@ N_FOR ::=
     OPEN_PARENTESIS 
     FOR 
     COLON 
-    N_SENTENCIA:e
+    N_SENTENCIA:n
     CLOSE_BLOCK
     {:
-        System.out.println("FOR");
+        DefaultMutableTreeNode parametros = parser.createNodo(id+","+n1+"->"+n2+","+o+n3);
+        ((DefaultMutableTreeNode)n).insert(parametros,0);
+        ((DefaultMutableTreeNode)n).setUserObject("FOR");
+        ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
+        RESULT = (DefaultMutableTreeNode)n;
+
+        /*System.out.println("FOR");
         DefaultMutableTreeNode nodo = parser.createNodo("FOR");
         nodo.add(parser.createNodo(id+""));
         nodo.add(parser.createNodo("from: "+n1));
@@ -532,7 +572,7 @@ N_FOR ::=
         node.setUserObject("For Instructions");
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(node);
         nodo.add(node);
-        RESULT = nodo;
+        RESULT = nodo;*/
     :}
     | 
     /*For vacio*/
@@ -540,21 +580,25 @@ N_FOR ::=
         {:
         System.out.println("FOR");
         DefaultMutableTreeNode nodo = parser.createNodo("FOR");
-        nodo.add(parser.createNodo(id+""));
-        nodo.add(parser.createNodo("from: "+n1));
-        nodo.add(parser.createNodo("to: "+n2));
-        nodo.add(parser.createNodo(""+o+n3));
+        DefaultMutableTreeNode parametros = parser.createNodo(id+","+n1+"->"+n2+","+o+n3);
+        nodo.add(parametros);
         RESULT = nodo;
     :}
 ;
 
 N_IF ::= 
     OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:bn CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON 
-    N_SENTENCIA:e
+    N_SENTENCIA:n
     N_ELSE_IF:el
     CLOSE_BLOCK
     {:
-        System.out.println("IF");
+        ((DefaultMutableTreeNode)n).insert((DefaultMutableTreeNode)bn, 0);
+        ((DefaultMutableTreeNode)n).add((DefaultMutableTreeNode)el);
+        ((DefaultMutableTreeNode)n).setUserObject("IF");
+        ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
+        RESULT = (DefaultMutableTreeNode)n;
+        
+        /*System.out.println("IF");
         DefaultMutableTreeNode nodo = parser.createNodo("IF");
         nodo.add((DefaultMutableTreeNode)bn);
         //cambiar nombre, brutal!!!
@@ -567,7 +611,7 @@ N_IF ::=
         node2.setUserObject("Other Conditions");
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(node2);
         nodo.add(node2);
-        RESULT = nodo;
+        RESULT = nodo;*/
     :}
     | /*If vacio*/
     OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:bn CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON 
@@ -588,11 +632,18 @@ N_IF ::=
 
 N_ELSE_IF ::=
     OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:bn CLOSE_PARENTESIS COLON 
-    N_SENTENCIA:e
+    N_SENTENCIA:n
     N_ELSE_IF:sw
     {:
-        System.out.println("N_SWITCH_CASE");
-        DefaultMutableTreeNode nodo = parser.createNodo("SWITCH_CASE");
+        ((DefaultMutableTreeNode)n).insert((DefaultMutableTreeNode)bn, 0);
+        ((DefaultMutableTreeNode)n).add((DefaultMutableTreeNode)sw);
+        ((DefaultMutableTreeNode)n).setUserObject("ELSE_IF");
+        ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
+        RESULT = (DefaultMutableTreeNode)n;
+    
+
+       /* System.out.println("N_ELSE_IF");
+        DefaultMutableTreeNode nodo = parser.createNodo("N_ELSE_IF");
         nodo.add((DefaultMutableTreeNode)bn);
         //cambiando nombre
         DefaultMutableTreeNode node2 = ((DefaultMutableTreeNode)e);
@@ -603,15 +654,15 @@ N_ELSE_IF ::=
         //nodo.add((DefaultMutableTreeNode)sw);
         ((DefaultMutableTreeNode)sw).add(nodo);
         //RESULT = nodo;
-        RESULT = sw;
+        RESULT = sw;*/
     :}
     |
     /*Switch vacio*/
     OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:bn CLOSE_PARENTESIS COLON 
     N_ELSE_IF:sw
     {:
-        System.out.println("N_SWITCH_CASE");
-        DefaultMutableTreeNode nodo = parser.createNodo("SWITCH_CASE empy");
+        System.out.println("N_ELSE_IF");
+        DefaultMutableTreeNode nodo = parser.createNodo("N_ELSE_IF empy");
         nodo.add((DefaultMutableTreeNode)bn);
         ((DefaultMutableTreeNode)sw).add(nodo);
         //RESULT = nodo;
@@ -619,9 +670,13 @@ N_ELSE_IF ::=
     :}
     |
     OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON 
-    N_SENTENCIA:e
+    N_SENTENCIA:n
     {:
-        System.out.println("ELSE");
+        ((DefaultMutableTreeNode)n).setUserObject("ELSE");
+        ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
+        RESULT = (DefaultMutableTreeNode)n;
+
+       /* System.out.println("ELSE");
         DefaultMutableTreeNode nodo = parser.createNodo("ELSE");
         //nodo.add(parser.createNodo(id+""));
         //cambiando nombre
@@ -630,7 +685,7 @@ N_ELSE_IF ::=
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(node2);
         nodo.add(node2);
         //nodo.add((DefaultMutableTreeNode)e);
-        RESULT = nodo;
+        RESULT = nodo;*/
     :}
     |/*Else vacío*/
     OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON 
@@ -1126,12 +1181,17 @@ N_DECLARACION ::=
     :}
     |
     //TIPO id,id,id
-    INTENGER:i N_DECLARACION_ID:de
+    INTENGER:i N_DECLARACION_ID:n
     {:
-        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
+        ((DefaultMutableTreeNode)n).insert(parser.createNodo(i+""), 0);
+        ((DefaultMutableTreeNode)n).setUserObject("Declaracion Anidada");
+        ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
+        RESULT = (DefaultMutableTreeNode)n;
+
+        /*DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
         nodo.add(parser.createNodo(i+""));
         nodo.add((DefaultMutableTreeNode) de);
-        RESULT = nodo;
+        RESULT = nodo;*/
     :}
     |
     BOOLEAN:i N_DECLARACION_ID:de
@@ -1379,27 +1439,35 @@ N_PRINT ::=
     CLOSE_BLOCK 
     PYC
     {:
-        DefaultMutableTreeNode nodo = parser.createNodo("PRINT");
-        nodo.add(parser.createNodo(e+""));
-        nodo.add((DefaultMutableTreeNode)n);
-        RESULT = nodo;
+        //Código mágico
+        ((DefaultMutableTreeNode)n).insert(parser.createNodo(e+""), 0);
+        DefaultMutableTreeNode node3 = new DefaultMutableTreeNode(((DefaultMutableTreeNode)n).getUserObject());
+        ((DefaultMutableTreeNode)n).insert(node3, 1);
+        //cambiar nombre, brutal!!!
+        ((DefaultMutableTreeNode)n).setUserObject("PRINT");
+        ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
+        RESULT = (DefaultMutableTreeNode)n;
     :}
     |
     OPEN_PARENTESIS
     PRINT 
     COLON 
-    ID:id
+    ID:e
     N_PRINT_IMPRESS:n
     CLOSE_BLOCK 
     PYC
     {:
-        DefaultMutableTreeNode nodo = parser.createNodo("PRINT");
-        nodo.add(parser.createNodo(id+""));
-        nodo.add((DefaultMutableTreeNode)n);
-        RESULT = nodo;
+        //Código mágico
+        ((DefaultMutableTreeNode)n).insert(parser.createNodo(e+""), 0);
+        DefaultMutableTreeNode node3 = new DefaultMutableTreeNode(((DefaultMutableTreeNode)n).getUserObject());
+        ((DefaultMutableTreeNode)n).insert(node3, 1);
+        //cambiar nombre, brutal!!!
+        ((DefaultMutableTreeNode)n).setUserObject("PRINT");
+        ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
+        RESULT = (DefaultMutableTreeNode)n;
     :}
     | /*Print vacio*/
-    OPEN_PARENTESIS PRINT  COLON  CLOSE_BLOCK  PYC
+    OPEN_PARENTESIS PRINT COLON  CLOSE_BLOCK  PYC
     {:
         DefaultMutableTreeNode nodo = parser.createNodo("PRINT");
         RESULT = nodo;
@@ -1427,9 +1495,10 @@ N_PRINT_IMPRESS::=
         RESULT = e1;
     :}
     |
-    OP_SUM NEW_LINE:nl
+    OP_SUM:n NEW_LINE:nl
     {:
         DefaultMutableTreeNode nodo = parser.createNodo(nl+"");
+        //((DefultMutableTreeNode)n).add(nodo);
         RESULT = nodo;
     :}
     |
