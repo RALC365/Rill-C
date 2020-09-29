@@ -293,15 +293,22 @@ N_FUNCTION ::=
             //RESULT = ((DefaultMutableTreeNode)e4);
         :}
     |
-    N_PARAMETRO
-    ID 
+    N_PARAMETRO:e1
+    ID:e2
     OPEN_PARENTESIS 
     FUNCTION 
     COLON 
-    NULL
+    NULL:e3
     N_SENTENCIA:e4
     CLOSE_BLOCK 
-    {:RESULT = ((DefaultMutableTreeNode)e4);:}
+    //{:RESULT = ((DefaultMutableTreeNode)e4);:}
+       {:
+                DefaultMutableTreeNode nodo = parser.createNodo(e2+""+":"+e3+"");
+                nodo.add((DefaultMutableTreeNode)e1);
+                nodo.add(((DefaultMutableTreeNode)e4));
+            RESULT = nodo;
+            //RESULT = ((DefaultMutableTreeNode)e4);
+        :}
     |
     /*Funciones y procedimientos vacios*/
     N_PARAMETRO ID  OPEN_PARENTESIS  FUNCTION  COLON  NULL CLOSE_BLOCK 
@@ -318,7 +325,8 @@ N_FUNCTION ::=
 N_PARAMETRO ::=
     OPEN_PARENTESIS CLOSE_PARENTESIS
         {:
-            RESULT = null;
+            //RESULT = null;
+            RESULT = parser.createNodo("Parametros");
         :}
     |
     OPEN_PARENTESIS N_PARAMETRO_FUNCTION:e CLOSE_PARENTESIS
@@ -334,8 +342,10 @@ N_PARAMETRO_FUNCTION ::=
         :}
     |
     N_RETORNO_FUNCTION:r ID:id
-        {:
-            RESULT = parser.createNodo(r+" "+id);
+        {:  
+            DefaultMutableTreeNode nodo = parser.createNodo("Parametros");
+            nodo.add(parser.createNodo(r+" "+id));
+            RESULT = nodo;
         :}
 ;
     
@@ -483,7 +493,13 @@ N_WHILE ::=
     :}
     |
     /*While vacio*/
-    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS WHILE COLON CLOSE_BLOCK
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:e2 CLOSE_PARENTESIS OPEN_PARENTESIS WHILE COLON CLOSE_BLOCK
+        {:
+        System.out.println("WHILE");
+        DefaultMutableTreeNode nodo = parser.createNodo("WHILE empy");
+        nodo.add((DefaultMutableTreeNode)e2);
+        RESULT = nodo;
+        :}
 ;
 
 N_FOR ::= 
@@ -519,7 +535,16 @@ N_FOR ::=
     :}
     | 
     /*For vacio*/
-    OPEN_PARENTESIS  ID  COMA  NUMBER  TO  NUMBER  COMA  OP_SUM NUMBER  CLOSE_PARENTESIS  OPEN_PARENTESIS  FOR  COLON  CLOSE_BLOCK
+    OPEN_PARENTESIS  ID:id  COMA  NUMBER:n1  TO  NUMBER:n2  COMA  OP_SUM:o NUMBER:n3  CLOSE_PARENTESIS  OPEN_PARENTESIS  FOR  COLON  CLOSE_BLOCK
+        {:
+        System.out.println("FOR");
+        DefaultMutableTreeNode nodo = parser.createNodo("FOR");
+        nodo.add(parser.createNodo(id+""));
+        nodo.add(parser.createNodo("from: "+n1));
+        nodo.add(parser.createNodo("to: "+n2));
+        nodo.add(parser.createNodo(""+o+n3));
+        RESULT = nodo;
+    :}
 ;
 
 N_IF ::= 
@@ -548,10 +573,22 @@ N_IF ::=
         RESULT = nodo;
     :}
     | /*If vacio*/
-    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON CLOSE_BLOCK
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:bn CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON CLOSE_BLOCK
+    {:
+        System.out.println("IF");
+        DefaultMutableTreeNode nodo = parser.createNodo("IF empy");
+        nodo.add((DefaultMutableTreeNode)bn);
+        RESULT = nodo;
+    :}
     |
-    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON 
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:bn CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON 
     OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON CLOSE_BLOCK
+    {:
+        System.out.println("IF");
+        DefaultMutableTreeNode nodo = parser.createNodo("IF empy");
+        nodo.add((DefaultMutableTreeNode)bn);
+        RESULT = nodo;
+    :}
 ;
 
 N_SWITCH ::=
@@ -582,8 +619,14 @@ N_SWITCH_CASE ::=
     :}
     |
     /*Switch vacio*/
-    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_SWITCH CLOSE_PARENTESIS COLON 
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_SWITCH:bn CLOSE_PARENTESIS COLON 
     N_SWITCH_CASE 
+    {:
+        System.out.println("N_SWITCH_CASE");
+        DefaultMutableTreeNode nodo = parser.createNodo("SWITCH_CASE empy");
+        nodo.add((DefaultMutableTreeNode)bn);
+        RESULT = nodo;
+    :}
     |
     OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON 
     N_SENTENCIA:e
@@ -596,6 +639,11 @@ N_SWITCH_CASE ::=
     :}
     |/*Else vacío*/
     OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON 
+    {:
+        System.out.println("ELSE");
+        DefaultMutableTreeNode nodo = parser.createNodo("ELSE empy");
+        RESULT = nodo;
+    :}
 ;
 
 /* -------------------------VARIABLE DEFINITION------------------------------ */
@@ -954,6 +1002,22 @@ N_SENTENCIA_BOOLEANA_SWITCH::=
         :}
     |
     ID:id1 BETWEEN:b ID:id2 
+        {:
+            DefaultMutableTreeNode nodo = parser.createNodo(b+"");
+            nodo.add(parser.createNodo(id1+""));
+            nodo.add(parser.createNodo(id2+""));
+            RESULT = nodo;
+        :}
+    |
+    ID:id1 BETWEEN:b NUMBER:id2 
+        {:
+            DefaultMutableTreeNode nodo = parser.createNodo(b+"");
+            nodo.add(parser.createNodo(id1+""));
+            nodo.add(parser.createNodo(id2+""));
+            RESULT = nodo;
+        :}
+    |
+    NUMBER:id1 BETWEEN:b ID:id2 
         {:
             DefaultMutableTreeNode nodo = parser.createNodo(b+"");
             nodo.add(parser.createNodo(id1+""));
