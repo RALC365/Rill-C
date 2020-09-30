@@ -1,8 +1,10 @@
 package AST;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.tree.DefaultTreeModel;
 import org.abego.treelayout.TreeLayout;
@@ -30,7 +32,7 @@ public class SwingDemo {
     private void showInDialog(JComponent panel) {
         JDialog dialog = new JDialog();
         JScrollPane scrollPane = new JScrollPane();
-        dialog.setBounds(100, 100, 700, 500);
+        dialog.setBounds(100, 100, 1300, 700);
         dialog.getContentPane().setLayout(new BorderLayout(0, 0));
         dialog.getContentPane().add(scrollPane, BorderLayout.CENTER);
         scrollPane.setViewportView(panel);
@@ -38,6 +40,9 @@ public class SwingDemo {
         dialog.setLocationRelativeTo(null);
         dialog.setAlwaysOnTop(true);
         dialog.setModal(true);
+        //full screen
+        dialog.setLocationRelativeTo(dialog);
+        dialog.setPreferredSize(new Dimension(JFrame.MAXIMIZED_HORIZ, JFrame.MAXIMIZED_VERT));
         dialog.setVisible(true);
     }
     public SwingDemo(DefaultTreeModel root){

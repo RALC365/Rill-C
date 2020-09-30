@@ -30,16 +30,21 @@ public class FrmPrincipal extends javax.swing.JFrame {
     /**
      * Creates new form FrmPrincipal
      */
+    NumeroLinea numeroLinea;
     public FrmPrincipal() {
         initComponents();
+        this.numeroLinea = new NumeroLinea(this.txtCodigo);
+        this.jScrollCodigo.setRowHeaderView(this.numeroLinea);
         this.setLocationRelativeTo(null);
         this.setExtendedState(this.MAXIMIZED_BOTH); 
+        
+        //this.jScrollCodigo.setColumnHeaderView(numeroLinea);
     }
     
     private void analizarLexico() throws IOException{
         int cont = 1;
         
-        String expr = (String) txtResultado.getText();
+        String expr = (String) txtCodigo.getText();
         Lexer lexer = new Lexer(new StringReader(expr));
         String resultado = "LINEA " + cont + "\t\tSIMBOLO\n";
         while (true) {
@@ -201,20 +206,20 @@ public class FrmPrincipal extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        txtResultado = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
         txtAnalizarLex = new javax.swing.JTextArea();
         btnAnalizarLex = new javax.swing.JButton();
-        btnLimpiarLex = new javax.swing.JButton();
+        btnTree = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         txtAnalizarSin = new javax.swing.JTextArea();
-        btnLimpiarSin = new javax.swing.JButton();
         btnAnalizarSin = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
+        btnLimpiarSin1 = new javax.swing.JButton();
+        btnLimpiarLex1 = new javax.swing.JButton();
+        jScrollCodigo = new javax.swing.JScrollPane();
+        txtCodigo = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -223,24 +228,15 @@ public class FrmPrincipal extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Rill-20");
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Analizador Lexico", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 18))); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "RILL-20", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 18))); // NOI18N
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        txtResultado.setBackground(new java.awt.Color(0, 0, 0));
-        txtResultado.setColumns(20);
-        txtResultado.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
-        txtResultado.setForeground(new java.awt.Color(255, 255, 255));
-        txtResultado.setRows(5);
-        jScrollPane1.setViewportView(txtResultado);
-
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, 644, 520));
 
         txtAnalizarLex.setEditable(false);
         txtAnalizarLex.setColumns(20);
         txtAnalizarLex.setRows(5);
         jScrollPane2.setViewportView(txtAnalizarLex);
 
-        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(684, 106, 270, 240));
+        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 110, 270, 240));
 
         btnAnalizarLex.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnAnalizarLex.setText("Analizar");
@@ -249,32 +245,23 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 btnAnalizarLexActionPerformed(evt);
             }
         });
-        jPanel1.add(btnAnalizarLex, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 70, -1, -1));
+        jPanel1.add(btnAnalizarLex, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 70, -1, -1));
 
-        btnLimpiarLex.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnLimpiarLex.setText("Limpiar");
-        btnLimpiarLex.addActionListener(new java.awt.event.ActionListener() {
+        btnTree.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnTree.setText("Árbol");
+        btnTree.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLimpiarLexActionPerformed(evt);
+                btnTreeActionPerformed(evt);
             }
         });
-        jPanel1.add(btnLimpiarLex, new org.netbeans.lib.awtextra.AbsoluteConstraints(860, 70, -1, -1));
+        jPanel1.add(btnTree, new org.netbeans.lib.awtextra.AbsoluteConstraints(1070, 70, -1, -1));
 
         txtAnalizarSin.setEditable(false);
         txtAnalizarSin.setColumns(20);
         txtAnalizarSin.setRows(5);
         jScrollPane3.setViewportView(txtAnalizarSin);
 
-        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(980, 107, 317, 450));
-
-        btnLimpiarSin.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnLimpiarSin.setText("Limpiar");
-        btnLimpiarSin.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLimpiarSinActionPerformed(evt);
-            }
-        });
-        jPanel1.add(btnLimpiarSin, new org.netbeans.lib.awtextra.AbsoluteConstraints(1210, 70, -1, -1));
+        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(927, 107, 370, 450));
 
         btnAnalizarSin.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnAnalizarSin.setText("Analizar");
@@ -288,31 +275,44 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 btnAnalizarSinActionPerformed(evt);
             }
         });
-        jPanel1.add(btnAnalizarSin, new org.netbeans.lib.awtextra.AbsoluteConstraints(980, 70, -1, -1));
+        jPanel1.add(btnAnalizarSin, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 70, -1, -1));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Logo.png"))); // NOI18N
         jLabel1.setText("jLabel1");
         jLabel1.setOpaque(true);
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 360, 280, -1));
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 360, 280, -1));
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel2.setText("Análisis Síntáctico");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1080, 30, -1, -1));
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 30, -1, -1));
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel3.setText("Análisis Léxico");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 30, -1, -1));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 30, -1, -1));
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
+        btnLimpiarSin1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnLimpiarSin1.setText("Limpiar");
+        btnLimpiarSin1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarSin1ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnLimpiarSin1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1200, 70, -1, -1));
+
+        btnLimpiarLex1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnLimpiarLex1.setText("Limpiar");
+        btnLimpiarLex1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarLex1ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnLimpiarLex1, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 70, -1, -1));
+
+        txtCodigo.setColumns(20);
+        txtCodigo.setRows(5);
+        jScrollCodigo.setViewportView(txtCodigo);
+
+        jPanel1.add(jScrollCodigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 590, 510));
 
         jMenu1.setText("Archivo");
         jMenu1.addActionListener(new java.awt.event.ActionListener() {
@@ -343,33 +343,18 @@ public class FrmPrincipal extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
         );
 
         jPanel1.getAccessibleContext().setAccessibleName("Rill-20");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnLimpiarSinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarSinActionPerformed
-        // TODO add your handling code here:
-        txtAnalizarSin.setText(null);
-    }//GEN-LAST:event_btnLimpiarSinActionPerformed
 
     private void btnAnalizarSinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarSinActionPerformed
         // TODO add your handling code here:
@@ -380,26 +365,20 @@ public class FrmPrincipal extends javax.swing.JFrame {
             Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
         //Cup and Lexer
-        String ST = txtResultado.getText();
-        Sintax s = new Sintax(new CUP.LexerCup(new StringReader(ST)));
+        //String ST = txtResultado.getText();
+        String ST = txtCodigo.getText();
+        s = new Sintax(new CUP.LexerCup(new StringReader(ST)));
         
         try {
             //jtSintactico.setModel(s.createTreeSintax("SintaxTree"));
             s.createTreeSintax("Program");
             s.parse();
-            /*for (int i = 0; i < s.reduce_table().length; i++) {
-                for (int j = 0; j < s.reduce_table()[i].length; j++) {
-                    System.out.print(" "+ s.reduce_table()[i][j]+ " ,");
-                }
-                System.out.println("");
-            }*/
             if(s.getERRORES().equalsIgnoreCase("")){
                 /*txtAnalizarSin.setText("Analisis realizado correctamente");
                 txtAnalizarSin.setForeground(new Color(25, 111, 61));*/
                     txtAnalizarSin.setText("Se completó el análisis sin errores");
                     txtAnalizarSin.setForeground(new Color(25, 111, 61));
-                    SwingDemo sintaxTree = new SwingDemo(s.getTreeSintaxModel());
-                    sintaxTree.showTree();
+                    
                 System.out.println("Se completo el análisis sintáctico sin errores");
                 
             }else{
@@ -430,7 +409,8 @@ public class FrmPrincipal extends javax.swing.JFrame {
         
         try {
             String ST = new String(Files.readAllBytes(archivo.toPath()));
-            txtResultado.setText(ST);
+            //txtResultado.setText(ST);
+            txtCodigo.setText(ST);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -442,10 +422,11 @@ public class FrmPrincipal extends javax.swing.JFrame {
         guardarComo();
     }//GEN-LAST:event_jMenu1ActionPerformed
 
-    private void btnLimpiarLexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarLexActionPerformed
+    private void btnTreeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTreeActionPerformed
         // TODO add your handling code here:
-        txtAnalizarLex.setText(null);
-    }//GEN-LAST:event_btnLimpiarLexActionPerformed
+        SwingDemo sintaxTree = new SwingDemo(s.getTreeSintaxModel());
+        sintaxTree.showTree();        
+    }//GEN-LAST:event_btnTreeActionPerformed
 
     private void btnAnalizarLexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarLexActionPerformed
         try {
@@ -454,6 +435,16 @@ public class FrmPrincipal extends javax.swing.JFrame {
             Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnAnalizarLexActionPerformed
+
+    private void btnLimpiarSin1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarSin1ActionPerformed
+        // TODO add your handling code here:
+        this.txtAnalizarSin.setText("");
+    }//GEN-LAST:event_btnLimpiarSin1ActionPerformed
+
+    private void btnLimpiarLex1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarLex1ActionPerformed
+        // TODO add your handling code here:
+            this.txtAnalizarLex.setText("");
+    }//GEN-LAST:event_btnLimpiarLex1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -498,7 +489,8 @@ public class FrmPrincipal extends javax.swing.JFrame {
 
     File archivo = guardar.getSelectedFile();
 
-    guardarFichero(txtResultado.getText(), archivo);
+    //guardarFichero(txtResultado.getText(), archivo);
+        guardarFichero(txtCodigo.getText(), archivo);
 
 }
     
@@ -517,12 +509,13 @@ public class FrmPrincipal extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null, "Error al guardar, en la salida");
     }
 }
-
+Sintax s;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAnalizarLex;
     private javax.swing.JButton btnAnalizarSin;
-    private javax.swing.JButton btnLimpiarLex;
-    private javax.swing.JButton btnLimpiarSin;
+    private javax.swing.JButton btnLimpiarLex1;
+    private javax.swing.JButton btnLimpiarSin1;
+    private javax.swing.JButton btnTree;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -531,12 +524,11 @@ public class FrmPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollCodigo;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTextArea txtAnalizarLex;
     private javax.swing.JTextArea txtAnalizarSin;
-    private javax.swing.JTextArea txtResultado;
+    private javax.swing.JTextArea txtCodigo;
     // End of variables declaration//GEN-END:variables
 }

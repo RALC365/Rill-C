@@ -1,73 +1,77 @@
 ()(main:
 int nota: 100.,
-	(peggo)(if:
+	(variable)(if:
 		(=1):
-			int peggo, variable2, variable3.,
+			int variable1, variable2, variable3.,
 		(=hola):
-			arr chr peggo: ["no","se", "diga", mas, nll].,
+			arr chr arreglo: ["String1","String2", "String3", id1, nll].,
 		(>1):
-			bln peggo: true.,
-			int m: 2.,
+			bln vBoolean: true.,
+			int vEntero: 2.,
 		|IGNORAME JFLEX| 
-		(50...10):|VOLVEME A IGNORAR JAJAJA XD|	
-			int peggo: 1.,
+		(50...10):|Este es un comentario|	
+			int vEntero: 1.,
 		(<hola):
-			int peggo: 1.,
-			(peggo)(if:
+			int vEntero: 1*545+693*4654.,
+			(vEntero)(if:
 				(=1):
-					int peggo: 1.,
-					(pp: "Salve Will!" - var1 - var2 -"texto" -84 -ln:).,
+					int vEntero: 1.,
+					(pp: "Mensaje de salida" - var1 - var2 -"texto" -84 -ln:).,
 				(els):
-					int peggo:2.,
+					int vEntero:2.,
 					(in:entrada:).,
 			:)
 		|matrices|
 		mtx int matriz: [1,2,3,[4,5,6],[7,8,9],10].,
 		mtx [4][6] int matriz2.,
 		mtx int matriz3: unaFuncion(1,2,3,4).,
+		int asignacion: vMatrix[i][j].,
 		|arreglo|
 		arr bln arreglo: [true, false, true].,
 		arr [8] chr arreglo2.,
 		arr int arreglo3: otraFuncion(id1,id2,id3).,
 	(els):
-		int peggo:2.,
+		int vEntero:2.,
 	:)
 	(h1=he)(wh:
 		int hola: 1.,
 	:)
-	(a,1 -> 19,++)(fr:
-		mtx int noMames: [[1,2,xD,4],2,4,3,['A',"hola",3]].,
-		(noMames,1 to 19,--)(fr:
-			mtx bln noMames: [[1,2,xD,4],2,4,3,[1,"hola",3]].,
+	(a,1 -> 19,+5)(fr:
+		mtx int vMatriz: [[1,2,xD,4],2,4,3,['A',"hola",3]].,
+		(variable,1 to 19,+8)(fr:
+			mtx bln vMatriz: [[1,2,xD,4],2,4,3,[1,"hola",3]].,
+			(in:vEntrada:).,
+			(pp:"Valor de entrada" - vEntrada:).,
 		:)
 
 	:)
-	int h: prueba().,
-	h: prueba().,
-	prueba().,
+	int h: callFuncion1("llamado",con,Parametros3).,
+	h: callFuncion2().,
+	callFuncion3().,
 :)
 
-(int a, int b, int c)funcionMagica(fun:mtx
-	(hola="peggo")(if:
-		int peggo: 1.,
+(int a, int b, int c)funcionDemostrativa(fun:mtx int
+ bln vEntero,vEntero2,vEntero3.,
+	(hola="hola2")(if:
+		int vEntero: (2323*23232)/(232+3232)+17.,
 		(hola=10)(wh:
-			int peggo: 1.,
-			int peggo:2.,
+			bln vBoleana: hola = 17.,
+			bln vBoleana:true.,
 		:)
 	(els):
-		int peggo:2.,
+		bln vBoleana: hola = 16 and adios = 28.,
 	:)
-	ret hola.,
+	ret vRetorno.,
 :)
 
 
-(int a, mtx b, arr c)ProcedimientoMagica(fun:nll
+(int a, mtx int b, arr int c)funcionSinRetorno(fun:nll
 	|esto no retorna nada|
 	int esta,es,una,declaracion,anidada.,
 :)
 
 |bloques de código vacio|
-()funcionVacia(fun:nll
+(int par, arr int metros)funcionVacia(fun:nll
 	(hola=hola)(wh:
 	:)
 	(variable)(if:

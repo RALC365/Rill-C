@@ -20,6 +20,7 @@ public class Principal {
         String ruta1 = "./src/LexerS/Lexer.flex";
         String ruta2 = "./src/CUP/LexerCup.flex";
         String[] rutaS = {"-parser", "Sintax", "./src/CUP/Sintax.cup"};
+        String[] rutaAST = {"-parser", "ASintaxT", "./src/CUP/ASintaxT.cup"};
         generar(ruta1, ruta2, rutaS);
     }
     public static void generar(String ruta1, String ruta2, String[] rutaS) throws IOException, Exception{
