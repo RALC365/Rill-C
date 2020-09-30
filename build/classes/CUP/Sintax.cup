@@ -20,10 +20,10 @@ parser code
     **/ 
     public void syntax_error(Symbol s){
         this.s = s;
-        System.out.println("Error Sintáctico recuperable en la Línea " + (s.right) +
+        System.out.println("Error Sintáctico recuperable en la Línea " + (s.right + 1) +
         " Columna "+s.left+ ". No se esperaba este componente: " +s.value+".");
 
-        String report = "Syntax error in line " + getS().right + " Column " + getS().left + ". No se esperaba este componente: " + getS().value;
+        String report = "Syntax error in line " + (getS().right + 1) + " Column " + getS().left + ". No se esperaba este componente: " + getS().value;
         if(getS().value == null){
             report = "You didn't close your last code structure";
         }
@@ -68,7 +68,7 @@ parser code
 
     public String errorMessage(String error, Symbol s){
         //String report = "Syntax error in line " + s.right + " Column " + s.left + ". No se esperaba este componente: " +s.value+ "\nDescripción: " + error +"\n";
-        this.addMessageErrorOnly("Descripción " + error+"\n");
+        this.addMessageErrorOnly("Comentario: " + error+"\n");
         System.out.println("Cantidad: " + getcERRORES());
         return "Listo, guapo ;D";
     }
@@ -253,6 +253,14 @@ N_MAIN ::=
                 RESULT = nodo;
                 //parser.report_(mes ,err);
         :}
+    |OPEN_PARENTESIS CLOSE_PARENTESIS OPEN_PARENTESIS MAIN COLON CLOSE_BLOCK
+    |OPEN_PARENTESIS CLOSE_PARENTESIS OPEN_PARENTESIS error:err COLON N_SENTENCIA:e CLOSE_BLOCK{:
+                String desc = "Falta el \"main\" al inicio" ;
+                String mes = parser.errorMessage(desc, parser.getS());
+                DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
+                RESULT = nodo;
+                //parser.report_(mes ,err);
+        :}
 
     |OPEN_PARENTESIS error CLOSE_PARENTESIS OPEN_PARENTESIS MAIN COLON N_SENTENCIA:e CLOSE_BLOCK{:
                 String desc = "El main no debe tener parametros";
@@ -266,6 +274,7 @@ N_MAIN ::=
                 String desc = "Debe iniciar con el main primero";
                 String mes = parser.errorMessage(desc, parser.getS());
                 DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
+                System.out.println("error: " + err);
                 RESULT = nodo;
                 //parser.report_error(mes ,err);
         :}
@@ -276,7 +285,7 @@ N_MAIN ::=
     OPEN_PARENTESIS 
     MAIN 
     COLON 
-    CLOSE_BLOCK
+
 ;
 
 N_FUNCTIONS::=
@@ -325,7 +334,7 @@ N_FUNCTION ::=
                 DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
                 RESULT = nodo;
         :}
-    |N_PARAMETRO:e1 ID:e2 OPEN_PARENTESIS  FUNCTION COLON  N_RETORNO_FUNCTION:e3 N_SENTENCIA:n error:err{:
+    |N_PARAMETRO:e1 ID:e2 OPEN_PARENTESIS  FUNCTION COLON  N_RETORNO_FUNCTION:e3 N_SENTENCIA:n error:err CLOSE_BLOCK{:
                 String desc = "Falta el return de la función";
                 String mes = parser.errorMessage(desc, parser.getS());
                 //parser.report_(mes ,err);
@@ -339,7 +348,7 @@ N_FUNCTION ::=
                 DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
                 RESULT = nodo;
     :}
-    |N_PARAMETRO:e1 ID:e2 OPEN_PARENTESIS  FUNCTION COLON  N_RETORNO_FUNCTION:e3 N_SENTENCIA:n RETURN N_VALOR_VARIABLE:vb error:err PYC {:
+    |N_PARAMETRO:e1 ID:e2 OPEN_PARENTESIS  FUNCTION COLON  N_RETORNO_FUNCTION:e3 N_SENTENCIA:n RETURN N_VALOR_VARIABLE:vb error:err {:
                 String desc = "Falta el PYC del retorno";
                 String mes = parser.errorMessage(desc, parser.getS());
                 //parser.report_(mes ,err);
@@ -367,7 +376,7 @@ N_PARAMETRO_FUNCTION ::=
     |
     N_RETORNO_FUNCTION:r ID:id
     |
-    ID ID error:err{:
+    ID error:err{:
         String desc = "Debe ser un solo identificador. Si tiene varias palabras unasla: \"funcionMuesta o funcion_muestra\"   ";
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
@@ -448,6 +457,16 @@ N_WHILE ::=
     |
     /*While vacio*/
     OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:e2 CLOSE_PARENTESIS OPEN_PARENTESIS WHILE COLON CLOSE_BLOCK
+    /*Errores en estructura del while*/
+    |OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA error:err OPEN_PARENTESIS WHILE COLON N_SENTENCIA CLOSE_BLOCK
+    {: String desc = "Falta \")\" en la declaración del while"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
+
+    |OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS error:err WHILE COLON N_SENTENCIA CLOSE_BLOCK
+    {: String desc = "Falta \"(\" en la declaración del while"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
+
+    |OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA CLOSE_PARENTESIS OPEN_PARENTESIS WHILE error:err N_SENTENCIA CLOSE_BLOCK
+    {: String desc = "Falta \":\" en la declaración del while"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
+
 ;
 
 N_FOR ::= 
@@ -469,6 +488,32 @@ N_FOR ::=
     | 
     /*For vacio*/
     OPEN_PARENTESIS  ID:id  COMA  N_TO_FOR:n1  TO  N_TO_FOR:n2  COMA  OP_SUM:o N_TO_FOR:n3  CLOSE_PARENTESIS  OPEN_PARENTESIS  FOR  COLON  CLOSE_BLOCK
+    
+    
+    /*Errores For*/
+    |OPEN_PARENTESIS  error:err  COMA  N_TO_FOR:n1  TO  N_TO_FOR:n2  COMA  OP_SUM:o N_TO_FOR:n3  CLOSE_PARENTESIS  OPEN_PARENTESIS  FOR  COLON N_SENTENCIA CLOSE_BLOCK
+    {: String desc = "Falta el id del contadador en la declaración del while"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
+
+    |OPEN_PARENTESIS  ID:id  error:err  N_TO_FOR:n1  TO  N_TO_FOR:n2  COMA  OP_SUM:o N_TO_FOR:n3  CLOSE_PARENTESIS  OPEN_PARENTESIS  FOR  COLON N_SENTENCIA CLOSE_BLOCK
+    {: String desc = "Falta \",\"  después del ID contador en la declaración del for"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
+
+    |OPEN_PARENTESIS  ID:id  COMA  N_TO_FOR:n1  error:err  N_TO_FOR:n2  COMA  OP_SUM:o N_TO_FOR:n3  CLOSE_PARENTESIS  OPEN_PARENTESIS  FOR  COLON N_SENTENCIA CLOSE_BLOCK
+    {: String desc = "Falta \"-> o to\" en la declaración del for"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
+
+    |OPEN_PARENTESIS  ID:id  COMA  N_TO_FOR:n1  TO  N_TO_FOR:n2  error:err  OP_SUM:o N_TO_FOR:n3  CLOSE_PARENTESIS  OPEN_PARENTESIS  FOR  COLON N_SENTENCIA CLOSE_BLOCK
+    {: String desc = "Falta \",\"  después del rango en la declaración del for"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
+
+    |OPEN_PARENTESIS  ID:id  COMA  N_TO_FOR:n1  TO  N_TO_FOR:n2  COMA  error:err N_TO_FOR:n3  CLOSE_PARENTESIS  OPEN_PARENTESIS  FOR  COLON N_SENTENCIA CLOSE_BLOCK
+    {: String desc = "Falta \"+ o -\" en el incremento del for"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
+
+    |OPEN_PARENTESIS  ID:id  COMA  N_TO_FOR:n1  TO  N_TO_FOR:n2  COMA  OP_SUM:o N_TO_FOR:n3  CLOSE_PARENTESIS  error:err  FOR  COLON N_SENTENCIA CLOSE_BLOCK
+    {: String desc = "Falta otro \"(\" en la declaración del for"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
+
+    |OPEN_PARENTESIS  ID:id  COMA  N_TO_FOR:n1  TO  N_TO_FOR:n2  COMA  OP_SUM:o N_TO_FOR:n3  CLOSE_PARENTESIS  OPEN_PARENTESIS  FOR  error:err N_SENTENCIA CLOSE_BLOCK
+    {: String desc = "Falta \":\" en la declaración del for"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
+
+    |OPEN_PARENTESIS  ID:id  COMA  N_TO_FOR:n1  TO  N_TO_FOR:n2  COMA  OP_SUM:o N_TO_FOR:n3  CLOSE_PARENTESIS  OPEN_PARENTESIS  FOR  COLON N_SENTENCIA error:err
+    {: String desc = "Falta \":)\" para cerrar el bloque for"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
 
 ;
 
@@ -499,6 +544,18 @@ N_IF ::=
     OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:bn CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON 
     N_ELSE_IF:el
     CLOSE_BLOCK
+
+    |
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:bn CLOSE_PARENTESIS error:err IF_SWITCH COLON N_SENTENCIA:n N_ELSE_IF CLOSE_BLOCK
+    {: String desc = "Falta volver a abrir \"(\" en la declaración del if"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
+
+    |
+    OPEN_PARENTESIS error CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON N_SENTENCIA:n N_ELSE_IF CLOSE_BLOCK
+    {: 
+        String desc = "No tiene sentencia boolena en la condición a evaluar"; 
+        String mes = parser.errorMessage(desc, parser.getS()); 
+        DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); 
+        RESULT = nodo;:}
 ;
 
 N_ELSE_IF ::=
@@ -515,6 +572,10 @@ N_ELSE_IF ::=
     |/*Else vacío*/
     OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON 
     |
+    |
+    /*Manejo de errores*/
+    OPEN_PARENTESIS error:err CLOSE_PARENTESIS COLON  N_SENTENCIA:n N_ELSE_IF:sw
+    {: String desc = "No tiene sentencia boolena en la condición a evaluar"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
 ;
 
 N_SWITCH ::=
@@ -522,6 +583,15 @@ N_SWITCH ::=
     IF_SWITCH COLON 
     N_SWITCH_CASE:sw 
     CLOSE_BLOCK
+    |
+    OPEN_PARENTESIS error:err CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON N_SWITCH_CASE:sw CLOSE_BLOCK
+    {: String desc = "Falta la variable a comparar en la declaracion del switch"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
+    |
+    OPEN_PARENTESIS ID CLOSE_PARENTESIS error:err IF_SWITCH COLON N_SWITCH_CASE:sw CLOSE_BLOCK
+    {: String desc = "Tiene que volver a abrir parentesis en la declaración del switch: (A=B)(if: ... :)"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
+    |
+    OPEN_PARENTESIS ID CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH error N_SWITCH_CASE:sw CLOSE_BLOCK
+    {: String desc = "Falta \":\" en la declaración del switch"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
 ;
 
 N_SWITCH_CASE ::=
@@ -539,25 +609,18 @@ N_SWITCH_CASE ::=
     OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON 
     /*Errores*/
     |
-     OPEN_PARENTESIS error:err COLON
-     N_SENTENCIA N_SWITCH_CASE:sw
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_SWITCH CLOSE_PARENTESIS error:err N_SENTENCIA N_SWITCH_CASE:sw
             {:
-                String desc = "Falta cerrar parentesis en el case del switch";
+                String desc = "Falta \":\" en la declaraciónd el switcch case";
                 String mes = parser.errorMessage(desc, parser.getS());
                 DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
                 RESULT = nodo;
                 //parser.report_(mes ,err);
             :}
-    |
-     OPEN_PARENTESIS error:err OPEN_PARENTESIS COLON
-     N_SENTENCIA N_SWITCH_CASE:sw
-            {:
-       String desc = "Falta cerrar parentesis en el case del switch";
-       String mes = parser.errorMessage(desc, parser.getS());
-       DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
-       RESULT = nodo;
-       //parser.report_(mes ,err);
-       :}
+    | 
+    OPEN_PARENTESIS error:err CLOSE_PARENTESIS COLON N_SENTENCIA N_SWITCH_CASE:sw
+    {: String desc = "Error en sentencia booleana del switch, debe ser de la forma: \"(OP_REL valorAComparar):\""; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
+   
     
 ;
 
@@ -567,7 +630,7 @@ N_CALL_FUNCTION::=
     |
     ID:id OPEN_PARENTESIS CLOSE_PARENTESIS
     |
-    ID error:err OPEN_PARENTESIS{:
+    error:err OPEN_PARENTESIS N_CALL_FUNCTION_PARAMETROS:n CLOSE_PARENTESIS {:
         String desc = "Falta el el identificador de la funcion";
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
@@ -575,8 +638,8 @@ N_CALL_FUNCTION::=
         //parser.report_(mes ,err);
     :}
     |
-    ID OPEN_PARENTESIS error:err{:
-        String desc = "Falta cerrar parentesis en llamado de función";
+    error:err {:
+        String desc = "Error en la declaración de llamado de función";
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
@@ -613,16 +676,8 @@ N_SENTENCIA_BOOLEANA_ANIDADA ::=
     N_SENTENCIA_BOOLEANA_ANIDADA:bl
     CLOSE_PARENTESIS
     |
-    OPEN_PARENTESIS CLOSE_PARENTESIS error:err{:
-            String desc = "Parentesis vacios en sentencia booleana";
-            String mes = parser.errorMessage(desc, parser.getS());
-            DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
-            RESULT = nodo;
-            //parser.report_(mes ,err);
-    :}
-    |
-    error:err OPEN_PARENTESIS CLOSE_PARENTESIS{:
-            String desc = "Parentesis vacios en sentencia booleana";
+    OPEN_PARENTESIS error:err CLOSE_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA{:
+            String desc = "Error en sentecia boolenada entre parentesis. Parentesis vacios en sentencia booleana";
             String mes = parser.errorMessage(desc, parser.getS());
             DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
             RESULT = nodo;
@@ -636,6 +691,14 @@ N_AND_OR::=
     |
     CON_OR:nd
     N_SENTENCIA_BOOLEANA_ANIDADA:bl
+    |
+    CON_AND error:err
+    {: String desc = "Error en sentencia booleana para comparar con AND."; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
+    |
+    CON_OR error:err
+    {: String desc = "Error en sentencia booleana para comparar con OR"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
+
+
 ;
 
 N_SENTENCIA_BOOLEANA ::= 
@@ -795,17 +858,6 @@ N_SENTENCIA_BOOLEANA_SWITCH::=
 ;
 
 N_DECLARACION ::= 
-    /*ID:id COLON ID:id2 
-
-    |*/
-    //ID:id COLON NULL:nl 
-    /*{:
-        DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
-        nodo.add(parser.createNodo(id+""));
-        nodo.add(parser.createNodo(nl+""));
-        RESULT = nodo;
-    :}
-    |*/
     ID:id COLON N_SENTENCIA_BOOLEANA_ANIDADA:bn 
     |
     ID:id COLON EXPR_LIST:ex
@@ -831,6 +883,21 @@ N_DECLARACION ::=
     OPEN_SQR_BRACKET N_TO_FOR:n1 CLOSE_SQR_BRACKET
     COLON
     EXPR_LIST:ex
+    |
+    ID:id
+    error:err N_TO_FOR:n1 CLOSE_SQR_BRACKET
+    COLON
+    EXPR_LIST:ex{: String desc = "Fala \"[\" en la declaración del arreglo"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
+    |
+    ID:id
+    OPEN_SQR_BRACKET N_TO_FOR:n1 error:err
+    COLON
+    EXPR_LIST:ex{: String desc = "Fala \"]\" en la declaración del arreglo"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
+    |
+    ID:id
+    OPEN_SQR_BRACKET N_TO_FOR:n1 CLOSE_SQR_BRACKET
+    error:err
+    EXPR_LIST:ex{: String desc = "Fala \"]\" en la declaración del arreglo"; String mes = parser.errorMessage(desc, parser.getS()); DefaultMutableTreeNode nodo = parser.createNodo("ERROR"); RESULT = nodo;:}
     |
     ID:id
     OPEN_SQR_BRACKET N_TO_FOR:n1 CLOSE_SQR_BRACKET
@@ -903,16 +970,9 @@ N_DECLARACION ::=
     |
     //mtx TIPO id: funcion(p1,p2,p3...)
     MATRIX:i N_TIPOS_DECLARACION_MATRIZ:t ID:id COLON N_CALL_FUNCTION:f 
+    
     |
-    MATRIX COLON error:err{:
-        String desc = "Falta tipo de la matriz";
-        String mes = parser.errorMessage(desc, parser.getS());
-        DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
-        RESULT = nodo;
-        //parser.report_(mes ,err);
-    :}
-    |
-    MATRIX N_TIPOS_DECLARACION_MATRIZ error:err{:
+    MATRIX N_TIPOS_DECLARACION_MATRIZ ID error:err N_CALL_FUNCTION:f{:
         String desc = "Falta \":\" en la asignación de la matriz";
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
@@ -920,7 +980,7 @@ N_DECLARACION ::=
         //parser.report_(mes ,err);
     :}
       |
-    MATRIX N_TIPOS_DECLARACION_MATRIZ COLON error:err{:
+    MATRIX N_TIPOS_DECLARACION_MATRIZ error:err COLON N_CALL_FUNCTION{:
         String desc = "Falta id de la matriz";
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
@@ -1005,6 +1065,7 @@ N_VALOR_VARIABLE ::=
     |
     FALSE:e1   {: RESULT = (parser.createNodo(e1+"")); :}
     |
+    
 ;
 
 N_TIPOS_DECLARACION_MATRIZ ::=
@@ -1015,7 +1076,7 @@ N_TIPOS_DECLARACION_MATRIZ ::=
     CHAR:e {: RESULT = (parser.createNodo(e+"")); :}
     |
     error:err{:
-        String desc = "Solo se permiten Int, boolean y char, id en los arreglos";
+        String desc = "Solo se permiten Int, boolean y char, id en los arreglos. Usar otro tipo o no especificar el no es válido";
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
@@ -1091,7 +1152,7 @@ N_BOOLEAN_VALUE::=
     ID:id OPEN_PARENTESIS CLOSE_PARENTESIS
     |
         error:err{:
-        String desc = "Error en el valor booleno, tipo no compatible con Boolean";
+        String desc = "Error en la definición del booleno, tipo no compatible con Boolean o falta PYC";
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
@@ -1114,6 +1175,14 @@ N_ARGUMENTOS ::=
     |
         ID ID error:err {:
             String desc = "Los ids deben ir separados por coma";
+            String mes = parser.errorMessage(desc, parser.getS());
+            DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
+            RESULT = nodo;
+            //parser.report_(mes ,err);
+        :}
+    |
+        ID COLON error:err{:
+            String desc = "No se pueden hacer declaraciones";
             String mes = parser.errorMessage(desc, parser.getS());
             DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
             RESULT = nodo;
@@ -1253,24 +1322,7 @@ N_CIN ::=
 
 EXPR_LIST   ::= EXPR_LIST:e1 EXPR:e2 
             |OPEN_PARENTESIS EXPR_LIST:e1 CLOSE_PARENTESIS EXPR_LIST:e2
-            | EXPR:e                     
-            |error: err CLOSE_PARENTESIS 
-                {:
-                    String desc = "Número de parentesis impares en la expresión";
-                    String mes = parser.errorMessage(desc, parser.getS());
-                    DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
-                    RESULT = nodo;
-                    //parser.report_(mes ,err);
-                :}
-            |OPEN_PARENTESIS error: err 
-                {:
-                    String desc = "Número de parentesis impares en la expresión";
-                    String mes = parser.errorMessage(desc, parser.getS());
-                    DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
-                    RESULT = nodo;
-                    //parser.report_(mes ,err);
-                :}
-           
+            | EXPR:e                          
 ;
 
 EXPR        ::= OP_SUM  EXPR:e2 

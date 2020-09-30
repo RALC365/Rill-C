@@ -4,7 +4,7 @@ import java.beans.*;
 import java.util.HashMap;
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.event.*;
+import javax.swing.event.*; 
 import javax.swing.text.*;
 
 public class NumeroLinea extends JPanel

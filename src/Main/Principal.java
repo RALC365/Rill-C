@@ -34,7 +34,7 @@ public class Principal {
         Path rutaSym = Paths.get("./src/CUP/sym.java");
         if (Files.exists(rutaSym)) {
             Files.delete(rutaSym);
-        }
+        } 
         Files.move(
                 Paths.get("./sym.java"), 
                 Paths.get("./src/CUP/sym.java")

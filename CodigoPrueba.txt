@@ -11,7 +11,7 @@ int nota: 100.,
 		|IGNORAME JFLEX| 
 		(50...10):|Este es un comentario|	
 			int vEntero: 1.,
-		(<hola):
+		(<hola): 
 			int vEntero: 1*545+693*4654.,
 			(vEntero)(if:
 				(=1):

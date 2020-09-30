@@ -403,18 +403,23 @@ public class FrmPrincipal extends javax.swing.JFrame {
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         // TODO add your handling code here:
-        JFileChooser chooser = new JFileChooser();
-        chooser.showOpenDialog(null);
-        File archivo = new File(chooser.getSelectedFile().getAbsolutePath());
-        
         try {
-            String ST = new String(Files.readAllBytes(archivo.toPath()));
-            //txtResultado.setText(ST);
-            txtCodigo.setText(ST);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+           
+            JFileChooser chooser = new JFileChooser();
+            chooser.showOpenDialog(null);
+            File archivo = new File(chooser.getSelectedFile().getAbsolutePath());
+
+            try {
+                String ST = new String(Files.readAllBytes(archivo.toPath()));
+                //txtResultado.setText(ST);
+                txtCodigo.setText(ST);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (Exception e) {
+            System.out.println("No abrio el archivo xD");
         }
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
