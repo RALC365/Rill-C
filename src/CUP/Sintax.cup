@@ -233,6 +233,8 @@ N_INICIO ::=
         String report = "Syntax error in line " + parser.getS().right + " Column " + parser.getS().left + ". No se esperaba este componente: " +parser.getS().value;
         //parser.addError(report + "\n");
         parser.report_error(report,e); 
+        System.out.println("1\n\n\n\n\n\n");
+        parser.agregarNodo((parser.createNodo("ERROR")));
     :}
 ;
 
@@ -347,6 +349,7 @@ N_FUNCTION ::=
         String report = "Syntax error in line " + parser.getS().right + " Column " + parser.getS().left + ". No se esperaba este componente: " +parser.getS().value;
         //parser.addError(report + "\n");
         parser.report_error(report,e); 
+        System.out.println("3\n\n\n\n\n\n");
         RESULT =  parser.createNodo("ERROR");
     :}
 ;
@@ -496,6 +499,8 @@ N_SENTENCIA ::=
         String report = "Syntax error in line " + parser.getS().right + " Column " + parser.getS().left + ". No se esperaba este componente: " +parser.getS().value;
         //parser.addError(report + "\n");
         parser.report_error(report,e); 
+        System.out.println("4\n\n\n\n\n\n");
+        RESULT =  parser.createNodo("ERROR");
     :}
 ;
 
@@ -519,7 +524,7 @@ N_WHILE ::=
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
         RESULT = (DefaultMutableTreeNode)n;
 
-        System.out.println("WHILE");
+        //System.out.printtln("WHILE");
         /*DefaultMutableTreeNode nodo = parser.createNodo("WHILE");
         nodo.add((DefaultMutableTreeNode)e2);
         //cambiar nombre, brutal!!!
@@ -533,7 +538,7 @@ N_WHILE ::=
     /*While vacio*/
     OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:e2 CLOSE_PARENTESIS OPEN_PARENTESIS WHILE COLON CLOSE_BLOCK
         {:
-        System.out.println("WHILE");
+        //System.out.printtln("WHILE");
         DefaultMutableTreeNode nodo = parser.createNodo("WHILE empy");
         nodo.add((DefaultMutableTreeNode)e2);
         RESULT = nodo;
@@ -563,7 +568,7 @@ N_FOR ::=
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
         RESULT = (DefaultMutableTreeNode)n;
 
-        /*System.out.println("FOR");
+        /*//System.out.printtln("FOR");
         DefaultMutableTreeNode nodo = parser.createNodo("FOR");
         nodo.add(parser.createNodo(id+""));
         nodo.add(parser.createNodo("from: "+n1));
@@ -581,7 +586,7 @@ N_FOR ::=
     /*For vacio*/
     OPEN_PARENTESIS  ID:id  COMA  N_TO_FOR:n1  TO  N_TO_FOR:n2  COMA  OP_SUM:o N_TO_FOR:n3  CLOSE_PARENTESIS  OPEN_PARENTESIS  FOR  COLON  CLOSE_BLOCK
         {:
-        System.out.println("FOR");
+        //System.out.printtln("FOR");
         DefaultMutableTreeNode nodo = parser.createNodo("FOR");
         DefaultMutableTreeNode parametros = parser.createNodo(id+","+n1+"->"+n2+","+o+n3);
         nodo.add(parametros);
@@ -610,7 +615,7 @@ N_IF ::=
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
         RESULT = (DefaultMutableTreeNode)n;
         
-        /*System.out.println("IF");
+        /*//System.out.printtln("IF");
         DefaultMutableTreeNode nodo = parser.createNodo("IF");
         nodo.add((DefaultMutableTreeNode)bn);
         //cambiar nombre, brutal!!!
@@ -630,7 +635,7 @@ N_IF ::=
     N_ELSE_IF:el
     CLOSE_BLOCK
     {:
-        System.out.println("IF");
+        //System.out.printtln("IF");
         DefaultMutableTreeNode nodo = parser.createNodo("IF");
         nodo.add((DefaultMutableTreeNode)bn);
         //N_Else_if
@@ -654,7 +659,7 @@ N_ELSE_IF ::=
         RESULT = (DefaultMutableTreeNode)n;
     
 
-       /* System.out.println("N_ELSE_IF");
+       /* //System.out.printtln("N_ELSE_IF");
         DefaultMutableTreeNode nodo = parser.createNodo("N_ELSE_IF");
         nodo.add((DefaultMutableTreeNode)bn);
         //cambiando nombre
@@ -673,7 +678,7 @@ N_ELSE_IF ::=
     OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:bn CLOSE_PARENTESIS COLON 
     N_ELSE_IF:sw
     {:
-        System.out.println("N_ELSE_IF");
+        //System.out.printtln("N_ELSE_IF");
         DefaultMutableTreeNode nodo = parser.createNodo("N_ELSE_IF empy");
         nodo.add((DefaultMutableTreeNode)bn);
         ((DefaultMutableTreeNode)sw).add(nodo);
@@ -688,7 +693,7 @@ N_ELSE_IF ::=
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
         RESULT = (DefaultMutableTreeNode)n;
 
-       /* System.out.println("ELSE");
+       /* //System.out.printtln("ELSE");
         DefaultMutableTreeNode nodo = parser.createNodo("ELSE");
         //nodo.add(parser.createNodo(id+""));
         //cambiando nombre
@@ -702,7 +707,7 @@ N_ELSE_IF ::=
     |/*Else vacío*/
     OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON 
     {:
-        System.out.println("ELSE");
+        //System.out.printtln("ELSE");
         DefaultMutableTreeNode nodo = parser.createNodo("ELSE empy");
         RESULT = nodo;
     :}
@@ -716,7 +721,7 @@ N_SWITCH ::=
     N_SWITCH_CASE:sw 
     CLOSE_BLOCK
     {:
-        System.out.println("SWITCH");
+        //System.out.printtln("SWITCH");
         DefaultMutableTreeNode nodo = parser.createNodo("SWITCH");
         nodo.add(parser.createNodo(id+""));
         nodo.add((DefaultMutableTreeNode)sw);
@@ -729,7 +734,7 @@ N_SWITCH_CASE ::=
     N_SENTENCIA:e
     N_SWITCH_CASE:sw
     {:
-        System.out.println("N_SWITCH_CASE");
+        //System.out.printtln("N_SWITCH_CASE");
         DefaultMutableTreeNode nodo = parser.createNodo("SWITCH_CASE");
         nodo.add((DefaultMutableTreeNode)bn);
         nodo.add((DefaultMutableTreeNode)e);
@@ -741,7 +746,7 @@ N_SWITCH_CASE ::=
     OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_SWITCH:bn CLOSE_PARENTESIS COLON 
     N_SWITCH_CASE 
     {:
-        System.out.println("N_SWITCH_CASE");
+        //System.out.printtln("N_SWITCH_CASE");
         DefaultMutableTreeNode nodo = parser.createNodo("SWITCH_CASE empy");
         nodo.add((DefaultMutableTreeNode)bn);
         RESULT = nodo;
@@ -750,7 +755,7 @@ N_SWITCH_CASE ::=
     OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON 
     N_SENTENCIA:e
     {:
-        System.out.println("ELSE");
+        //System.out.printtln("ELSE");
         DefaultMutableTreeNode nodo = parser.createNodo("ELSE");
         //nodo.add(parser.createNodo(id+""));
         nodo.add((DefaultMutableTreeNode)e);
@@ -759,7 +764,7 @@ N_SWITCH_CASE ::=
     |/*Else vacío*/
     OPEN_PARENTESIS ELSE CLOSE_PARENTESIS COLON 
     {:
-        System.out.println("ELSE");
+        //System.out.printtln("ELSE");
         DefaultMutableTreeNode nodo = parser.createNodo("ELSE empy");
         RESULT = nodo;
     :}
