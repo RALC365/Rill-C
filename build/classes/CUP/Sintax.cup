@@ -48,6 +48,10 @@ parser code
         this.ERRORES += error;
        this.cERRORES++;
     }
+
+    public void addMessageErrorOnly(String desc){
+        this.ERRORES += desc;
+    }
     public String getERRORES(){
         return this.ERRORES;
     }
@@ -63,10 +67,10 @@ parser code
     }
 
     public String errorMessage(String error, Symbol s){
-        String report = "Syntax error in line " + s.right + " Column " + s.left + ". No se esperaba este componente: " +s.value+ "\nDescripción: " + error +"\n";
-        this.addError(report);
+        //String report = "Syntax error in line " + s.right + " Column " + s.left + ". No se esperaba este componente: " +s.value+ "\nDescripción: " + error +"\n";
+        this.addMessageErrorOnly("Descripción " + error+"\n");
         System.out.println("Cantidad: " + getcERRORES());
-        return report;
+        return "Listo, guapo ;D";
     }
 
     //Se vino el arbolito papa
@@ -225,12 +229,11 @@ N_INICIO ::=
     N_MAIN:e1
     |
     N_MAIN:e1 N_FUNCTIONS
-    |
-    N_FUNCTIONS N_MAIN:e1
+    //Se elimno que comenzará con funciones
     /*error:e {: 
         String report = "Syntax error in line " + parser.getS().right + " Column " + parser.getS().left + ". No se esperaba este componente: " +parser.getS().value;
         //parser.addError(report + "\n");
-        parser.report_error(report,e); 
+        //parser.report_(report,e); 
         //System.out.println("Error: " + "1\n\n\n\n");
     :}*/
 ;
@@ -243,15 +246,30 @@ N_MAIN ::=
     COLON 
     N_SENTENCIA:e
     CLOSE_BLOCK
-    |OPEN_PARENTESIS CLOSE_PARENTESIS error:err MAIN COLON N_SENTENCIA:e CLOSE_BLOCK
+    |OPEN_PARENTESIS CLOSE_PARENTESIS error:err MAIN COLON N_SENTENCIA:e CLOSE_BLOCK{:
+                String desc = "Debe volver a abrir parentesis antes de main \"()(main: -código- :)\" ";
+                String mes = parser.errorMessage(desc, parser.getS());
+                DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
+                RESULT = nodo;
+                //parser.report_(mes ,err);
+        :}
 
-    |OPEN_PARENTESIS error:err {:
+    |OPEN_PARENTESIS error CLOSE_PARENTESIS OPEN_PARENTESIS MAIN COLON N_SENTENCIA:e CLOSE_BLOCK{:
                 String desc = "El main no debe tener parametros";
                 String mes = parser.errorMessage(desc, parser.getS());
                 DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
                 RESULT = nodo;
-                parser.report_error(mes ,err);
+                //parser.report_(mes ,err);
         :}
+    |
+    error:err {:
+                String desc = "Debe iniciar con el main primero";
+                String mes = parser.errorMessage(desc, parser.getS());
+                DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
+                RESULT = nodo;
+                //parser.report_error(mes ,err);
+        :}
+    OPEN_PARENTESIS  CLOSE_PARENTESIS  OPEN_PARENTESIS  MAIN  COLON  N_SENTENCIA:e CLOSE_BLOCK
     |
     OPEN_PARENTESIS 
     CLOSE_PARENTESIS 
@@ -303,28 +321,28 @@ N_FUNCTION ::=
     |N_PARAMETRO:e1 ID:e2 OPEN_PARENTESIS  FUNCTION error:err{:
                 String desc = "Falta \":\" depues de fun";
                 String mes = parser.errorMessage(desc, parser.getS());
-                parser.report_error(mes ,err);
+                //parser.report_(mes ,err);
                 DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
                 RESULT = nodo;
         :}
     |N_PARAMETRO:e1 ID:e2 OPEN_PARENTESIS  FUNCTION COLON  N_RETORNO_FUNCTION:e3 N_SENTENCIA:n error:err{:
                 String desc = "Falta el return de la función";
                 String mes = parser.errorMessage(desc, parser.getS());
-                parser.report_error(mes ,err);
+                //parser.report_(mes ,err);
                 DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
                 RESULT = nodo;
         :}
     |N_PARAMETRO:e1 ID:e2 OPEN_PARENTESIS  FUNCTION COLON  N_RETORNO_FUNCTION:e3 N_SENTENCIA:n RETURN N_VALOR_VARIABLE:vb PYC error:err {:
                 String desc = "Falta el close block de la función";
                 String mes = parser.errorMessage(desc, parser.getS());
-                parser.report_error(mes ,err);
+                //parser.report_(mes ,err);
                 DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
                 RESULT = nodo;
     :}
     |N_PARAMETRO:e1 ID:e2 OPEN_PARENTESIS  FUNCTION COLON  N_RETORNO_FUNCTION:e3 N_SENTENCIA:n RETURN N_VALOR_VARIABLE:vb error:err PYC {:
                 String desc = "Falta el PYC del retorno";
                 String mes = parser.errorMessage(desc, parser.getS());
-                parser.report_error(mes ,err);
+                //parser.report_(mes ,err);
                 DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
                 RESULT = nodo;
     :}
@@ -333,7 +351,7 @@ N_FUNCTION ::=
     error:e {: 
         String report = "Syntax error in line " + parser.getS().right + " Column " + parser.getS().left + ". No se esperaba este componente: " +parser.getS().value;
         //parser.addError(report + "\n");
-        parser.report_error(report,e); 
+        //parser.report_(report,e); 
         System.out.println("Error: " + "2\n\n\n\n\n\n");
         RESULT =  parser.createNodo("ERROR");
     :}*/
@@ -354,7 +372,7 @@ N_PARAMETRO_FUNCTION ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
 ;
     
@@ -369,7 +387,7 @@ N_RETORNO_FUNCTION ::=
     String mes = parser.errorMessage(desc, parser.getS());
     DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
     RESULT = nodo;
-    parser.report_error(mes ,err);
+    //parser.report_(mes ,err);
     :}
     ;
 
@@ -411,7 +429,7 @@ N_SENTENCIA ::=
     error:e {: 
         String report = "Syntax error in line " + parser.getS().right + " Column " + parser.getS().left + ". No se esperaba este componente: " +parser.getS().value;
         //parser.addError(report + "\n");
-        parser.report_error(report,e); 
+        //parser.report_(report,e); 
         ////System.out.println("Error: " + "3\n\n\n\n\n\n");
         RESULT =  parser.createNodo("ERROR");
     :}*/
@@ -465,7 +483,7 @@ N_TO_FOR::=
     error:err{:
         String desc = "Solo se admiten Numeros enteros y variables";
         String mes = parser.errorMessage(desc, parser.getS());
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
         //DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = "ERROR";
     :}
@@ -528,7 +546,7 @@ N_SWITCH_CASE ::=
                 String mes = parser.errorMessage(desc, parser.getS());
                 DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
                 RESULT = nodo;
-                parser.report_error(mes ,err);
+                //parser.report_(mes ,err);
             :}
     |
      OPEN_PARENTESIS error:err OPEN_PARENTESIS COLON
@@ -538,7 +556,7 @@ N_SWITCH_CASE ::=
        String mes = parser.errorMessage(desc, parser.getS());
        DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
        RESULT = nodo;
-       parser.report_error(mes ,err);
+       //parser.report_(mes ,err);
        :}
     
 ;
@@ -554,7 +572,7 @@ N_CALL_FUNCTION::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
     |
     ID OPEN_PARENTESIS error:err{:
@@ -562,7 +580,7 @@ N_CALL_FUNCTION::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
 ;
 
@@ -577,7 +595,7 @@ N_CALL_FUNCTION_PARAMETROS::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
 ;
 N_SENTENCIA_BOOLEANA_ANIDADA ::=
@@ -600,7 +618,7 @@ N_SENTENCIA_BOOLEANA_ANIDADA ::=
             String mes = parser.errorMessage(desc, parser.getS());
             DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
             RESULT = nodo;
-            parser.report_error(mes ,err);
+            //parser.report_(mes ,err);
     :}
     |
     error:err OPEN_PARENTESIS CLOSE_PARENTESIS{:
@@ -608,7 +626,7 @@ N_SENTENCIA_BOOLEANA_ANIDADA ::=
             String mes = parser.errorMessage(desc, parser.getS());
             DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
             RESULT = nodo;
-            parser.report_error(mes ,err);
+            //parser.report_(mes ,err);
     :}
 ;
 
@@ -649,7 +667,7 @@ N_SENTENCIA_BOOLEANA ::=
             String mes = parser.errorMessage(desc, parser.getS());
             DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
             RESULT = nodo;
-            parser.report_error(mes ,err);
+            //parser.report_(mes ,err);
         :}
     |
     FALSE:f OP_REL:op ID:id  
@@ -659,7 +677,7 @@ N_SENTENCIA_BOOLEANA ::=
             String mes = parser.errorMessage(desc, parser.getS());
             DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
             RESULT = nodo;
-            parser.report_error(mes ,err);
+            //parser.report_(mes ,err);
         :}
     |
     TRUE:t OP_REL:op ID:id  
@@ -669,7 +687,7 @@ N_SENTENCIA_BOOLEANA ::=
             String mes = parser.errorMessage(desc, parser.getS());
             DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
             RESULT = nodo;
-            parser.report_error(mes ,err);
+            //parser.report_(mes ,err);
         :}
     |
     /*Number*/
@@ -680,7 +698,7 @@ N_SENTENCIA_BOOLEANA ::=
             String mes = parser.errorMessage(desc, parser.getS());
             DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
             RESULT = nodo;
-            parser.report_error(mes ,err);
+            //parser.report_(mes ,err);
         :}
     |
     NUMBER:n OP_REL:op STRING:s 
@@ -722,7 +740,7 @@ N_SENTENCIA_BOOLEANA ::=
             String mes = parser.errorMessage(desc, parser.getS());
             DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
             RESULT = nodo;
-            parser.report_error(mes ,err);
+            //parser.report_(mes ,err);
         :}
     |
     OP_REL error:err {:
@@ -730,7 +748,7 @@ N_SENTENCIA_BOOLEANA ::=
             String mes = parser.errorMessage(desc, parser.getS());
             DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
             RESULT = nodo;
-            parser.report_error(mes ,err);
+            //parser.report_(mes ,err);
         :}
 ;
 
@@ -772,7 +790,7 @@ N_SENTENCIA_BOOLEANA_SWITCH::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
 ;
 
@@ -872,7 +890,7 @@ N_DECLARACION ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
     |
     INTENGER ID error:err{:
@@ -880,7 +898,7 @@ N_DECLARACION ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
     |
     //mtx TIPO id: funcion(p1,p2,p3...)
@@ -891,7 +909,7 @@ N_DECLARACION ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
     |
     MATRIX N_TIPOS_DECLARACION_MATRIZ error:err{:
@@ -899,7 +917,7 @@ N_DECLARACION ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
       |
     MATRIX N_TIPOS_DECLARACION_MATRIZ COLON error:err{:
@@ -907,7 +925,7 @@ N_DECLARACION ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
     |
     //arr TIPO id: funcion(p1,p2,p3...)
@@ -918,7 +936,7 @@ N_DECLARACION ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
     |
     ARRAY N_TIPOS_DECLARACION_MATRIZ error:err{:
@@ -926,7 +944,7 @@ N_DECLARACION ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
       |
     ARRAY N_TIPOS_DECLARACION_MATRIZ COLON error:err{:
@@ -934,7 +952,7 @@ N_DECLARACION ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
     |
     //char id: funcion(p1,p2,p3...)
@@ -945,7 +963,7 @@ N_DECLARACION ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
     |
     CHAR ID error:err{:
@@ -953,7 +971,7 @@ N_DECLARACION ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
 ;
 
@@ -968,7 +986,7 @@ N_DECLARACION_ID::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
 ;
 
@@ -1001,7 +1019,7 @@ N_TIPOS_DECLARACION_MATRIZ ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
 
 ;
@@ -1021,7 +1039,7 @@ N_MATRIZ ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
         :}
 ;
 N_ARREGLO ::=
@@ -1035,7 +1053,7 @@ N_ARREGLO ::=
         String mes = parser.errorMessage(desc, parser.getS());
         //DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = "ERROR";
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
       :}
     
 ;
@@ -1048,7 +1066,7 @@ N_BOOLEAN_ID ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
     |
     BOOLEAN ID error:err{:
@@ -1056,7 +1074,7 @@ N_BOOLEAN_ID ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
 ;
 
@@ -1077,7 +1095,7 @@ N_BOOLEAN_VALUE::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
         :}
 ;
 
@@ -1091,7 +1109,7 @@ N_ARGUMENTOS ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
         :}
     |
         ID ID error:err {:
@@ -1099,7 +1117,7 @@ N_ARGUMENTOS ::=
             String mes = parser.errorMessage(desc, parser.getS());
             DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
             RESULT = nodo;
-            parser.report_error(mes ,err);
+            //parser.report_(mes ,err);
         :}
     
 ;
@@ -1110,7 +1128,7 @@ N_PRINT ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
         :}
     |
     OPEN_PARENTESIS PRINT  COLON  STRING:e N_PRINT_IMPRESS:n CLOSE_BLOCK error:err {:
@@ -1118,7 +1136,7 @@ N_PRINT ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
         :}
 
     |
@@ -1127,7 +1145,7 @@ N_PRINT ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
         :}
     |
 
@@ -1172,7 +1190,7 @@ N_PRINT_IMPRESS::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;        
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
     | 
             OP_SUM ID:id
@@ -1199,7 +1217,7 @@ N_CIN ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
     |
     OPEN_PARENTESIS CIN COLON
@@ -1208,7 +1226,7 @@ N_CIN ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
     |
     OPEN_PARENTESIS CIN COLON ID
@@ -1217,7 +1235,7 @@ N_CIN ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
         
     :}
     |
@@ -1226,7 +1244,7 @@ N_CIN ::=
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
         RESULT = nodo;
-        parser.report_error(mes ,err);
+        //parser.report_(mes ,err);
     :}
     
 ;
@@ -1242,7 +1260,7 @@ EXPR_LIST   ::= EXPR_LIST:e1 EXPR:e2
                     String mes = parser.errorMessage(desc, parser.getS());
                     DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
                     RESULT = nodo;
-                    parser.report_error(mes ,err);
+                    //parser.report_(mes ,err);
                 :}
             |OPEN_PARENTESIS error: err 
                 {:
@@ -1250,7 +1268,7 @@ EXPR_LIST   ::= EXPR_LIST:e1 EXPR:e2
                     String mes = parser.errorMessage(desc, parser.getS());
                     DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
                     RESULT = nodo;
-                    parser.report_error(mes ,err);
+                    //parser.report_(mes ,err);
                 :}
            
 ;
@@ -1280,7 +1298,7 @@ EXPR        ::= OP_SUM  EXPR:e2
                 String mes = parser.errorMessage(desc, parser.getS());
                 DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
                 RESULT = nodo;
-                parser.report_error(mes ,err);
+                //parser.report_(mes ,err);
             :}
             |
             OP_MULTI_DIV:md error:err{:
@@ -1288,7 +1306,7 @@ EXPR        ::= OP_SUM  EXPR:e2
                 String mes = parser.errorMessage(desc, parser.getS());
                 DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
                 RESULT = nodo;
-                parser.report_error(mes ,err);
+                //parser.report_(mes ,err);
             :}
             |
             MOD error:err{:
@@ -1296,7 +1314,7 @@ EXPR        ::= OP_SUM  EXPR:e2
                 String mes = parser.errorMessage(desc, parser.getS());
                 DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
                 RESULT = nodo;
-                parser.report_error(mes ,err);
+                //parser.report_(mes ,err);
             :}
             /*| 
             ID:id
@@ -1305,7 +1323,7 @@ EXPR        ::= OP_SUM  EXPR:e2
                 String mes = parser.errorMessage(desc, parser.getS());
                 DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
                 RESULT = nodo;
-                parser.report_error(mes ,err);
+                //parser.report_(mes ,err);
             :}*/
 ;
 

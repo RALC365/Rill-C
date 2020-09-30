@@ -424,52 +424,30 @@ public class FrmPrincipal extends javax.swing.JFrame {
 
     private void btnTreeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTreeActionPerformed
         // TODO add your handling code here:
-        try {
-            analizarLexico();
-        } catch (IOException ex) {
-            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        //Cup and Lexer
-        //String ST = txtResultado.getText();
-        String ST = txtCodigo.getText();
-        ASTree = new ASintaxT(new CUP.LexerCup(new StringReader(ST)));
-        
-        try {
-            //jtSintactico.setModel(s.createTreeSintax("SintaxTree"));
-            ASTree.createTreeSintax("Program");
-            ASTree.parse();
-            if(ASTree.getERRORES().equalsIgnoreCase("")){
-                /*txtAnalizarSin.setText("Analisis realizado correctamente");
-                txtAnalizarSin.setForeground(new Color(25, 111, 61));*/
-                    txtAnalizarSin.setText("Se completó el análisis sin errores");
-                    txtAnalizarSin.setForeground(new Color(25, 111, 61));
-                    
-                System.out.println("Se completo el análisis sintáctico sin errores");
-                
-            }else{
-                txtAnalizarSin.setText("Cantidad de Errores: " + s.getcERRORES() + "\n" + s.getERRORES());
+        if((s != null)){
+            if(s.getcERRORES() == 0){
+            String ST = txtCodigo.getText();
+            ASTree = new ASintaxT(new CUP.LexerCup(new StringReader(ST)));
+
+            try {
+                //jtSintactico.setModel(s.createTreeSintax("SintaxTree"));
+                ASTree.createTreeSintax("Program");
+                ASTree.parse();
+            } catch (Exception ex) {
+                Symbol sym = ASTree.getS();
+                txtAnalizarSin.setText("Ups! Algo inesperado sucecido. No se logró generar el árbol");
                 txtAnalizarSin.setForeground(Color.red);
-                System.out.println("Se completo el análisis sintáctico con errores");
             }
-            
-        } catch (Exception ex) {
-            System.out.println("Entro al exeption que pinta en rojo");
-            Symbol sym = ASTree.getS();
-            txtAnalizarSin.setText("Error de sintaxis. Linea: " + (sym.right + 1) + " Columna: " + (sym.left + 1) + ", Texto: \"" + sym.value + "\"");
-            txtAnalizarSin.setForeground(Color.red);
-        }
-        //Setearear errores
-        ASTree.setERRORES("");
-        
-        
-        
-        
-        
-        
-        
-        
-        SwingDemo sintaxTree = new SwingDemo(ASTree.getTreeSintaxModel());
-        sintaxTree.showTree();        
+            SwingDemo sintaxTree = new SwingDemo(ASTree.getTreeSintaxModel());
+            sintaxTree.showTree();   
+            s = null;
+            }else{
+                JOptionPane.showMessageDialog(this, "Se encontraron errores en el análsis sintáctico."
+                        + "\nAún no se puede generar el árbol", "RILL-20", 0);
+            }
+        }else{
+            JOptionPane.showMessageDialog(this, "Aún no ha realizdo en análisis Sintáctico", "RILL-20", 0);
+        }      
     }//GEN-LAST:event_btnTreeActionPerformed
 
     private void btnAnalizarLexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarLexActionPerformed
