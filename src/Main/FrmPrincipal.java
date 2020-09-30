@@ -424,7 +424,51 @@ public class FrmPrincipal extends javax.swing.JFrame {
 
     private void btnTreeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTreeActionPerformed
         // TODO add your handling code here:
-        SwingDemo sintaxTree = new SwingDemo(s.getTreeSintaxModel());
+        try {
+            analizarLexico();
+        } catch (IOException ex) {
+            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //Cup and Lexer
+        //String ST = txtResultado.getText();
+        String ST = txtCodigo.getText();
+        ASTree = new ASintaxT(new CUP.LexerCup(new StringReader(ST)));
+        
+        try {
+            //jtSintactico.setModel(s.createTreeSintax("SintaxTree"));
+            ASTree.createTreeSintax("Program");
+            ASTree.parse();
+            if(ASTree.getERRORES().equalsIgnoreCase("")){
+                /*txtAnalizarSin.setText("Analisis realizado correctamente");
+                txtAnalizarSin.setForeground(new Color(25, 111, 61));*/
+                    txtAnalizarSin.setText("Se completó el análisis sin errores");
+                    txtAnalizarSin.setForeground(new Color(25, 111, 61));
+                    
+                System.out.println("Se completo el análisis sintáctico sin errores");
+                
+            }else{
+                txtAnalizarSin.setText("Cantidad de Errores: " + s.getcERRORES() + "\n" + s.getERRORES());
+                txtAnalizarSin.setForeground(Color.red);
+                System.out.println("Se completo el análisis sintáctico con errores");
+            }
+            
+        } catch (Exception ex) {
+            System.out.println("Entro al exeption que pinta en rojo");
+            Symbol sym = ASTree.getS();
+            txtAnalizarSin.setText("Error de sintaxis. Linea: " + (sym.right + 1) + " Columna: " + (sym.left + 1) + ", Texto: \"" + sym.value + "\"");
+            txtAnalizarSin.setForeground(Color.red);
+        }
+        //Setearear errores
+        ASTree.setERRORES("");
+        
+        
+        
+        
+        
+        
+        
+        
+        SwingDemo sintaxTree = new SwingDemo(ASTree.getTreeSintaxModel());
         sintaxTree.showTree();        
     }//GEN-LAST:event_btnTreeActionPerformed
 
@@ -510,6 +554,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }
 }
 Sintax s;
+ASintaxT ASTree;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAnalizarLex;
     private javax.swing.JButton btnAnalizarSin;

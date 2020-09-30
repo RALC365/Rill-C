@@ -22,6 +22,7 @@ public class Principal {
         String[] rutaS = {"-parser", "Sintax", "./src/CUP/Sintax.cup"};
         String[] rutaAST = {"-parser", "ASintaxT", "./src/CUP/ASintaxT.cup"};
         generar(ruta1, ruta2, rutaS);
+        generar2(ruta2, ruta2, rutaAST);
     }
     public static void generar(String ruta1, String ruta2, String[] rutaS) throws IOException, Exception{
         File archivo;
@@ -45,6 +46,32 @@ public class Principal {
         Files.move(
                 Paths.get("./Sintax.java"), 
                 Paths.get("./src/CUP/Sintax.java")
+        );
+    }
+    
+    
+    public static void generar2(String ruta1, String ruta2, String[] rutaS) throws IOException, Exception{
+        File archivo;
+        archivo = new File(ruta1);
+        JFlex.Main.generate(archivo);
+        archivo = new File(ruta2);
+        JFlex.Main.generate(archivo);
+        java_cup.Main.main(rutaS);
+        Path rutaSym = Paths.get("./src/CUP/sym.java");
+        if (Files.exists(rutaSym)) {
+            Files.delete(rutaSym);
+        }
+        Files.move(
+                Paths.get("./sym.java"), 
+                Paths.get("./src/CUP/sym.java")
+        );
+        Path rutaSin = Paths.get("./src/CUP/ASintaxT.java");
+        if (Files.exists(rutaSin)) {
+            Files.delete(rutaSin);
+        }
+        Files.move(
+                Paths.get("./ASintaxT.java"), 
+                Paths.get("./src/CUP/ASintaxT.java")
         );
     }
 }
