@@ -1609,7 +1609,8 @@ N_DECLARACION ::=
     INTENGER:e1 ID:e2 COLON N_CALL_FUNCTION:e3
     {:
         DefaultMutableTreeNode nodo = parser.createNodo("Declaración");
-        nodo.add(parser.createNodo(e1+" " + e2+""));
+        nodo.add(parser.createNodo(e1+""));
+        nodo.add(parser.createNodo(e2+""));
         nodo.add((DefaultMutableTreeNode)e3);
         RESULT = nodo;
     :}
@@ -1710,7 +1711,7 @@ N_DECLARACION ::=
         RESULT = nodo;
     :}   
     |
-    CHAR COLON error:err{:
+    CHAR COLON error:err {:
         String desc = "Fala identificador del char";
         String mes = parser.errorMessage(desc, parser.getS());
         DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
