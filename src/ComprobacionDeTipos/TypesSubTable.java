@@ -18,6 +18,7 @@ public class TypesSubTable {
     private final String functionType;
     private final HashMap<String, TableRow> ids = new HashMap();
     private TypesSubTable parent;
+    private final HashMap<String, TypesSubTable> children = new HashMap();
 
     public TypesSubTable(String functionName, String functionType, Object treepart) {
         this.functionName = functionName;
