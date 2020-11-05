@@ -25,7 +25,7 @@ public class JtreeToDefaultTreeforTreeLayout {
     }
 
     public DefaultTreeForTreeLayout<TextInBox> getDefaultTreeForTreeLayoutfromJtree() {
-        actualRoot = new TextInBox(oldTree.getRoot().toString(), (oldTree.getRoot().toString().length()*9), 20);
+        actualRoot = new TextInBox(oldTree.getRoot().toString(), (oldTree.getRoot().toString().length() * 9), 20);
         newTree = new DefaultTreeForTreeLayout<TextInBox>(actualRoot);
         //Convert((DefaultMutableTreeNode) oldTree.getRoot());
         convert(oldTree, oldTree.getRoot());
@@ -37,16 +37,22 @@ public class JtreeToDefaultTreeforTreeLayout {
         for (int i = 0; i < cc; i++) {
             Object child = model.getChild(o, i);
             if (model.isLeaf(child)) {
-                System.out.println("    " + child.toString());
-                TextInBox node = new TextInBox(child.toString(), (child.toString().length()*9), 20);
+                int x = 9;
+                if ((child.toString().length()) < 5) {
+                    x = 15;
+                }
+                TextInBox node = new TextInBox(child.toString(), (child.toString().length() * x), 20);
                 newTree.addChild(actualRoot, node);
             } else {
-                System.out.println(child.toString());
-                TextInBox node = new TextInBox(child.toString(), (child.toString().length()*9), 20);
+                int x = 9;
+                if ((child.toString().length()) < 5) {
+                    x = 15;
+                }
+                TextInBox node = new TextInBox(child.toString(), (child.toString().length() * x), 20);
                 newTree.addChild(actualRoot, node);
-                actualRoot=node;
+                actualRoot = node;
                 convert(model, child);
-                actualRoot=newTree.getParent(node);
+                actualRoot = newTree.getParent(node);
             }
         }
     }

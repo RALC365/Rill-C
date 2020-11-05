@@ -48,9 +48,9 @@ public class TextInBoxTreePane extends JComponent {
     // -------------------------------------------------------------------
     // painting
     private final static int ARC_SIZE = 10;
-    private final static Color BOX_COLOR = Color.GREEN;
-    private final static Color BORDER_COLOR = Color.darkGray;
-    private final static Color TEXT_COLOR = Color.black;
+    private final static Color BOX_COLOR = Color.BLACK;
+    private final static Color BORDER_COLOR = Color.WHITE;
+    private final static Color TEXT_COLOR = Color.WHITE;
 
     private void paintEdges(Graphics g, TextInBox parent) {
         if (!getTree().isLeaf(parent)) {

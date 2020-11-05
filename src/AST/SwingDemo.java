@@ -39,7 +39,7 @@ public class SwingDemo {
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.setLocationRelativeTo(null);
         dialog.setAlwaysOnTop(true);
-        dialog.setModal(true);
+        //dialog.setModal(true);
         //full screen
         dialog.setLocationRelativeTo(dialog);
         dialog.setPreferredSize(new Dimension(JFrame.MAXIMIZED_HORIZ, JFrame.MAXIMIZED_VERT));

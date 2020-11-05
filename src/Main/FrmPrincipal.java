@@ -7,6 +7,7 @@ package Main;
 
 import AST.SwingDemo;
 import CUP.*;
+import ComprobacionDeTipos.TypesTable;
 import LexerS.Lexer;
 import java.awt.Color;
 import java.io.File;
@@ -31,19 +32,20 @@ public class FrmPrincipal extends javax.swing.JFrame {
      * Creates new form FrmPrincipal
      */
     NumeroLinea numeroLinea;
+
     public FrmPrincipal() {
         initComponents();
         this.numeroLinea = new NumeroLinea(this.txtCodigo);
         this.jScrollCodigo.setRowHeaderView(this.numeroLinea);
         this.setLocationRelativeTo(null);
-        this.setExtendedState(this.MAXIMIZED_BOTH); 
-        
+        this.setExtendedState(this.MAXIMIZED_BOTH);
+
         //this.jScrollCodigo.setColumnHeaderView(numeroLinea);
     }
-    
-    private void analizarLexico() throws IOException{
+
+    private void analizarLexico() throws IOException {
         int cont = 1;
-        
+
         String expr = (String) txtCodigo.getText();
         Lexer lexer = new Lexer(new StringReader(expr));
         String resultado = "LINEA " + cont + "\t\tSIMBOLO\n";
@@ -106,7 +108,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 case CHAR_ELEMENT:
                     resultado += "  <CHAR_ELEMENT>\t\t" + lexer.lexeme + "\n";
                     break;
-                    /* control statements */
+                /* control statements */
                 case FUNCTION:
                     resultado += "  <FUNCTION>\t\t" + lexer.lexeme + "\n";
                     break;
@@ -128,14 +130,14 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 case CIN:
                     resultado += "  <CIN>\t\t" + lexer.lexeme + "\n";
                     break;
-                    
+
                 case TO:
                     resultado += "  <TO>\t\t" + lexer.lexeme + "\n";
                     break;
                 case MAIN:
                     resultado += "  <MAIN>\t\t" + lexer.lexeme + "\n";
                     break;
-                    /* operators */
+                /* operators */
                 case OP_REL:
                     resultado += "  <OP_REL>\t\t" + lexer.lexeme + "\n";
                     break;
@@ -145,7 +147,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 case OP_MULTI_DIV:
                     resultado += "  <OP_MULTI_DIV>\t\t" + lexer.lexeme + "\n";
                     break;
-                 
+
                 case MOD:
                     resultado += "  <MOD>\t\t" + lexer.lexeme + "\n";
                     break;
@@ -158,11 +160,11 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 case CON_OR:
                     resultado += "  <CON_OR>\t\t" + lexer.lexeme + "\n";
                     break;
-                    /* data types */
+                /* data types */
                 case INTENGER:
                     resultado += "  <INTENGER>\t\t" + lexer.lexeme + "\n";
                     break;
-                    
+
                 case BOOLEAN:
                     resultado += "  <BOOLEAN>\t\t" + lexer.lexeme + "\n";
                     break;
@@ -178,17 +180,17 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 case VARIABLE:
                     resultado += "  <VARIABLE>\t\t" + lexer.lexeme + "\n";
                     break;
-                    /* identifiers */
+                /* identifiers */
                 case ID:
                     resultado += "  <ID>\t\t" + lexer.lexeme + "\n";
                     break;
                 case NUMBER:
                     resultado += "  <NUMBER>\t\t" + lexer.lexeme + "\n";
-                    break;        
+                    break;
                 case ERROR:
                     resultado += "  <Simbolo no definido>\t\t" + lexer.lexeme + "\n";
                     break;
-                
+
                 default:
                     resultado += "  < " + lexer.lexeme + " >\n";
                     break;
@@ -368,25 +370,25 @@ public class FrmPrincipal extends javax.swing.JFrame {
         //String ST = txtResultado.getText();
         String ST = txtCodigo.getText();
         s = new Sintax(new CUP.LexerCup(new StringReader(ST)));
-        
+
         try {
             //jtSintactico.setModel(s.createTreeSintax("SintaxTree"));
             s.createTreeSintax("Program");
             s.parse();
-            if(s.getERRORES().equalsIgnoreCase("")){
+            if (s.getERRORES().equalsIgnoreCase("")) {
                 /*txtAnalizarSin.setText("Analisis realizado correctamente");
                 txtAnalizarSin.setForeground(new Color(25, 111, 61));*/
-                    txtAnalizarSin.setText("Se completó el análisis sin errores");
-                    txtAnalizarSin.setForeground(new Color(25, 111, 61));
-                    
+                txtAnalizarSin.setText("Se completó el análisis sin errores");
+                txtAnalizarSin.setForeground(new Color(25, 111, 61));
+
                 System.out.println("Se completo el análisis sintáctico sin errores");
-                
-            }else{
+
+            } else {
                 txtAnalizarSin.setText("Cantidad de Errores: " + s.getcERRORES() + "\n" + s.getERRORES());
                 txtAnalizarSin.setForeground(Color.red);
                 System.out.println("Se completo el análisis sintáctico con errores");
             }
-            
+
         } catch (Exception ex) {
             System.out.println("Entro al exeption que pinta en rojo");
             Symbol sym = s.getS();
@@ -404,7 +406,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         // TODO add your handling code here:
         try {
-           
+
             JFileChooser chooser = new JFileChooser();
             chooser.showOpenDialog(null);
             File archivo = new File(chooser.getSelectedFile().getAbsolutePath());
@@ -429,30 +431,31 @@ public class FrmPrincipal extends javax.swing.JFrame {
 
     private void btnTreeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTreeActionPerformed
         // TODO add your handling code here:
-        if((s != null)){
-            if(s.getcERRORES() == 0){
-            String ST = txtCodigo.getText();
-            ASTree = new ASintaxT(new CUP.LexerCup(new StringReader(ST)));
+        if ((s != null)) {
+            if (s.getcERRORES() == 0) {
+                String ST = txtCodigo.getText();
+                ASTree = new ASintaxT(new CUP.LexerCup(new StringReader(ST)));
 
-            try {
-                //jtSintactico.setModel(s.createTreeSintax("SintaxTree"));
-                ASTree.createTreeSintax("Program");
-                ASTree.parse();
-            } catch (Exception ex) {
-                Symbol sym = ASTree.getS();
-                txtAnalizarSin.setText("Ups! Algo inesperado sucecido. No se logró generar el árbol");
-                txtAnalizarSin.setForeground(Color.red);
-            }
-            SwingDemo sintaxTree = new SwingDemo(ASTree.getTreeSintaxModel());
-            sintaxTree.showTree();   
-            s = null;
-            }else{
+                try {
+                    //jtSintactico.setModel(s.createTreeSintax("SintaxTree"));
+                    ASTree.createTreeSintax("Program");
+                    ASTree.parse();
+                } catch (Exception ex) {
+                    Symbol sym = ASTree.getS();
+                    txtAnalizarSin.setText("Ups! Algo inesperado sucecido. No se logró generar el árbol");
+                    txtAnalizarSin.setForeground(Color.red);
+                }
+                SwingDemo sintaxTree = new SwingDemo(ASTree.getTreeSintaxModel());
+                sintaxTree.showTree();
+                TypesTable tt = new TypesTable(ASTree.getTreeSintaxModel());
+                s = null;
+            } else {
                 JOptionPane.showMessageDialog(this, "Se encontraron errores en el análsis sintáctico."
                         + "\nAún no se puede generar el árbol", "RILL-20", 0);
             }
-        }else{
+        } else {
             JOptionPane.showMessageDialog(this, "Aún no ha realizdo en análisis Sintáctico", "RILL-20", 0);
-        }      
+        }
     }//GEN-LAST:event_btnTreeActionPerformed
 
     private void btnAnalizarLexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarLexActionPerformed
@@ -470,7 +473,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
 
     private void btnLimpiarLex1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarLex1ActionPerformed
         // TODO add your handling code here:
-            this.txtAnalizarLex.setText("");
+        this.txtAnalizarLex.setText("");
     }//GEN-LAST:event_btnLimpiarLex1ActionPerformed
 
     /**
@@ -507,37 +510,37 @@ public class FrmPrincipal extends javax.swing.JFrame {
             }
         });
     }
-    
-    public void guardarComo(){
 
-    JFileChooser guardar = new JFileChooser();
-    guardar.showSaveDialog(null);
-    guardar.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+    public void guardarComo() {
 
-    File archivo = guardar.getSelectedFile();
+        JFileChooser guardar = new JFileChooser();
+        guardar.showSaveDialog(null);
+        guardar.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
-    //guardarFichero(txtResultado.getText(), archivo);
+        File archivo = guardar.getSelectedFile();
+
+        //guardarFichero(txtResultado.getText(), archivo);
         guardarFichero(txtCodigo.getText(), archivo);
 
-}
-    
-    public void guardarFichero(String cadena, File archivo){
-
-    FileWriter escribir;
-    try {
-
-        escribir = new FileWriter(archivo, true);
-        escribir.write(cadena);
-        escribir.close();
-
-    } catch (FileNotFoundException ex) {
-        JOptionPane.showMessageDialog(null, "Error al guardar, ponga nombre al archivo");
-    } catch (IOException ex) {
-        JOptionPane.showMessageDialog(null, "Error al guardar, en la salida");
     }
-}
-Sintax s;
-ASintaxT ASTree;
+
+    public void guardarFichero(String cadena, File archivo) {
+
+        FileWriter escribir;
+        try {
+
+            escribir = new FileWriter(archivo, true);
+            escribir.write(cadena);
+            escribir.close();
+
+        } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(null, "Error al guardar, ponga nombre al archivo");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Error al guardar, en la salida");
+        }
+    }
+    Sintax s;
+    ASintaxT ASTree;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAnalizarLex;
     private javax.swing.JButton btnAnalizarSin;
