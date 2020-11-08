@@ -633,7 +633,7 @@ N_FOR ::=
     N_SENTENCIA:n
     CLOSE_BLOCK
     {:
-        DefaultMutableTreeNode parametros = parser.createNodo(id+","+n1+"->"+n2+","+o+n3);
+        DefaultMutableTreeNode parametros = parser.createNodo(id+","+n1+","+n2+","+o+n3);
         ((DefaultMutableTreeNode)n).insert(parametros,0);
         ((DefaultMutableTreeNode)n).setUserObject("FOR");
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
@@ -2102,11 +2102,11 @@ N_CIN ::=
 /* ------------------------------MATHEMATICS--------------------------------- */
 
 EXPR_LIST   ::= EXPR_LIST:e1 EXPR:e2 
-                {:((DefaultMutableTreeNode)e2).add((DefaultMutableTreeNode)e1);
+                {:((DefaultMutableTreeNode)e2).insert((DefaultMutableTreeNode)e1,0);
                     RESULT = ((DefaultMutableTreeNode)e2);:}
             |OPEN_PARENTESIS EXPR_LIST:e1 CLOSE_PARENTESIS EXPR_LIST:e2
                 {:
-                    ((DefaultMutableTreeNode)e2).add((DefaultMutableTreeNode)e1);
+                    ((DefaultMutableTreeNode)e2).insert((DefaultMutableTreeNode)e1,0);
                     RESULT = ((DefaultMutableTreeNode)e2);
                 :}
             | EXPR:e                     
@@ -2134,17 +2134,17 @@ EXPR_LIST   ::= EXPR_LIST:e1 EXPR:e2
 
 EXPR        ::= OP_SUM:o  EXPR:e2 
                 {:DefaultMutableTreeNode nodo = parser.createNodo(o+"");
-                  nodo.add((DefaultMutableTreeNode)e2);
+                  nodo.insert((DefaultMutableTreeNode)e2,0);
                 RESULT = nodo;:}
             | OP_MULTI_DIV:o EXPR:e2
-                {:DefaultMutableTreeNode nodo = parser.createNodo(0+"");
-                  nodo.add((DefaultMutableTreeNode)e2);
+                {:DefaultMutableTreeNode nodo = parser.createNodo(o+"");
+                  nodo.insert((DefaultMutableTreeNode)e2,0);
                 RESULT = nodo;:}
             | OPEN_PARENTESIS EXPR_LIST:e CLOSE_PARENTESIS
                 {: RESULT = e;:}
             | MOD EXPR:e2
                 {:DefaultMutableTreeNode nodo = parser.createNodo("%");
-                  nodo.add((DefaultMutableTreeNode)e2);
+                  nodo.insert((DefaultMutableTreeNode)e2,0);
                 RESULT = nodo;:}
             | NUMBER:n
                 {:DefaultMutableTreeNode nodo = parser.createNodo(n+"");
