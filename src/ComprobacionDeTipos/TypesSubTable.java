@@ -144,18 +144,12 @@ public class TypesSubTable {
     
     //Arreglo: false, Matriz: true
     private String[] buildMatrixArray(TableRow arrayRow, Object elements, boolean level) {
-        System.out.println("K");
         int cc = model.getChildCount(elements);
         String[] acumulative = new String[cc];
         String[][] overAcumulative = (level) ? new String[cc][] : null;
-        System.out.println("P");
         for (int i = 0; i < cc; i++) {
-            System.out.println("T");
-            System.out.println(i);
             if (acumulative != null) {
-                System.out.println("N");
                 Object subElement = model.getChild(elements, i);
-                System.out.println(arrayRow.type+ " : "+subElement.toString());
                 if (subElement.toString().equals("ELEMENTS")) {
                     if (!level) {
                         System.out.println("Imposible de construir: Tipo esperado 'arr', tipo recibido: 'mtx'.");
@@ -167,20 +161,11 @@ public class TypesSubTable {
                     if ((level)||(!checkValue(arrayRow.type, subElement.toString()))) {
                       return null;
                     }
-                    System.out.println("JODA");
-                    System.out.println(subElement.toString());
                     acumulative[i] = subElement.toString();
-                    System.out.println("After JODA");
-                    System.out.println(acumulative[i]);
                 }
             }
         }
-        System.out.println("Evil");
         if (acumulative != null) {
-            System.out.println("Culiacan");
-            for (int i = 0; i < acumulative.length; i++) {
-                System.out.println(acumulative[i]);
-            }
             arrayRow.setValue((overAcumulative != null) ? overAcumulative: acumulative);
         }
         return acumulative;

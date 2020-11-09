@@ -36,11 +36,11 @@ class TableRow {
         if ((this.value != null)&&(this.value.getClass().isArray())) {
             if(this.value instanceof String[]) {
                 String[] objects = (String[]) this.value;
-                return "id: " + id + ", type: " + type + ", value: " + Arrays.toString(objects);
+                return "id: " + id + ", type: (0.."+ (objects.length-1) + ", " + type + "), value: " + Arrays.toString(objects);
             }
             if(this.value instanceof String[][]) {
                 String[][] objects = (String[][]) this.value;
-                return "id: " + id + ", type: " + type + ", value: " + Arrays.deepToString(objects);
+                return "id: " + id + ", type: (0.."+ (objects.length-1) + ", (0.." + (objects[0].length-1) + ", " + type + ")), value: " + Arrays.deepToString(objects);
             }
         }
         return "id: " + id + ", type: " + type + ", value: " + value;
