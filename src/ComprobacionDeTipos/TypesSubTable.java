@@ -147,7 +147,7 @@ public class TypesSubTable {
         System.out.println("K");
         int cc = model.getChildCount(elements);
         String[] acumulative = new String[cc];
-        String[][] overAcumulative = new String[cc][];
+        String[][] overAcumulative = (level) ? new String[cc][] : null;
         System.out.println("P");
         for (int i = 0; i < cc; i++) {
             System.out.println("T");
@@ -167,11 +167,20 @@ public class TypesSubTable {
                     if ((level)||(!checkValue(arrayRow.type, subElement.toString()))) {
                       return null;
                     }
+                    System.out.println("JODA");
+                    System.out.println(subElement.toString());
                     acumulative[i] = subElement.toString();
+                    System.out.println("After JODA");
+                    System.out.println(acumulative[i]);
                 }
             }
         }
+        System.out.println("Evil");
         if (acumulative != null) {
+            System.out.println("Culiacan");
+            for (int i = 0; i < acumulative.length; i++) {
+                System.out.println(acumulative[i]);
+            }
             arrayRow.setValue((overAcumulative != null) ? overAcumulative: acumulative);
         }
         return acumulative;
