@@ -1751,7 +1751,11 @@ N_TIPOS_DECLARACION_MATRIZ ::=
 //solo matrices de dos dimensiones
 N_MATRIZ ::=  
     OPEN_SQR_BRACKET N_ARREGLO:n
-    {:RESULT= n;:}
+    {:
+        DefaultMutableTreeNode el=parser.createNodo("ELEMENTS");
+        el.add((DefaultMutableTreeNode)n);
+        RESULT = el;
+    :}
     |
     OPEN_SQR_BRACKET N_ARREGLO:a COMA N_MATRIZ:n 
         {:
