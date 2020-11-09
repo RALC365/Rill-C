@@ -5,6 +5,8 @@
  */
 package ComprobacionDeTipos;
 
+import java.util.Arrays;
+
 /**
  *
  * @author Usuario
@@ -13,7 +15,7 @@ class TableRow {
 
     public final String id;
     public final String type;
-    public final Object value;
+    private Object value;
 
     public TableRow(String id, String type, Object value) {
         this.id = id;
@@ -21,8 +23,26 @@ class TableRow {
         this.type = type;
     }
 
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
+    }    
+
     @Override
     public String toString() {
+        if ((this.value != null)&&(this.value.getClass().isArray())) {
+            if(this.value instanceof String[]) {
+                String[] objects = (String[]) this.value;
+                return "id: " + id + ", type: " + type + ", value: " + Arrays.toString(objects);
+            }
+            if(this.value instanceof String[][]) {
+                String[][] objects = (String[][]) this.value;
+                return "id: " + id + ", type: " + type + ", value: " + Arrays.deepToString(objects);
+            }
+        }
         return "id: " + id + ", type: " + type + ", value: " + value;
     }
 

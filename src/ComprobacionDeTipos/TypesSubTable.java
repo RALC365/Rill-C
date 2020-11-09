@@ -14,13 +14,13 @@ import javax.swing.tree.DefaultTreeModel;
  */
 public class TypesSubTable {
 
-    private final Object treepart;
+    private final Object treepart;//actual
     private final DefaultTreeModel model;
     private final String functionName;
     private final String functionType;
-    private final HashMap<String, TableRow> ids = new HashMap();
+    private final HashMap<String, TableRow> ids = new HashMap();//Tabla de sibolos
     private final TypesSubTable parent;
-    private final HashMap<String, TypesSubTable> children = new HashMap();
+    private final HashMap<String, TypesSubTable> children = new HashMap();//Arbol de Simbolos
 
     public TypesSubTable(String functionName, String functionType, DefaultTreeModel model, Object treepart, TypesSubTable parent) {
         this.functionName = functionName;
@@ -42,7 +42,7 @@ public class TypesSubTable {
         }
     }
 
-    private boolean addIDToSubTable(TableRow t) {
+    private boolean addIDToSubTable(TableRow t) {//?
         if (ids.containsKey(t.id)) {
             return false;
         }
@@ -74,8 +74,8 @@ public class TypesSubTable {
 
             //WHILE
             if (o.toString().equals("WHILE")) {
-                TypesSubTable st = new TypesSubTable("FOR", "nll", model, o, this);
-                this.children.put("FOR", st);
+                TypesSubTable st = new TypesSubTable("WHILE", "nll", model, o, this);
+                this.children.put("WHILE", st);
             }
 
             //Al ser estas declaraciones sin valores, no necesita ver si el valor 
@@ -99,6 +99,28 @@ public class TypesSubTable {
                 String val = model.getChild(o, 2).toString();
                 checkDeclr(id, type, val, o);
             }
+            
+            //Declaraciones de Matrices
+            if (o.toString().equals("DECLR MATRIX")) {
+                //Asume que aprobó la evaluación sintáctica y el token es: ELEMENTS
+                TableRow arrayRow = new TableRow(model.getChild(o, 2).toString(), model.getChild(o, 1).toString(), null);
+                buildMatrixArray(
+                        arrayRow,
+                        model.getChild(o, 3),
+                        true);
+                addIDToSubTable(arrayRow);
+            }
+            
+            //Declaraciones de Arreglos
+            if (o.toString().equals("DECLR ARRAY")) {
+                //Asume que aprobó la evaluación sintáctica y el token es: ELEMENTS
+                TableRow arrayRow = new TableRow(model.getChild(o, 2).toString(), model.getChild(o, 1).toString(), null);
+                buildMatrixArray(
+                        arrayRow,
+                        model.getChild(o, 3),
+                        false);
+                addIDToSubTable(arrayRow);
+            }
 
             //Asignaciones
             if (o.toString().equals("ASSIGN")) {
@@ -118,6 +140,41 @@ public class TypesSubTable {
         } catch (NumberFormatException nfe) {
             return false;
         }
+    }
+    
+    //Arreglo: false, Matriz: true
+    private String[] buildMatrixArray(TableRow arrayRow, Object elements, boolean level) {
+        System.out.println("K");
+        int cc = model.getChildCount(elements);
+        String[] acumulative = new String[cc];
+        String[][] overAcumulative = new String[cc][];
+        System.out.println("P");
+        for (int i = 0; i < cc; i++) {
+            System.out.println("T");
+            System.out.println(i);
+            if (acumulative != null) {
+                System.out.println("N");
+                Object subElement = model.getChild(elements, i);
+                System.out.println(arrayRow.type+ " : "+subElement.toString());
+                if (subElement.toString().equals("ELEMENTS")) {
+                    if (!level) {
+                        System.out.println("Imposible de construir: Tipo esperado 'arr', tipo recibido: 'mtx'.");
+                        return null;
+                    }
+                    acumulative = buildMatrixArray(arrayRow, subElement, false);
+                    overAcumulative[i] = acumulative;
+                } else {
+                    if ((level)||(!checkValue(arrayRow.type, subElement.toString()))) {
+                      return null;
+                    }
+                    acumulative[i] = subElement.toString();
+                }
+            }
+        }
+        if (acumulative != null) {
+            arrayRow.setValue((overAcumulative != null) ? overAcumulative: acumulative);
+        }
+        return acumulative;
     }
 
     //Vesmos si la declaración es correcta
@@ -165,10 +222,10 @@ public class TypesSubTable {
 
             if (isNumeric(value)) {
                 var2Type = "int";
-            } else if (value.contains(":fun")) {
+            } else if (value.contains(":fun")) {//x
                 //Verificar el tipo de la función
                 var2Type = "nll";
-            } else if (value.equals("false") || value.equals("true")) {
+            } else if (value.equals("false") || value.equals("true")) {//x
                 var2Type = "bln";
             } else if (value.contains("'") || (value.contains("‘") && value.contains("’"))) {
                 var2Type = "chr";
@@ -188,7 +245,7 @@ public class TypesSubTable {
             if (var.type.equals(var2Type)) {
                 return true;
             } else {
-                System.out.println("Error de Tipo. La variable " + id + " y el valor " + value
+                System.out.println("Error de Tipo. La variable " + id + " y el valor " + var2Type
                         + " no son compatibles");
                 return false;
             }
@@ -196,6 +253,26 @@ public class TypesSubTable {
             System.out.println("La variable " + id + " no ha sido declarada.");
             return false;
         }
+    }
+    
+    private boolean checkValue(String declaredValue, String currentValue) {
+        String typeValue = "";
+        if (currentValue.contains("'") || (currentValue.contains("‘") && currentValue.contains("’"))) {
+            if (currentValue.length() < 2) {
+                typeValue = "chr";
+            }
+        }
+        if (isNumeric(currentValue)) {
+            typeValue = "int";
+        }
+        if (currentValue.equals("false") || currentValue.equals("true")) {
+            typeValue = "bln";
+        }
+        if (declaredValue.equals(typeValue)) {
+            return true;
+        }
+        System.out.println("El valor " + currentValue + " no corresponde al Tipo: "+declaredValue+".");
+        return false;
     }
 
     @Override

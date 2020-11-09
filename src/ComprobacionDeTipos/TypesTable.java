@@ -43,6 +43,7 @@ public class TypesTable {
             }
             //Crea una nueva subtabla y la agrega al Hashmap de las subtablas
             //El key de búsqyeda es "nombreFuncion"
+            System.out.println(name + " : " + typeOfFuction);
             TypesSubTable x = new TypesSubTable(name, typeOfFuction, model, child, null);
             //x.getDeclarations(model, child, x);
             subtables.put(name, x);
