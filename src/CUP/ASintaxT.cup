@@ -1596,7 +1596,7 @@ N_DECLARACION ::=
     //mtx TIPO id: funcion(p1,p2,p3...)
     MATRIX:i N_TIPOS_DECLARACION_MATRIZ:t ID:id COLON N_CALL_FUNCTION:f 
     {:
-        DefaultMutableTreeNode nodo = parser.createNodo("DECLR");
+        DefaultMutableTreeNode nodo = parser.createNodo("DECLR MATRIX");
         nodo.add(parser.createNodo(i+""));
         nodo.add((DefaultMutableTreeNode)t);
         nodo.add(parser.createNodo(id+""));
@@ -1631,7 +1631,7 @@ N_DECLARACION ::=
     //arr TIPO id: funcion(p1,p2,p3...)
     ARRAY:a N_TIPOS_DECLARACION_MATRIZ:t ID:id COLON N_CALL_FUNCTION:f 
     {:
-        DefaultMutableTreeNode nodo = parser.createNodo("DECLR");
+        DefaultMutableTreeNode nodo = parser.createNodo("DECLR ARRAY");
         nodo.add(parser.createNodo(a+""));
         nodo.add((DefaultMutableTreeNode) t);
         nodo.add(parser.createNodo(id+""));

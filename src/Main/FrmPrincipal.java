@@ -7,6 +7,8 @@ package Main;
 
 import AST.SwingDemo;
 import CUP.*;
+import ComprobacionDeTipos.TypeErrorException;
+import ComprobacionDeTipos.TypesSubTable;
 import ComprobacionDeTipos.TypesTable;
 import LexerS.Lexer;
 import java.awt.Color;
@@ -19,6 +21,7 @@ import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java_cup.runtime.Symbol;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -32,6 +35,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
      * Creates new form FrmPrincipal
      */
     NumeroLinea numeroLinea;
+    TypesTable tt;
 
     public FrmPrincipal() {
         initComponents();
@@ -52,7 +56,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
         while (true) {
             Tokens token = lexer.yylex();
             if (token == null) {
-                txtAnalizarLex.setText(resultado);
+                console_txt.setText(resultado);
                 return;
             }
             switch (token) {
@@ -198,6 +202,80 @@ public class FrmPrincipal extends javax.swing.JFrame {
         }
     }
 
+    private void analizarSintactico() {
+        // TODO add your handling code here:
+        //Only Lexer
+        try {
+            analizarLexico();
+        } catch (IOException ex) {
+            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //Cup and Lexer
+        //String ST = txtResultado.getText();
+        String ST = txtCodigo.getText();
+        s = new Sintax(new CUP.LexerCup(new StringReader(ST)));
+        try {
+            //jtSintactico.setModel(s.createTreeSintax("SintaxTree"));
+            s.createTreeSintax("Program");
+            s.parse();
+            if (s.getERRORES().equalsIgnoreCase("")) {
+                /*txtAnalizarSin.setText("Analisis realizado correctamente");
+                txtAnalizarSin.setForeground(new Color(25, 111, 61));*/
+                console_txt.setText("Se completó el análisis sin errores");
+                console_txt.setForeground(Color.green);
+            } else {
+                console_txt.setText("Cantidad de Errores: " + s.getcERRORES() + "\n" + s.getERRORES());
+                console_txt.setForeground(Color.red);
+            }
+            console_txt.setForeground(Color.red);
+        } catch (Exception ex) {
+            Symbol sym = s.getS();
+            console_txt.setText("Error de sintaxis. Linea: " + (sym.right + 1) + " Columna: " + (sym.left + 1) + ", Texto: \"" + sym.value + "\"");
+            console_txt.setForeground(Color.red);
+        }
+        //Setearear errores
+        s.setERRORES("");
+
+        ASTree = new ASintaxT(new CUP.LexerCup(new StringReader(ST)));
+
+        try {
+            //jtSintactico.setModel(s.createTreeSintax("SintaxTree"));
+            ASTree.createTreeSintax("Program");
+            ASTree.parse();
+        } catch (Exception ex) {
+            Symbol sym = ASTree.getS();
+            console_txt.setText("Ups! Algo inesperado sucecido. No se logró generar el árbol");
+            console_txt.setForeground(Color.red);
+        }
+        s = null;
+    }
+
+    private void showTree() {
+        SwingDemo sintaxTree = new SwingDemo(ASTree.getTreeSintaxModel());
+        sintaxTree.showTree();
+    }
+
+    private void ComprobacionTipos() {
+        try {
+            tt = new TypesTable(ASTree.getTreeSintaxModel());
+            console_txt.setForeground(Color.green);
+        } catch (TypeErrorException e) {
+            console_txt.setText(e.getMessage());
+            console_txt.setForeground(Color.red);
+        }
+    }
+
+    private void VerTablasDeTipo(TypesSubTable t) {
+        if (!t.children.isEmpty()) {
+            t.children.keySet().forEach((i) -> {
+                console_txt.setText(console_txt.getText() + t.children.get(i).toString() + "\n");
+                VerTablasDeTipo(t.children.get(i));
+            });
+        } else {
+            console_txt.setText(console_txt.getText() + t.toString() + "\n");
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -207,25 +285,98 @@ public class FrmPrincipal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jdConsole = new javax.swing.JDialog();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        console_txt = new javax.swing.JTextPane();
+        jMenuBar2 = new javax.swing.JMenuBar();
+        jMenuSee = new javax.swing.JMenu();
+        jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuItem11 = new javax.swing.JMenuItem();
+        jMenuItem5 = new javax.swing.JMenuItem();
+        jMenuItem6 = new javax.swing.JMenuItem();
+        jMenuItem9 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
+        jMenuItem8 = new javax.swing.JMenuItem();
+        jMenu4 = new javax.swing.JMenu();
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        txtAnalizarLex = new javax.swing.JTextArea();
-        btnAnalizarLex = new javax.swing.JButton();
-        btnTree = new javax.swing.JButton();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        txtAnalizarSin = new javax.swing.JTextArea();
-        btnAnalizarSin = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        btnLimpiarSin1 = new javax.swing.JButton();
-        btnLimpiarLex1 = new javax.swing.JButton();
         jScrollCodigo = new javax.swing.JScrollPane();
         txtCodigo = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
+        jMenu5 = new javax.swing.JMenu();
+        jMenuItem10 = new javax.swing.JMenuItem();
+
+        jdConsole.setTitle("Rill-20 Console ");
+        jdConsole.setBackground(new java.awt.Color(0, 0, 0));
+        jdConsole.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jdConsole.setMinimumSize(new java.awt.Dimension(600, 600));
+        jdConsole.setPreferredSize(new java.awt.Dimension(600, 600));
+        jdConsole.setSize(new java.awt.Dimension(600, 600));
+        jdConsole.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        console_txt.setBackground(new java.awt.Color(0, 0, 0));
+        console_txt.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
+        console_txt.setForeground(new java.awt.Color(255, 255, 255));
+        console_txt.setText("Welcome To Rill - 20....");
+        console_txt.setToolTipText("");
+        jScrollPane1.setViewportView(console_txt);
+
+        jdConsole.getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 560, 520));
+
+        jMenuSee.setText("Ver");
+
+        jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem3.setText("Lexical Analysis ");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+        jMenuSee.add(jMenuItem3);
+
+        jMenuItem11.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem11.setText("Análisis Sintáctico");
+        jMenuItem11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem11ActionPerformed(evt);
+            }
+        });
+        jMenuSee.add(jMenuItem11);
+
+        jMenuItem5.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem5.setText("AST");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
+        jMenuSee.add(jMenuItem5);
+
+        jMenuItem6.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem6.setText("Comprobación de Tipos");
+        jMenuSee.add(jMenuItem6);
+
+        jMenuItem9.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.ALT_MASK));
+        jMenuItem9.setText("Ver Tablas de Tipos");
+        jMenuItem9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem9ActionPerformed(evt);
+            }
+        });
+        jMenuSee.add(jMenuItem9);
+
+        jMenuBar2.add(jMenuSee);
+
+        jdConsole.setJMenuBar(jMenuBar2);
+
+        jMenuItem4.setText("jMenuItem4");
+
+        jMenuItem8.setText("jMenuItem8");
+
+        jMenu4.setText("jMenu4");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Rill-20");
@@ -233,88 +384,16 @@ public class FrmPrincipal extends javax.swing.JFrame {
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "RILL-20", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 18))); // NOI18N
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        txtAnalizarLex.setEditable(false);
-        txtAnalizarLex.setColumns(20);
-        txtAnalizarLex.setRows(5);
-        jScrollPane2.setViewportView(txtAnalizarLex);
-
-        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 110, 270, 240));
-
-        btnAnalizarLex.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnAnalizarLex.setText("Analizar");
-        btnAnalizarLex.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAnalizarLexActionPerformed(evt);
-            }
-        });
-        jPanel1.add(btnAnalizarLex, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 70, -1, -1));
-
-        btnTree.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnTree.setText("Árbol");
-        btnTree.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnTreeActionPerformed(evt);
-            }
-        });
-        jPanel1.add(btnTree, new org.netbeans.lib.awtextra.AbsoluteConstraints(1070, 70, -1, -1));
-
-        txtAnalizarSin.setEditable(false);
-        txtAnalizarSin.setColumns(20);
-        txtAnalizarSin.setRows(5);
-        jScrollPane3.setViewportView(txtAnalizarSin);
-
-        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(927, 107, 370, 450));
-
-        btnAnalizarSin.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnAnalizarSin.setText("Analizar");
-        btnAnalizarSin.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnAnalizarSinMouseClicked(evt);
-            }
-        });
-        btnAnalizarSin.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAnalizarSinActionPerformed(evt);
-            }
-        });
-        jPanel1.add(btnAnalizarSin, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 70, -1, -1));
-
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Logo.png"))); // NOI18N
         jLabel1.setText("jLabel1");
         jLabel1.setOpaque(true);
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 360, 280, -1));
-
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel2.setText("Análisis Síntáctico");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 30, -1, -1));
-
-        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel3.setText("Análisis Léxico");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 30, -1, -1));
-
-        btnLimpiarSin1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnLimpiarSin1.setText("Limpiar");
-        btnLimpiarSin1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLimpiarSin1ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(btnLimpiarSin1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1200, 70, -1, -1));
-
-        btnLimpiarLex1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnLimpiarLex1.setText("Limpiar");
-        btnLimpiarLex1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLimpiarLex1ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(btnLimpiarLex1, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 70, -1, -1));
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 170, 280, -1));
 
         txtCodigo.setColumns(20);
         txtCodigo.setRows(5);
         jScrollCodigo.setViewportView(txtCodigo);
 
-        jPanel1.add(jScrollCodigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 590, 510));
+        jPanel1.add(jScrollCodigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 970, 510));
 
         jMenu1.setText("Archivo");
         jMenu1.addActionListener(new java.awt.event.ActionListener() {
@@ -334,9 +413,32 @@ public class FrmPrincipal extends javax.swing.JFrame {
 
         jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem1.setText("Guardar Archivo");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem1);
 
         jMenuBar1.add(jMenu1);
+
+        jMenu5.setText("Ejecutar");
+        jMenu5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenu5ActionPerformed(evt);
+            }
+        });
+
+        jMenuItem10.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F6, 0));
+        jMenuItem10.setText("Ejecutar Archivo");
+        jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem10ActionPerformed(evt);
+            }
+        });
+        jMenu5.add(jMenuItem10);
+
+        jMenuBar1.add(jMenu5);
 
         setJMenuBar(jMenuBar1);
 
@@ -357,51 +459,6 @@ public class FrmPrincipal extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnAnalizarSinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarSinActionPerformed
-        // TODO add your handling code here:
-        //Only Lexer
-        try {
-            analizarLexico();
-        } catch (IOException ex) {
-            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        //Cup and Lexer
-        //String ST = txtResultado.getText();
-        String ST = txtCodigo.getText();
-        s = new Sintax(new CUP.LexerCup(new StringReader(ST)));
-
-        try {
-            //jtSintactico.setModel(s.createTreeSintax("SintaxTree"));
-            s.createTreeSintax("Program");
-            s.parse();
-            if (s.getERRORES().equalsIgnoreCase("")) {
-                /*txtAnalizarSin.setText("Analisis realizado correctamente");
-                txtAnalizarSin.setForeground(new Color(25, 111, 61));*/
-                txtAnalizarSin.setText("Se completó el análisis sin errores");
-                txtAnalizarSin.setForeground(new Color(25, 111, 61));
-
-                System.out.println("Se completo el análisis sintáctico sin errores");
-
-            } else {
-                txtAnalizarSin.setText("Cantidad de Errores: " + s.getcERRORES() + "\n" + s.getERRORES());
-                txtAnalizarSin.setForeground(Color.red);
-                System.out.println("Se completo el análisis sintáctico con errores");
-            }
-
-        } catch (Exception ex) {
-            System.out.println("Entro al exeption que pinta en rojo");
-            Symbol sym = s.getS();
-            txtAnalizarSin.setText("Error de sintaxis. Linea: " + (sym.right + 1) + " Columna: " + (sym.left + 1) + ", Texto: \"" + sym.value + "\"");
-            txtAnalizarSin.setForeground(Color.red);
-        }
-        //Setearear errores
-        s.setERRORES("");
-    }//GEN-LAST:event_btnAnalizarSinActionPerformed
-
-    private void btnAnalizarSinMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAnalizarSinMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnAnalizarSinMouseClicked
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         // TODO add your handling code here:
@@ -429,52 +486,51 @@ public class FrmPrincipal extends javax.swing.JFrame {
         guardarComo();
     }//GEN-LAST:event_jMenu1ActionPerformed
 
-    private void btnTreeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTreeActionPerformed
-        // TODO add your handling code here:
-        if ((s != null)) {
-            if (s.getcERRORES() == 0) {
-                String ST = txtCodigo.getText();
-                ASTree = new ASintaxT(new CUP.LexerCup(new StringReader(ST)));
-
-                try {
-                    //jtSintactico.setModel(s.createTreeSintax("SintaxTree"));
-                    ASTree.createTreeSintax("Program");
-                    ASTree.parse();
-                } catch (Exception ex) {
-                    Symbol sym = ASTree.getS();
-                    txtAnalizarSin.setText("Ups! Algo inesperado sucecido. No se logró generar el árbol");
-                    txtAnalizarSin.setForeground(Color.red);
-                }
-                SwingDemo sintaxTree = new SwingDemo(ASTree.getTreeSintaxModel());
-                sintaxTree.showTree();
-                TypesTable tt = new TypesTable(ASTree.getTreeSintaxModel());
-                s = null;
-            } else {
-                JOptionPane.showMessageDialog(this, "Se encontraron errores en el análsis sintáctico."
-                        + "\nAún no se puede generar el árbol", "RILL-20", 0);
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Aún no ha realizdo en análisis Sintáctico", "RILL-20", 0);
-        }
-    }//GEN-LAST:event_btnTreeActionPerformed
-
-    private void btnAnalizarLexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarLexActionPerformed
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         try {
             analizarLexico();
         } catch (IOException ex) {
             Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_btnAnalizarLexActionPerformed
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
 
-    private void btnLimpiarSin1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarSin1ActionPerformed
-        // TODO add your handling code here:
-        this.txtAnalizarSin.setText("");
-    }//GEN-LAST:event_btnLimpiarSin1ActionPerformed
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        try {
+            analizarLexico();
+        } catch (IOException ex) {
+            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        analizarSintactico();
+        showTree();
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
 
-    private void btnLimpiarLex1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarLex1ActionPerformed
-        // TODO add your handling code here:
-        this.txtAnalizarLex.setText("");
-    }//GEN-LAST:event_btnLimpiarLex1ActionPerformed
+    private void jMenu5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu5ActionPerformed
+
+    }//GEN-LAST:event_jMenu5ActionPerformed
+
+    private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
+        analizarSintactico();
+    }//GEN-LAST:event_jMenuItem11ActionPerformed
+
+    private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
+        jdConsole.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        jdConsole.setLocationRelativeTo(this);
+        jdConsole.setVisible(true);
+        console_txt.setText("");
+        analizarSintactico();
+        ComprobacionTipos();
+    }//GEN-LAST:event_jMenuItem10ActionPerformed
+
+    private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
+        analizarSintactico();
+        ComprobacionTipos();
+        console_txt.setText("");
+        VerTablasDeTipo(tt.root);
+    }//GEN-LAST:event_jMenuItem9ActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        guardarComo();
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -542,24 +598,28 @@ public class FrmPrincipal extends javax.swing.JFrame {
     Sintax s;
     ASintaxT ASTree;
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAnalizarLex;
-    private javax.swing.JButton btnAnalizarSin;
-    private javax.swing.JButton btnLimpiarLex1;
-    private javax.swing.JButton btnLimpiarSin1;
-    private javax.swing.JButton btnTree;
+    private javax.swing.JTextPane console_txt;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu4;
+    private javax.swing.JMenu jMenu5;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuBar jMenuBar2;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem10;
+    private javax.swing.JMenuItem jMenuItem11;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JMenuItem jMenuItem6;
+    private javax.swing.JMenuItem jMenuItem8;
+    private javax.swing.JMenuItem jMenuItem9;
+    private javax.swing.JMenu jMenuSee;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollCodigo;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTextArea txtAnalizarLex;
-    private javax.swing.JTextArea txtAnalizarSin;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JDialog jdConsole;
     private javax.swing.JTextArea txtCodigo;
     // End of variables declaration//GEN-END:variables
 }
