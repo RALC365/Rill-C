@@ -266,13 +266,11 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }
 
     private void VerTablasDeTipo(TypesSubTable t) {
+        console_txt.setText(console_txt.getText() + t.toString() + "\n");
         if (!t.children.isEmpty()) {
             t.children.keySet().forEach((i) -> {
-                console_txt.setText(console_txt.getText() + t.children.get(i).toString() + "\n");
                 VerTablasDeTipo(t.children.get(i));
             });
-        } else {
-            console_txt.setText(console_txt.getText() + t.toString() + "\n");
         }
     }
 

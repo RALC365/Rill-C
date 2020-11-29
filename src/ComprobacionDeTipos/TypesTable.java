@@ -16,7 +16,7 @@ public class TypesTable {
 
     //private final HashMap<String, TypesSubTable> subtables = new HashMap();
     private final ArrayList<String> errors = new ArrayList();
-    public TypesSubTable root = new TypesSubTable("Program", "nill", null, null, null);
+    public TypesSubTable root = new TypesSubTable("Program", "nill", null, null, null, 0);
 
     public TypesTable(DefaultTreeModel model) throws TypeErrorException {
         createSubtables(model);
@@ -44,7 +44,7 @@ public class TypesTable {
             //Crea una nueva subtabla y la agrega al Hashmap de las subtablas
             //El key de búsqyeda es "nombreFuncion"
             //System.out.println(name + " : " + typeOfFuction);
-            TypesSubTable x = new TypesSubTable(name, typeOfFuction, model, child, root);
+            TypesSubTable x = new TypesSubTable(name, typeOfFuction, model, child, root, 0);
             root.children.put(name, x);
             //x.getDeclarations(model, child, x);
             //subtables.put(name, x);
