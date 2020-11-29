@@ -20,7 +20,6 @@ public class TypesTable {
 
     public TypesTable(DefaultTreeModel model) throws TypeErrorException {
         createSubtables(model);
-        //analizeTypes(model);
     }
 
     //Crea las subTablaas de Tipos en Base a las funciones dentro del programa
@@ -43,17 +42,13 @@ public class TypesTable {
             }
             //Crea una nueva subtabla y la agrega al Hashmap de las subtablas
             //El key de búsqyeda es "nombreFuncion"
-            //System.out.println(name + " : " + typeOfFuction);
             TypesSubTable x = new TypesSubTable(name, typeOfFuction, model, child, root, 0);
             root.children.put(name, x);
-            //x.getDeclarations(model, child, x);
-            //subtables.put(name, x);
         }
         //System.out.println("--------------------------");
         for (String i : root.children.keySet()) {
             TypesSubTable child = root.children.get(i);
             child.getDeclarations(child.treepart);
-            //System.out.println(child.toString());
         }
     }
 

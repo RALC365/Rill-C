@@ -18,6 +18,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
+import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java_cup.runtime.Symbol;
@@ -43,7 +44,6 @@ public class FrmPrincipal extends javax.swing.JFrame {
         this.jScrollCodigo.setRowHeaderView(this.numeroLinea);
         this.setLocationRelativeTo(null);
         this.setExtendedState(this.MAXIMIZED_BOTH);
-
         //this.jScrollCodigo.setColumnHeaderView(numeroLinea);
     }
 
@@ -266,7 +266,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }
 
     private void VerTablasDeTipo(TypesSubTable t) {
-        console_txt.setText(console_txt.getText() + t.toString() + "\n");
+        console_txt.setText(console_txt.getText() + t + "\n");
         if (!t.children.isEmpty()) {
             t.children.keySet().forEach((i) -> {
                 VerTablasDeTipo(t.children.get(i));

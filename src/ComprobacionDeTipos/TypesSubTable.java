@@ -76,16 +76,18 @@ public class TypesSubTable {
             //FOR
             if (o.toString().equals("FOR")) {
                 TypesSubTable st = new TypesSubTable("FOR", "nll", model, o, this, offsetActual);
-                this.children.put("FOR", st);
+                this.children.put("FOR "+this.children.size(), st);
                 st.getDeclarations(o);
+                // System.out.println(st.toString());
             }
 
             //WHILE
             if (o.toString().equals("WHILE")) {
                 if (checkBlnExpression(model.getChild(o, 0))) {
                     TypesSubTable st = new TypesSubTable("WHILE", "nll", model, o, this, offsetActual);
-                    this.children.put("WHILE", st);
+                    this.children.put("WHILE "+this.children.size(), st);
                     st.getDeclarations(o);
+                    // System.out.println(st.toString());
                 }
             }
 
@@ -93,8 +95,9 @@ public class TypesSubTable {
             if (o.toString().equals("IF")) {
                 if (checkBlnExpression(model.getChild(o, 0))) {
                     TypesSubTable st = new TypesSubTable("IF", "nll", model, o, this, offsetActual);
-                    this.children.put("IF", st);
+                    this.children.put("IF "+this.children.size(), st);
                     st.getDeclarations(o);
+                    // System.out.println(st.toString());
                 }
             }
 
@@ -112,16 +115,18 @@ public class TypesSubTable {
             if (o.toString().equals("ELSE_IF")) {
                 if (checkBlnExpression(model.getChild(o, 0))) {
                     TypesSubTable st = new TypesSubTable("ELSE_IF", "nll", model, o, this, offsetActual);
-                    this.children.put("ELSE_IF", st);
+                    this.children.put("ELSE_IF "+this.children.size(), st);
                     st.getDeclarations(o);
+                    // System.out.println(st.toString());
                 }
             }
 
             //ELSE_IF
             if (o.toString().equals("ELSE")) {
                 TypesSubTable st = new TypesSubTable("ELSE", "nll", model, o, this, offsetActual);
-                this.children.put("ELSE", st);
+                this.children.put("ELSE "+this.children.size(), st);
                 st.getDeclarations(o);
+                // System.out.println(st.toString());
             }
 
             //SWITCH
@@ -129,7 +134,7 @@ public class TypesSubTable {
                 TableRow id = checkIDExistence(model.getChild(o, 0).toString());
                 if (id != null) {
                     TypesSubTable st = new TypesSubTable("SWITCH", "nll", model, o, this, offsetActual);
-                    this.children.put("SWITCH", st);
+                    this.children.put("SWITCH "+this.children.size(), st);
                     st.getDeclarations(o);
                 } else {
                     throw new TypeErrorException("Error de Tipo.\nLa variable de nombre: '"
@@ -146,8 +151,9 @@ public class TypesSubTable {
             if (o.toString().equals("SWITCH_CASE")) {
                 if (checkBlnExpressionSWITCH(model.getChild(o, 0))) {
                     TypesSubTable st = new TypesSubTable("CASE", "nll", model, o, this, offsetActual);
-                    this.children.put("CASE", st);
+                    this.children.put("CASE "+this.children.size(), st);
                     st.getDeclarations(o);
+                    // System.out.println(st.toString());
                 }
             }
 
