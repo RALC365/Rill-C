@@ -11,6 +11,7 @@ import ComprobacionDeTipos.TypeErrorException;
 import ComprobacionDeTipos.TypesSubTable;
 import ComprobacionDeTipos.TypesTable;
 import LexerS.Lexer;
+import ThreeAddressCode.ThreeAddressTable;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,7 +38,8 @@ public class FrmPrincipal extends javax.swing.JFrame {
      */
     NumeroLinea numeroLinea;
     TypesTable tt;
-
+    ThreeAddressTable tablaCuadruplos;
+    
     public FrmPrincipal() {
         initComponents();
         this.numeroLinea = new NumeroLinea(this.txtCodigo);
@@ -264,6 +266,16 @@ public class FrmPrincipal extends javax.swing.JFrame {
             console_txt.setForeground(Color.red);
         }
     }
+    
+    private void DesplegarCuadruplos() {
+        try {
+            tablaCuadruplos = new ThreeAddressTable(ASTree.getTreeSintaxModel());
+            //console_txt.setForeground(Color.green);
+        } catch (TypeErrorException e) {
+            //console_txt.setText(e.getMessage());
+            //console_txt.setForeground(Color.red);
+        }
+    }
 
     private void VerTablasDeTipo(TypesSubTable t) {
         console_txt.setText(console_txt.getText() + t + "\n");
@@ -293,6 +305,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
         jMenuItem9 = new javax.swing.JMenuItem();
+        jMenuItem7 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem8 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
@@ -311,7 +324,6 @@ public class FrmPrincipal extends javax.swing.JFrame {
         jdConsole.setBackground(new java.awt.Color(0, 0, 0));
         jdConsole.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jdConsole.setMinimumSize(new java.awt.Dimension(600, 600));
-        jdConsole.setPreferredSize(new java.awt.Dimension(600, 600));
         jdConsole.setSize(new java.awt.Dimension(600, 600));
         jdConsole.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -365,6 +377,15 @@ public class FrmPrincipal extends javax.swing.JFrame {
             }
         });
         jMenuSee.add(jMenuItem9);
+
+        jMenuItem7.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_J, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem7.setLabel("Desplegar Cuadruplos");
+        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem7ActionPerformed(evt);
+            }
+        });
+        jMenuSee.add(jMenuItem7);
 
         jMenuBar2.add(jMenuSee);
 
@@ -530,6 +551,10 @@ public class FrmPrincipal extends javax.swing.JFrame {
         guardarComo();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
+    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
+        DesplegarCuadruplos();
+    }//GEN-LAST:event_jMenuItem7ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -611,6 +636,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
+    private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JMenu jMenuSee;
