@@ -27,6 +27,7 @@ public class ThreeAddressTable {
         System.out.println("A");
         iterateTree(model.getRoot());
         System.out.println("Finito");
+        imprimirCuadruplos();
     }
 
     private String iterateTree(Object eachNode) throws TypeErrorException {
@@ -61,36 +62,54 @@ public class ThreeAddressTable {
             }
             
             if (child.toString().equals("ASSIGN")) {
-
-                Object leftChild = model.getChild(child, 0);
-                Object rightChild = model.getChild(child, 1);
-                
-                if ((model.getChildCount(leftChild) == 0)&&(model.getChildCount(rightChild) == 0)) {
-                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNACION, rightChild.toString(), "", leftChild.toString()));
-//                    return leftChild.toString();
-                } else {
-                    iterateTree(child);
-                }
+                AsignationBuild(child);
             }
             
-            if (child.toString().equals("+")) {
-                return ArithmeticBuild(child, Operacion.SUMA);
-            }
-            
-            if (child.toString().equals("-")) {
-                return ArithmeticBuild(child, Operacion.RESTA);
-            }
-            
-            if (child.toString().equals("*")) {
-                return ArithmeticBuild(child, Operacion.MULTIPLICACION);
-            }
-            
-            if (child.toString().equals("/")) {
-                return ArithmeticBuild(child, Operacion.DIVISION);
-            }
         }
         
         return null;
+        
+    }
+    
+    private String ArithmeticTree(Object childNode) throws TypeErrorException {
+        
+        if (childNode.toString().equals("+")) {
+            return ArithmeticBuild(childNode, Operacion.SUMA);
+        }
+
+        if (childNode.toString().equals("-")) {
+            if ((model.getChildCount(childNode) == 1)) {
+                String temporalRetorno = "t"+(this.conteoTemporales++);
+                this.tablaCuadruplos.add(new Cuadruplos(Operacion.NEGACION, model.getChild(childNode, 0).toString(), "", temporalRetorno));
+                return temporalRetorno;
+            } else {
+                return ArithmeticBuild(childNode, Operacion.RESTA);
+            }
+        }
+
+        if (childNode.toString().equals("*")) {
+            return ArithmeticBuild(childNode, Operacion.MULTIPLICACION);
+        }
+
+        if (childNode.toString().equals("/")) {
+            return ArithmeticBuild(childNode, Operacion.DIVISION);
+        }
+        
+        return null;
+        
+    }
+    
+    private void AsignationBuild(Object currentNode) throws TypeErrorException {
+        
+        Object leftChild = model.getChild(currentNode, 0);
+        Object rightChild = model.getChild(currentNode, 1);
+
+        if ((model.getChildCount(leftChild) == 0)&&(model.getChildCount(rightChild) == 0)) {
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNACION, rightChild.toString(), "", leftChild.toString()));
+        } else {
+            String temporalRetorno = ArithmeticTree(rightChild);
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNACION, temporalRetorno, "", leftChild.toString()));
+        }
         
     }
 
@@ -108,10 +127,10 @@ public class ThreeAddressTable {
             String temporalIzquierdo = leftChild.toString();
             String temporalDerecho = rightChild.toString();
             if (model.getChildCount(leftChild) > 0) {
-                temporalIzquierdo = iterateTree(currentNode);
+                temporalIzquierdo = ArithmeticTree(leftChild);
             }
             if (model.getChildCount(rightChild) > 0) {
-                temporalDerecho = iterateTree(currentNode);
+                temporalDerecho = ArithmeticTree(rightChild);
             }
             temporalRetorno = "t"+(this.conteoTemporales++);
             this.tablaCuadruplos.add(new Cuadruplos(operacionEnum, temporalIzquierdo, temporalDerecho, temporalRetorno));
@@ -123,7 +142,7 @@ public class ThreeAddressTable {
         return tablaCuadruplos;
     }
     
-    public void imprimirCuadruplos() {
+    private void imprimirCuadruplos() {
         int count = 1;
         for(Cuadruplos cadaCuadruplo: this.tablaCuadruplos) {
             System.out.println((count++)+": "+cadaCuadruplo.toString());

@@ -9,8 +9,8 @@
 
 ()funcionDemostrativa(fun:int
 	int a,b,c.,
-	a: 5.,
+	a: -5.,
 	b: (5-6*4)*a+a/(2+3).,
-	c: a*a+b/2.,
+	c: -a*a+b/2.,
 	ret c.,
 :)

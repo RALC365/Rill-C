@@ -271,7 +271,6 @@ public class FrmPrincipal extends javax.swing.JFrame {
     private void DesplegarCuadruplos() {
         try {
             tablaCuadruplos = new ThreeAddressTable(ASTree.getTreeSintaxModel());
-            tablaCuadruplos.imprimirCuadruplos();
             SwingTable cuadruplosGraficos = new SwingTable(tablaCuadruplos.getTablaCuadruplos());
             cuadruplosGraficos.showInDialog();
             //console_txt.setForeground(Color.green);

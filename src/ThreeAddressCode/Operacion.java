@@ -15,5 +15,6 @@ public enum Operacion {
     MULTIPLICACION,
     DIVISION,
     ASIGNACION,
+    NEGACION,
     GOTO
 }
