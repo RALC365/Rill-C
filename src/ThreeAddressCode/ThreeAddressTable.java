@@ -19,15 +19,17 @@ public class ThreeAddressTable {
     
     private ArrayList<Cuadruplos> tablaCuadruplos = new ArrayList();
     private final DefaultTreeModel model;
+    private int conteoTemporales;
     
     public ThreeAddressTable(DefaultTreeModel model) throws TypeErrorException {
         this.model = model;
+        this.conteoTemporales = 0;
         System.out.println("A");
         iterateTree(model.getRoot());
         System.out.println("Finito");
     }
 
-    private void iterateTree(Object eachNode) throws TypeErrorException {
+    private String iterateTree(Object eachNode) throws TypeErrorException {
         int cc = model.getChildCount(eachNode);
         System.out.println("B");
         for (int i = 0; i < cc; i++) {       
@@ -59,65 +61,118 @@ public class ThreeAddressTable {
             }
             
             if (child.toString().equals("ASSIGN")) {
-                System.out.println("H");
+
                 Object leftChild = model.getChild(child, 0);
                 Object rightChild = model.getChild(child, 1);
                 
-                if ((model.getChildCount(rightChild) == 0)&&(model.getChildCount(rightChild) == 0)) {
+                if ((model.getChildCount(leftChild) == 0)&&(model.getChildCount(rightChild) == 0)) {
                     this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNACION, rightChild.toString(), "", leftChild.toString()));
+//                    return leftChild.toString();
                 } else {
                     iterateTree(child);
                 }
             }
             
             if (child.toString().equals("+")) {
-                System.out.println("I");
+
                 Object leftChild = model.getChild(child, 0);
                 Object rightChild = model.getChild(child, 1);
+                String temporalRetorno = "t"+(this.conteoTemporales++);
                 
-                if ((model.getChildCount(rightChild) == 0)&&(model.getChildCount(rightChild) == 0)) {
-                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.SUMA, leftChild.toString(), rightChild.toString(), ""));
+                if ((model.getChildCount(leftChild) == 0)&&(model.getChildCount(rightChild) == 0)) {    
+                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.SUMA, leftChild.toString(), rightChild.toString(), temporalRetorno));
+                    return temporalRetorno;
                 } else {
-                    iterateTree(child);
+                    String temporalIzquierdo = leftChild.toString();
+                    String temporalDerecho = rightChild.toString();
+                    if (model.getChildCount(leftChild) > 0) {
+                        temporalIzquierdo = iterateTree(child);
+                    }
+                    if (model.getChildCount(rightChild) > 0) {
+                        temporalDerecho = iterateTree(child);
+                    }
+                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.SUMA, temporalIzquierdo, temporalDerecho, temporalRetorno));
+                    return temporalRetorno;
                 }
             }
             
             if (child.toString().equals("-")) {
-                System.out.println("I");
+
                 Object leftChild = model.getChild(child, 0);
                 Object rightChild = model.getChild(child, 1);
+                String temporalRetorno = "t"+(this.conteoTemporales++);
                 
-                if ((model.getChildCount(rightChild) == 0)&&(model.getChildCount(rightChild) == 0)) {
-                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.RESTA, leftChild.toString(), rightChild.toString(), ""));
+                if ((model.getChildCount(leftChild) == 0)&&(model.getChildCount(rightChild) == 0)) {    
+                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.RESTA, leftChild.toString(), rightChild.toString(), temporalRetorno));
+                    return temporalRetorno;
                 } else {
-                    iterateTree(child);
+                    String temporalIzquierdo = leftChild.toString();
+                    String temporalDerecho = rightChild.toString();
+                    if (model.getChildCount(leftChild) > 0) {
+                        temporalIzquierdo = iterateTree(child);
+                    }
+                    if (model.getChildCount(rightChild) > 0) {
+                        temporalDerecho = iterateTree(child);
+                    }
+                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.RESTA, temporalIzquierdo, temporalDerecho, temporalRetorno));
+                    return temporalRetorno;
                 }
             }
             
             if (child.toString().equals("*")) {
-                System.out.println("I");
+
                 Object leftChild = model.getChild(child, 0);
                 Object rightChild = model.getChild(child, 1);
+                String temporalRetorno = "t"+(this.conteoTemporales++);
                 
-                if ((model.getChildCount(rightChild) == 0)&&(model.getChildCount(rightChild) == 0)) {
-                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.MULTIPLICACION, leftChild.toString(), rightChild.toString(), ""));
+                if ((model.getChildCount(leftChild) == 0)&&(model.getChildCount(rightChild) == 0)) {
+                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.MULTIPLICACION, leftChild.toString(), rightChild.toString(), temporalRetorno));
+                    return temporalRetorno;
                 } else {
-                    iterateTree(child);
+                    String temporalIzquierdo = leftChild.toString();
+                    String temporalDerecho = rightChild.toString();
+                    if (model.getChildCount(leftChild) > 0) {
+                        temporalIzquierdo = iterateTree(child);
+                    }
+                    if (model.getChildCount(rightChild) > 0) {
+                        temporalDerecho = iterateTree(child);
+                    }
+                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.MULTIPLICACION, temporalIzquierdo, temporalDerecho, temporalRetorno));
+                    return temporalRetorno;
                 }
             }
             
             if (child.toString().equals("/")) {
-                System.out.println("I");
+
                 Object leftChild = model.getChild(child, 0);
                 Object rightChild = model.getChild(child, 1);
+                String temporalRetorno = "t"+(this.conteoTemporales++);
                 
-                if ((model.getChildCount(rightChild) == 0)&&(model.getChildCount(rightChild) == 0)) {
-                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.DIVISION, leftChild.toString(), rightChild.toString(), ""));
+                if ((model.getChildCount(leftChild) == 0)&&(model.getChildCount(rightChild) == 0)) {
+                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.DIVISION, leftChild.toString(), rightChild.toString(), temporalRetorno));
+                    return temporalRetorno;
                 } else {
-                    iterateTree(child);
+                    String temporalIzquierdo = leftChild.toString();
+                    String temporalDerecho = rightChild.toString();
+                    if (model.getChildCount(leftChild) > 0) {
+                        temporalIzquierdo = iterateTree(child);
+                    }
+                    if (model.getChildCount(rightChild) > 0) {
+                        temporalDerecho = iterateTree(child);
+                    }
+                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.DIVISION, temporalIzquierdo, temporalDerecho, temporalRetorno));
+                    return temporalRetorno;
                 }
             }
         }
+        return null;
     }
 
+    public void imprimirCuadruplos() {
+        int count = 1;
+        for(Cuadruplos cadaCuadruplo: this.tablaCuadruplos) {
+            System.out.println((count++)+": "+cadaCuadruplo.toString());
+        }
+    }
+    
 }

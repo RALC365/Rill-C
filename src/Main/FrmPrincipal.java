@@ -270,6 +270,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     private void DesplegarCuadruplos() {
         try {
             tablaCuadruplos = new ThreeAddressTable(ASTree.getTreeSintaxModel());
+            tablaCuadruplos.imprimirCuadruplos();
             //console_txt.setForeground(Color.green);
         } catch (TypeErrorException e) {
             //console_txt.setText(e.getMessage());

@@ -40,7 +40,7 @@ public class Cuadruplos {
 
     @Override
     public String toString() {
-        return "Cuadruplos{" + "operacion=" + operacion + ", parametroA=" + parametroA + ", parametroB=" + parametroB + ", resultado=" + resultado + '}';
+        return "("+this.operacion+", "+this.parametroA+", "+this.parametroB+", "+this.resultado+")";
     }
         
 }
