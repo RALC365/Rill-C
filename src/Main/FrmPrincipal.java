@@ -11,6 +11,7 @@ import ComprobacionDeTipos.TypeErrorException;
 import ComprobacionDeTipos.TypesSubTable;
 import ComprobacionDeTipos.TypesTable;
 import LexerS.Lexer;
+import ThreeAddressCode.SwingTable;
 import ThreeAddressCode.ThreeAddressTable;
 import java.awt.Color;
 import java.io.File;
@@ -271,6 +272,8 @@ public class FrmPrincipal extends javax.swing.JFrame {
         try {
             tablaCuadruplos = new ThreeAddressTable(ASTree.getTreeSintaxModel());
             tablaCuadruplos.imprimirCuadruplos();
+            SwingTable cuadruplosGraficos = new SwingTable(tablaCuadruplos.getTablaCuadruplos());
+            cuadruplosGraficos.showInDialog();
             //console_txt.setForeground(Color.green);
         } catch (TypeErrorException e) {
             //console_txt.setText(e.getMessage());
