@@ -5,6 +5,7 @@
  */
 package ComprobacionDeTipos;
 
+import CUP.InstructionCode;
 import java.util.LinkedHashMap;
 import javax.swing.tree.DefaultTreeModel;
 
@@ -179,7 +180,7 @@ public class TypesSubTable {
                 if (ccc > 2) {
                     for (int j = 2; j < ccc; j++) {
                         if (checkIDExistence(model.getChild(o, j).toString()) != null) {
-                            throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, j).toString() + " ya existe en el ámbito.");
+                            throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, j).toString() + " ya existe en el ámbito. Linea: " + ((InstructionCode)model.getChild(o, j)).getCodeLine());
                         } else {
                             TableRow row = new TableRow(model.getChild(o, j).toString(), model.getChild(o, 0).toString(), offsetActual);
                             addIDToSubTable(row);
@@ -209,7 +210,7 @@ public class TypesSubTable {
             //Declaraciones de Matrices Vacías
             if (o.toString().equals("DECLR MATRIX EMPTY")) {
                 if (checkIDExistence(model.getChild(o, 2).toString()) != null) {
-                    throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito.");
+                    throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito. Línea: " + ((InstructionCode)model.getChild(o, 1)).getCodeLine());
                 } else {
                     String id = model.getChild(o, 2).toString();
                     int filas = Integer.parseInt(model.getChild(model.getChild(o, 0), 0).toString());
@@ -234,7 +235,7 @@ public class TypesSubTable {
             //Declaraciones de Matrices
             if (o.toString().equals("DECLR MATRIX")) {
                 if (checkIDExistence(model.getChild(o, 2).toString()) != null) {
-                    throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito.");
+                    throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito. Línea: " + ((InstructionCode)model.getChild(o, 1)).getCodeLine());
                 } else {
                     String id = model.getChild(o, 2).toString();
                     int[] size = checkMatrix(model.getChild(o, 1).toString(), model.getChild(o, 3));
@@ -258,7 +259,7 @@ public class TypesSubTable {
             //Declaraciones de Arreglos Vacía
             if (o.toString().equals("DECLR ARRAY EMPTY")) {
                 if (checkIDExistence(model.getChild(o, 2).toString()) != null) {
-                    throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito.");
+                    throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito.. Línea: " + ((InstructionCode)model.getChild(o, 1)).getCodeLine());
                 } else {
                     String id = model.getChild(o, 2).toString();
                     int els = Integer.parseInt(model.getChild(model.getChild(o, 0), 0).toString());
@@ -281,7 +282,7 @@ public class TypesSubTable {
             //Declaraciones de Arreglos
             if (o.toString().equals("DECLR ARRAY")) {
                 if (checkIDExistence(model.getChild(o, 2).toString()) != null) {
-                    throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito.");
+                    throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito.. Línea: " + ((InstructionCode)model.getChild(o, 1)).getCodeLine());
                 } else {
                     String id = model.getChild(o, 2).toString();
                     int els = checkArray(model.getChild(o, 1).toString(), model.getChild(o, 3));
@@ -342,7 +343,7 @@ public class TypesSubTable {
                 throw new TypeErrorException("Error de tipo. La expresión del lado izquiero de '" + id + "' no es del tipo esperado.");
             }
         } else {
-            throw new TypeErrorException("Error de Tipo.\nLa variable de nombre '" + id + "' ya existe en el ámbito actual.");
+            throw new TypeErrorException("Error de Tipodadasdasd.\nLa variable de nombre '" + id + "' ya existe en el ámbito actual.");
         }
     }
 
