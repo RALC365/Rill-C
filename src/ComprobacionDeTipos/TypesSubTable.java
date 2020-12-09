@@ -394,7 +394,7 @@ public class TypesSubTable {
             if (checkFunctionParams(fun.split(" -> ")[0], o)) {
                 return fun.split(" -> ")[1];
             } else {
-                throw new TypeErrorException("Error de Tipo.\nNo hay función '" + root.replace(":fun", "") + "' con esos tipos de parámetros. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
+                throw new TypeErrorException("Error de Tipo.\nNo hay función '" + root.replace(":fun", "") + "' con esos tipos de parámetros. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)model.getChild(o, i)).getUserObject()).getCodeLine());
             }
         } else {
             TableRow id = checkIDExistence(root);
@@ -556,7 +556,7 @@ public class TypesSubTable {
                     }
                 } else {
                     throw new TypeErrorException("Error de Tipo.\nNo hay variable de nombre: '"
-                            + c + "' accesible desde este ámbito actual. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
+                            + c + "' accesible desde este ámbito actual. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)model.getChild(o, i)).getUserObject()).getCodeLine());
                 }
             }
         }
@@ -618,7 +618,7 @@ public class TypesSubTable {
         size[1] = 1;
         for (int i = 0; i < size[0]; i++) {
             if (!model.getChild(o, i).toString().equals("ELEMENTS")) {
-                throw new TypeErrorException("Error de Tipo.\n" + "El elemento en la fila " + i + " no es de tipo arr. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
+                throw new TypeErrorException("Error de Tipo.\n" + "El elemento en la fila " + i + " no es de tipo arr. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)model.getChild(o, i)).getUserObject()).getCodeLine());
             }
             int x = checkArray(type, model.getChild(o, i));
             if (i == 0) {
