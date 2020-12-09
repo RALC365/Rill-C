@@ -7,6 +7,7 @@ package ComprobacionDeTipos;
 
 import CUP.InstructionCode;
 import java.util.LinkedHashMap;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 /**
@@ -139,7 +140,7 @@ public class TypesSubTable {
                     st.getDeclarations(o);
                 } else {
                     throw new TypeErrorException("Error de Tipo.\nLa variable de nombre: '"
-                            + model.getChild(o, 0).toString() + "' no fue encontrada en el ámbito actual");
+                            + model.getChild(o, 0).toString() + "' no fue encontrada en el ámbito actual. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine() );
                 }
             }
 
@@ -161,7 +162,7 @@ public class TypesSubTable {
             //Declaraciones sin valores
             if (o.toString().equals("DECLR NEST/NO_VAL")) {
                 if (checkIDExistence(model.getChild(o, 1).toString()) != null) {
-                    throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito.");
+                    throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)model.getChild(o, 0)).getUserObject()).getCodeLine()  );
                 } else {
                     TableRow row = new TableRow(model.getChild(o, 1).toString(), model.getChild(o, 0).toString(), offsetActual);
                     addIDToSubTable(row);
@@ -180,7 +181,7 @@ public class TypesSubTable {
                 if (ccc > 2) {
                     for (int j = 2; j < ccc; j++) {
                         if (checkIDExistence(model.getChild(o, j).toString()) != null) {
-                            throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, j).toString() + " ya existe en el ámbito. Linea: " + ((InstructionCode)model.getChild(o, j)).getCodeLine());
+                            throw new TypeErrorException("Error de Declaración2. La variable: " + model.getChild(o, j).toString() + " ya existe en el ámbito. Linea: " + ((InstructionCode)((DefaultMutableTreeNode)model.getChild(o, j)).getUserObject()).getCodeLine());
                         } else {
                             TableRow row = new TableRow(model.getChild(o, j).toString(), model.getChild(o, 0).toString(), offsetActual);
                             addIDToSubTable(row);
@@ -210,7 +211,7 @@ public class TypesSubTable {
             //Declaraciones de Matrices Vacías
             if (o.toString().equals("DECLR MATRIX EMPTY")) {
                 if (checkIDExistence(model.getChild(o, 2).toString()) != null) {
-                    throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito. Línea: " + ((InstructionCode)model.getChild(o, 1)).getCodeLine());
+                    throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)model.getChild(o, 1)).getUserObject()).getCodeLine());
                 } else {
                     String id = model.getChild(o, 2).toString();
                     int filas = Integer.parseInt(model.getChild(model.getChild(o, 0), 0).toString());
@@ -235,7 +236,7 @@ public class TypesSubTable {
             //Declaraciones de Matrices
             if (o.toString().equals("DECLR MATRIX")) {
                 if (checkIDExistence(model.getChild(o, 2).toString()) != null) {
-                    throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito. Línea: " + ((InstructionCode)model.getChild(o, 1)).getCodeLine());
+                    throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)model.getChild(o, 1)).getUserObject()).getCodeLine());
                 } else {
                     String id = model.getChild(o, 2).toString();
                     int[] size = checkMatrix(model.getChild(o, 1).toString(), model.getChild(o, 3));
@@ -259,7 +260,7 @@ public class TypesSubTable {
             //Declaraciones de Arreglos Vacía
             if (o.toString().equals("DECLR ARRAY EMPTY")) {
                 if (checkIDExistence(model.getChild(o, 2).toString()) != null) {
-                    throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito.. Línea: " + ((InstructionCode)model.getChild(o, 1)).getCodeLine());
+                    throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito.. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)model.getChild(o, 1)).getUserObject()).getCodeLine());
                 } else {
                     String id = model.getChild(o, 2).toString();
                     int els = Integer.parseInt(model.getChild(model.getChild(o, 0), 0).toString());
@@ -282,7 +283,7 @@ public class TypesSubTable {
             //Declaraciones de Arreglos
             if (o.toString().equals("DECLR ARRAY")) {
                 if (checkIDExistence(model.getChild(o, 2).toString()) != null) {
-                    throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito.. Línea: " + ((InstructionCode)model.getChild(o, 1)).getCodeLine());
+                    throw new TypeErrorException("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito.. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)model.getChild(o, 1)).getUserObject()).getCodeLine());
                 } else {
                     String id = model.getChild(o, 2).toString();
                     int els = checkArray(model.getChild(o, 1).toString(), model.getChild(o, 3));
@@ -340,10 +341,10 @@ public class TypesSubTable {
                 }
                 return true;
             } else {
-                throw new TypeErrorException("Error de tipo. La expresión del lado izquiero de '" + id + "' no es del tipo esperado.");
+                throw new TypeErrorException("Error de tipo. La expresión del lado izquiero de '" + id + "' no es del tipo esperado. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine() );
             }
         } else {
-            throw new TypeErrorException("Error de Tipodadasdasd.\nLa variable de nombre '" + id + "' ya existe en el ámbito actual.");
+            throw new TypeErrorException("Error de Tipodadasdasd.\nLa variable de nombre '" + id + "' ya existe en el ámbito actual. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
         }
     }
 
@@ -354,10 +355,10 @@ public class TypesSubTable {
             if (x.type.equals(checkExpression(o, 1))) {
                 return true;
             } else {
-                throw new TypeErrorException("Error de tipo. La expresión del lado izquiero de '" + id + "' no es del tipo esperado.");
+                throw new TypeErrorException("Error de tipo. La expresión del lado izquiero de '" + id + "' no es del tipo esperado. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
             }
         } else {
-            throw new TypeErrorException("Error de Tipo.\nNo se encuentra el nombre: '" + id + "' accesible desde este ámbito.");
+            throw new TypeErrorException("Error de Tipo.\nNo se encuentra el nombre: '" + id + "' accesible desde este ámbito. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
         }
     }
 
@@ -378,7 +379,7 @@ public class TypesSubTable {
             if (checkIntExpression(o)) {
                 return "int";
             } else {
-                throw new TypeErrorException("Error de Tipo.\nDesconocido.");
+                throw new TypeErrorException("Error de Tipo.\nDesconocido. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
             }
         } else if (root.equals("AND") || root.equals("OR") || root.equals("<") || root.equals(">")
                 || root.equals("<=") || root.equals(">=") || root.equals("=") || root.equals("!=")
@@ -386,20 +387,20 @@ public class TypesSubTable {
             if (checkBlnExpression(o)) {
                 return "bln";
             } else {
-                throw new TypeErrorException("Error de Tipo.\nDesconocido.");
+                throw new TypeErrorException("Error de Tipo.\nDesconocido. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
             }
         } else if (root.contains(":fun")) {
             String fun = checkFunction(root.replace(":fun", ""));
             if (checkFunctionParams(fun.split(" -> ")[0], o)) {
                 return fun.split(" -> ")[1];
             } else {
-                throw new TypeErrorException("Error de Tipo.\nNo hay función '" + root.replace(":fun", "") + "' con esos tipos de parámetros.");
+                throw new TypeErrorException("Error de Tipo.\nNo hay función '" + root.replace(":fun", "") + "' con esos tipos de parámetros. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
             }
         } else {
             TableRow id = checkIDExistence(root);
             if (id == null) {
                 throw new TypeErrorException("Error de Tipo.\nLa variable de nombre: '"
-                        + root + "' no fue encontrada en el ámbito actual");
+                        + root + "' no fue encontrada en el ámbito actual Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
             } else {
                 return id.type;
             }
@@ -412,32 +413,32 @@ public class TypesSubTable {
             if (isNumeric(o.toString())) {
                 return true;
             } else if (o.toString().contains("'") || o.toString().contains("‘") || o.toString().contains("’")) {
-                throw new TypeErrorException("Error de Tipo.\nEl caracter '" + o.toString() + "' no puede ir dentro de una expresión aritmética");
+                throw new TypeErrorException("Error de Tipo.\nEl caracter '" + o.toString() + "' no puede ir dentro de una expresión aritmética. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
             } else if (o.toString().equals("true") || o.toString().equals("false")) {
-                throw new TypeErrorException("Error de Tipo.\nEl booleano '" + o.toString() + "' no puede ir dentro de una expresión aritmética");
+                throw new TypeErrorException("Error de Tipo.\nEl booleano '" + o.toString() + "' no puede ir dentro de una expresión aritmética. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
             } else {
                 TableRow id = checkIDExistence(o.toString());
                 if (id != null) {
                     if (id.type.equals("int")) {
                         return true;
                     } else {
-                        throw new TypeErrorException("Error de Tipo.\nEl " + id.type + " '" + o.toString() + "' no puede ir dentro de una expresión aritmética");
+                        throw new TypeErrorException("Error de Tipo.\nEl " + id.type + " '" + o.toString() + "' no puede ir dentro de una expresión aritmética. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
                     }
                 } else {
                     throw new TypeErrorException("Error de Tipo.\nNo hay variable de nombre: '"
-                            + o.toString() + "' accesible desde este ámbito actual.");
+                            + o.toString() + "' accesible desde este ámbito actual. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
                 }
             }
         } else {
             if (o.toString().contains(":fun")) {
                 String fun = checkFunction(o.toString().replace(":fun", ""));
                 if (!fun.split(" -> ")[1].equals("int")) {
-                    throw new TypeErrorException("Error de Tipo.\nLa función '" + fun + "' no devuelve un int.");
+                    throw new TypeErrorException("Error de Tipo.\nLa función '" + fun + "' no devuelve un int. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
                 } else {
                     if (checkFunctionParams(fun.split(" -> ")[0], o)) {
                         return true;
                     } else {
-                        throw new TypeErrorException("Error de Tipo.\nNo hay función '" + fun + "' con esos tipos de parámetros.");
+                        throw new TypeErrorException("Error de Tipo.\nNo hay función '" + fun + "' con esos tipos de parámetros. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
                     }
                 }
             } else {
@@ -470,34 +471,34 @@ public class TypesSubTable {
                     return true;
                 } else {
                     throw new TypeErrorException("Error de Tipo.\nNo hay variable de nombre: '"
-                            + o.toString() + "' accesible desde este ámbito actual.");
+                            + o.toString() + "' accesible desde este ámbito actual. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
                 }
             }
         } else {
             if (o.toString().contains(":fun")) {
                 String fun = checkFunction(o.toString().replace(":fun", ""));
                 if (!fun.split(" -> ")[1].equals("nll")) {
-                    throw new TypeErrorException("Error de Tipo.\nLa función '" + fun + "' no devuelve un nada.");
+                    throw new TypeErrorException("Error de Tipo.\nLa función '" + fun + "' no devuelve un nada. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
                 } else {
                     if (checkFunctionParams(fun.split(" -> ")[0], o)) {
                         return true;
                     } else {
-                        throw new TypeErrorException("Error de Tipo.\nNo hay función '" + fun + "' con esos tipos de parámetros.");
+                        throw new TypeErrorException("Error de Tipo.\nNo hay función '" + fun + "' con esos tipos de parámetros. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
                     }
                 }
             } else if (o.toString().equals("<") || o.toString().equals(">")
                     || o.toString().equals("<=") || o.toString().equals(">=")
                     || o.toString().equals("...")) {
-                if (checkTypeofValue(model.getChild(o, 0).toString()).equals("int") && checkTypeofValue(model.getChild(o, 1).toString()).equals("int")) {
+                if (checkTypeofValue(model.getChild(o, 0)).equals("int") && checkTypeofValue(model.getChild(o, 1)).equals("int")) {
                     return true;
                 } else {
-                    throw new TypeErrorException("Error de Tipo.\nAmbas variables en una comparación(<,>,<=.>=) deben ser de tipo int.");
+                    throw new TypeErrorException("Error de Tipo.\nAmbas variables en una comparación(<,>,<=.>=) deben ser de tipo int. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
                 }
             } else if (o.toString().equals("!=") || o.toString().equals("=")) {
-                if (checkTypeofValue(model.getChild(o, 0).toString()).equals(checkTypeofValue(model.getChild(o, 1).toString()))) {
+                if (checkTypeofValue(model.getChild(o, 0)).equals(checkTypeofValue(model.getChild(o, 1)))) {
                     return true;
                 } else {
-                    throw new TypeErrorException("Error de Tipo.\nAmbas variables en una comparación(=,!=) deben ser de del mismo tipo.");
+                    throw new TypeErrorException("Error de Tipo.\nAmbas variables en una comparación(=,!=) deben ser de del mismo tipo. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
                 }
             } else {
                 boolean lc = checkBlnExpression(model.getChild(o, 0));
@@ -505,7 +506,7 @@ public class TypesSubTable {
                 if (lc && rc) {
                     return true;
                 } else {
-                    throw new TypeErrorException("Error de Tipo.\nDesconocido.");
+                    throw new TypeErrorException("Error de Tipo.\nDesconocido. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
                 }
             }
         }
@@ -515,23 +516,23 @@ public class TypesSubTable {
     //Analiza que la comdicion del switch_case sea correcta
     private boolean checkBlnExpressionSWITCH(Object o) throws TypeErrorException {
         if (o.toString().equals("...")) {
-            if (checkTypeofValue(model.getChild(o, 0).toString()).equals("int") && checkTypeofValue(model.getChild(o, 1).toString()).equals("int")) {
+            if (checkTypeofValue(model.getChild(o, 0)).equals("int") && checkTypeofValue(model.getChild(o, 1)).equals("int")) {
                 return true;
             } else {
-                throw new TypeErrorException("Error de Tipo.\nAmbas variables en una comparación(...) deben ser de tipo int.");
+                throw new TypeErrorException("Error de Tipo.\nAmbas variables en una comparación(...) deben ser de tipo int. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
             }
         } else if (o.toString().equals("<") || o.toString().equals(">")
                 || o.toString().equals("<=") || o.toString().equals(">=")) {
-            if (checkTypeofValue(model.getChild(o, 0).toString()).equals("int")) {
+            if (checkTypeofValue(model.getChild(o, 0)).equals("int")) {
                 return true;
             } else {
-                throw new TypeErrorException("Error de Tipo.\nLa variable dentro del SWITCH en una comparación(<,>,<=.>=) deben se de tipo int.");
+                throw new TypeErrorException("Error de Tipo.\nLa variable dentro del SWITCH en una comparación(<,>,<=.>=) deben se de tipo int. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
             }
         } else if (o.toString().equals("!=") || o.toString().equals("=")) {
-            if (!checkTypeofValue(model.getChild(o, 0).toString()).equals("nill")) {
+            if (!checkTypeofValue(model.getChild(o, 0)).equals("nill")) {
                 return true;
             } else {
-                throw new TypeErrorException("Error de Tipo.\nLa variable dentro del SWITCH no es de ningún tipo (nll).");
+                throw new TypeErrorException("Error de Tipo.\nLa variable dentro del SWITCH no es de ningún tipo (nll). Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
             }
         }
         return false;
@@ -555,7 +556,7 @@ public class TypesSubTable {
                     }
                 } else {
                     throw new TypeErrorException("Error de Tipo.\nNo hay variable de nombre: '"
-                            + c + "' accesible desde este ámbito actual.");
+                            + c + "' accesible desde este ámbito actual. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
                 }
             }
         }
@@ -574,7 +575,8 @@ public class TypesSubTable {
         }
     }
 
-    private String checkTypeofValue(String id) throws TypeErrorException {
+    private String checkTypeofValue(Object o) throws TypeErrorException {
+        String id = ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).toString();
         if (id.equals("false") || id.equals("true")) {
             return "bln";
         } else if (id.equals("nll")) {
@@ -589,7 +591,7 @@ public class TypesSubTable {
                 return id1.type;
             } else {
                 throw new TypeErrorException("Error de Tipo.\nNo hay variable de nombre: '"
-                        + id + "' accesible desde este ámbito actual.");
+                        + id + "' accesible desde este ámbito actual. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
             }
         }
     }
@@ -600,7 +602,10 @@ public class TypesSubTable {
             if (checkExpression(o, i).equals(type)) {
                 return cc;
             } else {
-                throw new TypeErrorException("Error de Tipo.\n" + "El elemento '" + model.getChild(o, i) + "' no es de tipo " + type);
+                throw new TypeErrorException("Error de Tipo.\n" 
+                        + "El elemento '" + model.getChild(o, i) 
+                        + "' no es de tipo " + type + ". Línea: " 
+                        + ((InstructionCode)((DefaultMutableTreeNode)model.getChild(o, i)).getUserObject()).getCodeLine());
             }
         }
         return cc;
@@ -613,13 +618,13 @@ public class TypesSubTable {
         size[1] = 1;
         for (int i = 0; i < size[0]; i++) {
             if (!model.getChild(o, i).toString().equals("ELEMENTS")) {
-                throw new TypeErrorException("Error de Tipo.\n" + "El elemento en la fila " + i + " no es de tipo arr.");
+                throw new TypeErrorException("Error de Tipo.\n" + "El elemento en la fila " + i + " no es de tipo arr. Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
             }
             int x = checkArray(type, model.getChild(o, i));
             if (i == 0) {
                 size[1] = x;
             } else if (size[1] != x) {
-                throw new TypeErrorException("Error de Tipo.\n" + "El arr en la fila " + i + " no es del mismo tamaño que arr en la fila " + (i - 1) + ".");
+                throw new TypeErrorException("Error de Tipo.\n" + "El arr en la fila " + i + " no es del mismo tamaño que arr en la fila " + (i - 1) + ". Línea: " + ((InstructionCode)((DefaultMutableTreeNode)o).getUserObject()).getCodeLine());
             }
         }
         return size;

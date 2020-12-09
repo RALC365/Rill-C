@@ -15,7 +15,7 @@ public class InstructionCode {
 
     public InstructionCode(String name, int codeLine) {
         this.name = name;
-        this.codeLine = codeLine;
+        this.codeLine = codeLine + 1;
     }
 
     public String getName() {

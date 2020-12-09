@@ -322,7 +322,7 @@ N_FUNCTION ::=
             //DefaultMutableTreeNode ret = parser.createNodo("ret " + "" +vb+ "");
             DefaultMutableTreeNode ret = parser.createNodoObject("ret " + "" +vb+ "",rright);
             ((DefaultMutableTreeNode)n).add((DefaultMutableTreeNode)ret);
-            ((DefaultMutableTreeNode)n).setUserObject(e2+":"+e3+"");
+            ((DefaultMutableTreeNode)n).setUserObject(parser.createNodoObject(e2+":"+e3+"",e2right));
             ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
             RESULT = (DefaultMutableTreeNode)n;
 
@@ -348,7 +348,7 @@ N_FUNCTION ::=
     CLOSE_BLOCK 
        {:
             ((DefaultMutableTreeNode)n).insert((DefaultMutableTreeNode)e1, 0);
-            ((DefaultMutableTreeNode)n).setUserObject(e2+":"+e3+"");
+            ((DefaultMutableTreeNode)n).setUserObject(parser.createNodoObject(e2+":"+e3+"",e2right));
             ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
             RESULT = (DefaultMutableTreeNode)n;
 
@@ -599,7 +599,7 @@ N_WHILE ::=
         //DefaultMutableTreeNode node3 = new DefaultMutableTreeNode(((DefaultMutableTreeNode)n).getUserObject());
         //((DefaultMutableTreeNode)n).insert(node3, 1);
         //cambiar nombre, brutal!!!
-        ((DefaultMutableTreeNode)n).setUserObject("WHILE");
+        ((DefaultMutableTreeNode)n).setUserObject(parser.createNodoObject("WHILE",e5right));
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
         RESULT = (DefaultMutableTreeNode)n;
 
@@ -643,7 +643,7 @@ N_FOR ::=
     {:
         DefaultMutableTreeNode parametros = parser.createNodoObject(id+","+n1+","+n2+","+o+n3,idright);
         ((DefaultMutableTreeNode)n).insert(parametros,0);
-        ((DefaultMutableTreeNode)n).setUserObject("FOR");
+        ((DefaultMutableTreeNode)n).setUserObject(parser.createNodoObject("FOR",idright));
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
         RESULT = (DefaultMutableTreeNode)n;
 
@@ -692,14 +692,14 @@ N_TO_FOR::=
 ;
 
 N_IF ::= 
-    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:bn CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH COLON 
+    OPEN_PARENTESIS N_SENTENCIA_BOOLEANA_ANIDADA:bn CLOSE_PARENTESIS OPEN_PARENTESIS IF_SWITCH:fs COLON 
     N_SENTENCIA:n
     N_ELSE_IF:el
     CLOSE_BLOCK
     {:
         ((DefaultMutableTreeNode)n).insert((DefaultMutableTreeNode)bn, 0);
         ((DefaultMutableTreeNode)n).add((DefaultMutableTreeNode)el);
-        ((DefaultMutableTreeNode)n).setUserObject("IF");
+        ((DefaultMutableTreeNode)n).setUserObject(parser.createNodoObject("IF",fsright));
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
         RESULT = (DefaultMutableTreeNode)n;
     :}
@@ -712,7 +712,7 @@ N_IF ::=
         nodo.add((DefaultMutableTreeNode)bn);
         //N_Else_if
         DefaultMutableTreeNode node2 = ((DefaultMutableTreeNode)el);
-        node2.setUserObject("ELSE_IFS");
+        node2.setUserObject(parser.createNodoObject("ELSE_IFS",mright));
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(node2);
         nodo.add(node2);
         RESULT = nodo;
@@ -727,7 +727,7 @@ N_ELSE_IF ::=
         DefaultMutableTreeNode nodo = parser.createNodoObject("ELSE_IF",mright);
         nodo.insert((DefaultMutableTreeNode)bn, 0);
         nodo.add((DefaultMutableTreeNode)n);
-        ((DefaultMutableTreeNode)n).setUserObject("SENTENCES");
+        ((DefaultMutableTreeNode)n).setUserObject(parser.createNodoObject("SENTENCES",mright));
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
         ((DefaultMutableTreeNode)sw).insert(nodo,0);
         RESULT = (DefaultMutableTreeNode)sw;
@@ -747,7 +747,7 @@ N_ELSE_IF ::=
     N_SENTENCIA:n
     {:
         DefaultMutableTreeNode nodo = parser.createNodoObject("ELSE_IFS",mright);
-        ((DefaultMutableTreeNode)n).setUserObject("ELSE");
+        ((DefaultMutableTreeNode)n).setUserObject(parser.createNodoObject("ELSE",mright));
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
         nodo.add((DefaultMutableTreeNode)n);
         RESULT = nodo;
@@ -787,7 +787,7 @@ N_SWITCH_CASE ::=
         nodo.add((DefaultMutableTreeNode)bn);
         nodo.add((DefaultMutableTreeNode)e);
         ((DefaultMutableTreeNode)sw).insert(nodo,0);
-        ((DefaultMutableTreeNode)e).setUserObject("SENTENCES");
+        ((DefaultMutableTreeNode)e).setUserObject(parser.createNodoObject("SENTENCES",mright));
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)e));
         RESULT = sw;
     :}
@@ -809,7 +809,7 @@ N_SWITCH_CASE ::=
         DefaultMutableTreeNode nodo = parser.createNodoObject("CASES",mright);
         //nodo.add(parser.createNodo(id+""));
         nodo.add((DefaultMutableTreeNode)e);
-        ((DefaultMutableTreeNode)e).setUserObject("ELSE");
+        ((DefaultMutableTreeNode)e).setUserObject(parser.createNodoObject("ELSE",mright));
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)e));
         RESULT = nodo;
     :}
@@ -848,7 +848,7 @@ N_SWITCH_CASE ::=
 N_CALL_FUNCTION::=
     ID:id OPEN_PARENTESIS N_CALL_FUNCTION_PARAMETROS:n CLOSE_PARENTESIS 
         {:
-            ((DefaultMutableTreeNode)n).setUserObject(id+":fun");
+            ((DefaultMutableTreeNode)n).setUserObject(parser.createNodoObject(id+":fun", idright));
             ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
             RESULT = (DefaultMutableTreeNode)n;
 
@@ -1385,7 +1385,7 @@ N_DECLARACION ::=
     INTENGER:i N_DECLARACION_ID:n
     {:
         ((DefaultMutableTreeNode)n).insert(parser.createNodoObject(i+"",iright), 0);
-        ((DefaultMutableTreeNode)n).setUserObject("DECLR NEST/NO_VAL");
+        ((DefaultMutableTreeNode)n).setUserObject(parser.createNodoObject("DECLR NEST/NO_VAL",iright));
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
         RESULT = (DefaultMutableTreeNode)n;
 
@@ -1398,7 +1398,7 @@ N_DECLARACION ::=
     BOOLEAN:i N_DECLARACION_ID:n
     {:
         ((DefaultMutableTreeNode)n).insert(parser.createNodoObject(i+"",iright), 0);
-        ((DefaultMutableTreeNode)n).setUserObject("DECLR NEST/NO_VAL");
+        ((DefaultMutableTreeNode)n).setUserObject(parser.createNodoObject("DECLR NEST/NO_VAL",iright));
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
         RESULT = (DefaultMutableTreeNode)n;
     :}
@@ -1406,7 +1406,7 @@ N_DECLARACION ::=
     CHAR:i N_DECLARACION_ID:n
     {:
         ((DefaultMutableTreeNode)n).insert(parser.createNodoObject(i+"",iright), 0);
-        ((DefaultMutableTreeNode)n).setUserObject("DECLR NEST/NO_VAL");
+        ((DefaultMutableTreeNode)n).setUserObject(parser.createNodoObject("DECLR NEST/NO_VAL",iright));
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
         RESULT = (DefaultMutableTreeNode)n;
     :}
@@ -1674,7 +1674,7 @@ N_DECLARACION ::=
     //char id: funcion(p1,p2,p3...)
     CHAR:c ID:i COLON N_CALL_FUNCTION:f
     {:
-        DefaultMutableTreeNode nodo = parser.createNodo("DECLR");
+        DefaultMutableTreeNode nodo = parser.createNodoObject("DECLR",iright);
         nodo.add(parser.createNodoObject(c+"",cright));//nodo.add(parser.createNodo(c+""));
         nodo.add(parser.createNodoObject(i+"",iright));//nodo.add(parser.createNodo(i+""));
         nodo.add((DefaultMutableTreeNode) f);
@@ -1944,7 +1944,7 @@ N_PRINT ::=
     |
 
     OPEN_PARENTESIS
-    PRINT 
+    PRINT:p
     COLON 
     STRING:e
     N_PRINT_IMPRESS:n
@@ -1956,13 +1956,13 @@ N_PRINT ::=
         DefaultMutableTreeNode node3 = new DefaultMutableTreeNode(((DefaultMutableTreeNode)n).getUserObject());
         ((DefaultMutableTreeNode)n).insert(node3, 1);
         //cambiar nombre, brutal!!!
-        ((DefaultMutableTreeNode)n).setUserObject("PRINT");
+        ((DefaultMutableTreeNode)n).setUserObject(parser.createNodoObject("PRINT",pright));
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
         RESULT = (DefaultMutableTreeNode)n;
     :}
     |
     OPEN_PARENTESIS
-    PRINT 
+    PRINT:p
     COLON 
     N_TO_FOR:e
     N_PRINT_IMPRESS:n
@@ -1974,13 +1974,13 @@ N_PRINT ::=
         DefaultMutableTreeNode node3 = new DefaultMutableTreeNode(((DefaultMutableTreeNode)n).getUserObject());
         ((DefaultMutableTreeNode)n).insert(node3, 1);
         //cambiar nombre, brutal!!!
-        ((DefaultMutableTreeNode)n).setUserObject("PRINT");
+        ((DefaultMutableTreeNode)n).setUserObject(parser.createNodoObject("PRINT",pright));
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
         RESULT = (DefaultMutableTreeNode)n;
     :}
     |
     OPEN_PARENTESIS
-    PRINT 
+    PRINT:p
     COLON 
     NEW_LINE:e
     N_PRINT_IMPRESS:n
@@ -1992,7 +1992,7 @@ N_PRINT ::=
         DefaultMutableTreeNode node3 = new DefaultMutableTreeNode(((DefaultMutableTreeNode)n).getUserObject());
         ((DefaultMutableTreeNode)n).insert(node3, 1);
         //cambiar nombre, brutal!!!
-        ((DefaultMutableTreeNode)n).setUserObject("PRINT");
+        ((DefaultMutableTreeNode)n).setUserObject(parser.createNodoObject("PRINT",pright));
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
         RESULT = (DefaultMutableTreeNode)n;
     :}
