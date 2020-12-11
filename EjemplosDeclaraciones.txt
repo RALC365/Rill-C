@@ -9,6 +9,7 @@
 
 ()funcionDemostrativa(fun:int
 	int a,b,c.,
+	arr int arreglo: [1,2,3,4,5].,
 	a: -5.,
 	b: (5-6*4)*a+a/(2+3).,
 	c: -a*a+b/2.,

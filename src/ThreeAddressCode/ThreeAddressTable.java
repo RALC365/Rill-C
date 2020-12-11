@@ -24,45 +24,40 @@ public class ThreeAddressTable {
     public ThreeAddressTable(DefaultTreeModel model) throws TypeErrorException {
         this.model = model;
         this.conteoTemporales = 0;
-        System.out.println("A");
         iterateTree(model.getRoot());
-        System.out.println("Finito");
         imprimirCuadruplos();
     }
 
     private String iterateTree(Object eachNode) throws TypeErrorException {
         int cc = model.getChildCount(eachNode);
-        System.out.println("B");
         for (int i = 0; i < cc; i++) {       
-            System.out.println("Ci: "+eachNode.toString());
             Object child = model.getChild(eachNode, i);
-            System.out.println("Cf: "+child.toString());
             if (eachNode.equals(model.getRoot())) {
-                System.out.println("D");
-                //Some Code Here
                 iterateTree(child);
             }
             
             if (child.toString().equals("FOR")) {
-                System.out.println("E");
-                //Some Code Here
                 iterateTree(child);
             }
             
             if (child.toString().equals("WHILE")) {
-                System.out.println("F");
-                //Some Code Here
                 iterateTree(child);
             }
             
             if (child.toString().equals("IF")) {
-                System.out.println("G");
-                //Some Code Here
                 iterateTree(child);
             }
             
             if (child.toString().equals("ASSIGN")) {
                 AsignationBuild(child);
+            }
+            
+            if (child.toString().equals("DECLR ARRAY")) {
+                AsignationArray(model.getChild(child, 1).toString(), model.getChild(child, 2).toString(), model.getChild(child, 3));
+            }
+            
+            if (child.toString().equals("DECLR MATRIX")) {
+            
             }
             
         }
@@ -111,6 +106,35 @@ public class ThreeAddressTable {
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNACION, temporalRetorno, "", leftChild.toString()));
         }
         
+    }
+    
+    private void AsignationArray(String tipo, String identificador, Object currentNode) throws TypeErrorException {
+        
+        int cc = model.getChildCount(currentNode);
+        int tamanio = 0;
+        
+        switch(tipo) {
+            case "chr":
+                tamanio = 2;
+                break;
+            case "int": 
+                tamanio = 4;
+                break;
+            case "bln": 
+                tamanio = 1;
+                break;
+        }
+        
+        for (int i = 0; i < cc; i++) {
+            Object child = model.getChild(currentNode, i);
+            String temporalIndice = "t"+(this.conteoTemporales++);
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.MULTIPLICACION, i+"", tamanio+"", temporalIndice));
+            if (i == 0) {
+                this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNACION, temporalIndice, "", identificador));
+            }
+            String temporalRetorno = "t"+(this.conteoTemporales++);
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNARREGLO, child.toString(), temporalIndice, temporalRetorno));
+        }
     }
 
     private String ArithmeticBuild(Object currentNode, Operacion operacionEnum) throws TypeErrorException {

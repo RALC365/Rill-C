@@ -16,5 +16,6 @@ public enum Operacion {
     DIVISION,
     ASIGNACION,
     NEGACION,
-    GOTO
+    GOTO,
+    ASIGNARREGLO
 }
