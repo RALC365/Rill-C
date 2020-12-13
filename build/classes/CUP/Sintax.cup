@@ -1325,7 +1325,7 @@ EXPR_LIST   ::= EXPR_LIST:e1 EXPR:e2
             | EXPR:e                          
 ;
 
-EXPR        ::= EXPR:e1 OP_SUM  EXPR:e2 
+EXPR        ::= OP_SUM  EXPR:e2 
             | EXPR:e1 OP_MULTI_DIV EXPR:e2
             | OPEN_PARENTESIS EXPR_LIST:e CLOSE_PARENTESIS
             | EXPR:e1 MOD EXPR:e2

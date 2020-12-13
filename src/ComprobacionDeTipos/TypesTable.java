@@ -15,16 +15,17 @@ import javax.swing.tree.DefaultTreeModel;
 public class TypesTable {
 
     //private final HashMap<String, TypesSubTable> subtables = new HashMap();
-    private final ArrayList<String> errors = new ArrayList();
+    public ArrayList<String> errors = new ArrayList();
     public TypesSubTable root = new TypesSubTable("Program", "nill", null, null, null, 0);
 
-    public TypesTable(DefaultTreeModel model) throws TypeErrorException {
+    public TypesTable(DefaultTreeModel model) {
         createSubtables(model);
+        errors=root.errors;
     }
 
     //Crea las subTablaas de Tipos en Base a las funciones dentro del programa
     //Un tabla por Función, de esta manera se facilita la definición del ámbito
-    private void createSubtables(DefaultTreeModel model) throws TypeErrorException {
+    private void createSubtables(DefaultTreeModel model) {
         int cc = model.getChildCount(model.getRoot());
         for (int i = 0; i < cc; i++) {
             Object child = model.getChild(model.getRoot(), i);
@@ -49,6 +50,7 @@ public class TypesTable {
         for (String i : root.children.keySet()) {
             TypesSubTable child = root.children.get(i);
             child.getDeclarations(child.treepart);
+            root.errors.addAll(child.errors);
         }
     }
 

@@ -2144,10 +2144,10 @@ EXPR_LIST   ::= EXPR_LIST:e1 EXPR:e2
            
 ;
 
-EXPR        ::= EXPR:e1 OP_SUM:o  EXPR:e2 
+EXPR        ::= OP_SUM:o  EXPR:e2 
                 {:DefaultMutableTreeNode nodo = parser.createNodoObject(o+"",oright);//DefaultMutableTreeNode nodo = parser.createNodo(o+"");
-                  nodo.insert((DefaultMutableTreeNode)e1,0);
-                  nodo.insert((DefaultMutableTreeNode)e2,1);
+                  //nodo.insert((DefaultMutableTreeNode)e1,0);
+                  nodo.insert((DefaultMutableTreeNode)e2,0);
                 RESULT = nodo;:}
             | EXPR:e1 OP_MULTI_DIV:o EXPR:e2
                 {:DefaultMutableTreeNode nodo = parser.createNodoObject(o+"",oright);//DefaultMutableTreeNode nodo = parser.createNodo(o+"");

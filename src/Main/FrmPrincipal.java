@@ -20,7 +20,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
-import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java_cup.runtime.Symbol;
@@ -40,7 +39,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     NumeroLinea numeroLinea;
     TypesTable tt;
     ThreeAddressTable tablaCuadruplos;
-    
+
     public FrmPrincipal() {
         initComponents();
         this.numeroLinea = new NumeroLinea(this.txtCodigo);
@@ -205,7 +204,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
         }
     }
 
-    private void analizarSintactico() {
+    private void analizarSintactico() throws Exception {
         // TODO add your handling code here:
         //Only Lexer
         try {
@@ -224,17 +223,18 @@ public class FrmPrincipal extends javax.swing.JFrame {
             if (s.getERRORES().equalsIgnoreCase("")) {
                 /*txtAnalizarSin.setText("Analisis realizado correctamente");
                 txtAnalizarSin.setForeground(new Color(25, 111, 61));*/
-                console_txt.setText("Se completó el análisis sin errores");
                 console_txt.setForeground(Color.green);
+                console_txt.setText("Se completó el análisis Sintáctico sin errores");
             } else {
-                console_txt.setText("Cantidad de Errores: " + s.getcERRORES() + "\n" + s.getERRORES());
                 console_txt.setForeground(Color.red);
+                console_txt.setText("Cantidad de Errores: " + s.getcERRORES() + "\n" + s.getERRORES());
+                throw new Exception();
             }
-            console_txt.setForeground(Color.red);
         } catch (Exception ex) {
             Symbol sym = s.getS();
-            console_txt.setText("Error de sintaxis. Linea: " + (sym.right + 1) + " Columna: " + (sym.left + 1) + ", Texto: \"" + sym.value + "\"");
             console_txt.setForeground(Color.red);
+            console_txt.setText("Error de sintaxis. Linea: " + (sym.right + 1) + " Columna: " + (sym.left + 1) + ", Texto: \"" + sym.value + "\"");
+            throw new Exception();
         }
         //Setearear errores
         s.setERRORES("");
@@ -259,15 +259,20 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }
 
     private void ComprobacionTipos() {
-        try {
-            tt = new TypesTable(ASTree.getTreeSintaxModel());
+        tt = new TypesTable(ASTree.getTreeSintaxModel());
+        if (tt.errors.isEmpty()) {
             console_txt.setForeground(Color.green);
-        } catch (TypeErrorException e) {
-            console_txt.setText(e.getMessage());
+            console_txt.setText("Analisis Léxico, Sintáctico y de Tipo Completos y Sin errores.");
+        } else {
+            String errors = "";
+            for (String i : tt.errors) {
+                errors += i + "\n";
+            }
             console_txt.setForeground(Color.red);
+            console_txt.setText(errors);
         }
     }
-    
+
     private void DesplegarCuadruplos() {
         try {
             tablaCuadruplos = new ThreeAddressTable(ASTree.getTreeSintaxModel());
@@ -522,7 +527,11 @@ public class FrmPrincipal extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
-        analizarSintactico();
+        try {
+            analizarSintactico();
+        } catch (Exception ex) {
+            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
         showTree();
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
@@ -531,7 +540,11 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenu5ActionPerformed
 
     private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
-        analizarSintactico();
+        try {
+            analizarSintactico();
+        } catch (Exception ex) {
+            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jMenuItem11ActionPerformed
 
     private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
@@ -539,12 +552,20 @@ public class FrmPrincipal extends javax.swing.JFrame {
         jdConsole.setLocationRelativeTo(this);
         jdConsole.setVisible(true);
         console_txt.setText("");
-        analizarSintactico();
+        try {
+            analizarSintactico();
+        } catch (Exception ex) {
+            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
         ComprobacionTipos();
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
-        analizarSintactico();
+        try {
+            analizarSintactico();
+        } catch (Exception ex) {
+            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
         ComprobacionTipos();
         console_txt.setText("");
         VerTablasDeTipo(tt.root);
