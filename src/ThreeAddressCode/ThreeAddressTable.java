@@ -51,15 +51,22 @@ public class ThreeAddressTable {
             }
             
             if (child.toString().equals("WHILE")) {
+                
                 String[] nuevasEtiquetas = new String[3];
                 nuevasEtiquetas[2] = "tag"+(this.conteoEtiquetas++);
                 nuevasEtiquetas[0] = "tag"+(this.conteoEtiquetas++);
                 nuevasEtiquetas[1] = "tag"+(this.conteoEtiquetas++);
+                
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[2], "", ""));
-                ExpresionsTree(child, nuevasEtiquetas, 1);
+                
+                Object expresionChild = model.getChild(child, 0);
+                ExpresionsTree(expresionChild, nuevasEtiquetas);
+                
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[0], "", ""));
+                
                 iterateTree(child, nuevasEtiquetas, 2);
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[1], "", ""));
+                
             }
             
             if (child.toString().equals("IF")) {
@@ -70,20 +77,26 @@ public class ThreeAddressTable {
                 nuevasEtiquetas[1] = "tag"+(this.conteoEtiquetas++);
                 nuevasEtiquetas[2] = "";
                 
-                ExpresionsTree(child, nuevasEtiquetas, 1);
+                Object expresionChild = model.getChild(child, 0);
+                ExpresionsTree(expresionChild, nuevasEtiquetas);
                 
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[0], "", ""));
                 
                 if ((model.getChild(child, lastChild) == null)||(model.getChild(child, lastChild).toString().isEmpty())) {
+                    
                     iterateTree(child, nuevasEtiquetas, 1);
                     this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[1], "", ""));
+                    
                 } else {
+                    
                     nuevasEtiquetas[2] = "tag"+(this.conteoEtiquetas++);
                     iterateTree(child, nuevasEtiquetas, 1);
                     this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, nuevasEtiquetas[2], "", ""));
+                    
                     Object elseChild = model.getChild(child, lastChild);
                     iterateTree(elseChild, nuevasEtiquetas, 0);
                     this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[2], "", ""));
+                    
                 }
                 
             }
@@ -94,7 +107,8 @@ public class ThreeAddressTable {
                 siguienteEtiqueta[0] = "tag"+(this.conteoEtiquetas++);
                 siguienteEtiqueta[1] = "tag"+(this.conteoEtiquetas++);
                 
-                ExpresionsTree(child, siguienteEtiqueta, 1);
+                Object expresionChild = model.getChild(child, 0);
+                ExpresionsTree(expresionChild, siguienteEtiqueta);
                 
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, siguienteEtiqueta[0], "", ""));
                 Object sentenceChild = model.getChild(child, 1);
@@ -130,46 +144,64 @@ public class ThreeAddressTable {
         
     }
     
-    private void ExpresionsTree(Object childNode, String[] siguienteEtiqueta, int flowAllower) throws TypeErrorException {
-        for (int i = 0; i < flowAllower; i++) {
-            Object child = model.getChild(childNode, i);
-            if (child.toString().equals("=")) {
-                Object hijoDerecho = model.getChild(child, 0);
-                Object hijoIzquierdo = model.getChild(child, 1);
-                this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFIGUAL, hijoDerecho.toString(), hijoIzquierdo.toString(), siguienteEtiqueta[0]));
-                this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
-            }
-            if (child.toString().equals(">")) {
-                Object hijoDerecho = model.getChild(child, 0);
-                Object hijoIzquierdo = model.getChild(child, 1);
-                this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFMAYOR, hijoDerecho.toString(), hijoIzquierdo.toString(), siguienteEtiqueta[0]));
-                this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
-            }
-            if (child.toString().equals("<")) {
-                Object hijoDerecho = model.getChild(child, 0);
-                Object hijoIzquierdo = model.getChild(child, 1);
-                this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFMENOR, hijoDerecho.toString(), hijoIzquierdo.toString(), siguienteEtiqueta[0]));
-                this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
-            }
-            if (child.toString().equals("<=")) {
-                Object hijoDerecho = model.getChild(child, 0);
-                Object hijoIzquierdo = model.getChild(child, 1);
-                this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFMENORIGUAL, hijoDerecho.toString(), hijoIzquierdo.toString(), siguienteEtiqueta[0]));
-                this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
-            }
-            if (child.toString().equals("=>")) {
-                Object hijoDerecho = model.getChild(child, 0);
-                Object hijoIzquierdo = model.getChild(child, 1);
-                this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFMAYORIGUAL, hijoDerecho.toString(), hijoIzquierdo.toString(), siguienteEtiqueta[0]));
-                this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
-            }
-            if (child.toString().equals("!=")) {
-                Object hijoDerecho = model.getChild(child, 0);
-                Object hijoIzquierdo = model.getChild(child, 1);
-                this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFDISTINTO, hijoDerecho.toString(), hijoIzquierdo.toString(), siguienteEtiqueta[0]));
-                this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
-            }
-            //        int maxlimit = model.getChildCount(childNode);
+    //siguienteEtiqueta[0] (Verdadero)
+    //siguienteEtiqueta[1] (Falso)
+    private void ExpresionsTree(Object childNode, String[] siguienteEtiqueta) throws TypeErrorException {
+        if (childNode.toString().equals("AND")) {
+            Object hijoIzquierdo = model.getChild(childNode, 0);
+            Object hijoDerecho = model.getChild(childNode, 1);
+            String[] nuevaEtiqueta = new String[2];
+            nuevaEtiqueta[0] = "tag"+(this.conteoEtiquetas++);
+            nuevaEtiqueta[1] = siguienteEtiqueta[1];
+            ExpresionsTree(hijoIzquierdo, nuevaEtiqueta);
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevaEtiqueta[0], "", ""));
+            ExpresionsTree(hijoDerecho, siguienteEtiqueta);
+        }
+        if (childNode.toString().equals("OR")) {
+            Object hijoIzquierdo = model.getChild(childNode, 0);
+            Object hijoDerecho = model.getChild(childNode, 1);
+            String[] nuevaEtiqueta = new String[2];
+            nuevaEtiqueta[0] = siguienteEtiqueta[0];
+            nuevaEtiqueta[1] = "tag"+(this.conteoEtiquetas++);
+            ExpresionsTree(hijoIzquierdo, nuevaEtiqueta);
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevaEtiqueta[1], "", ""));
+            ExpresionsTree(hijoDerecho, siguienteEtiqueta);
+        }
+        if (childNode.toString().equals("=")) {
+            Object hijoDerecho = model.getChild(childNode, 0);
+            Object hijoIzquierdo = model.getChild(childNode, 1);
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFIGUAL, hijoDerecho.toString(), hijoIzquierdo.toString(), siguienteEtiqueta[0]));
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
+        }
+        if (childNode.toString().equals(">")) {
+            Object hijoDerecho = model.getChild(childNode, 0);
+            Object hijoIzquierdo = model.getChild(childNode, 1);
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFMAYOR, hijoDerecho.toString(), hijoIzquierdo.toString(), siguienteEtiqueta[0]));
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
+        }
+        if (childNode.toString().equals("<")) {
+            Object hijoDerecho = model.getChild(childNode, 0);
+            Object hijoIzquierdo = model.getChild(childNode, 1);
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFMENOR, hijoDerecho.toString(), hijoIzquierdo.toString(), siguienteEtiqueta[0]));
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
+        }
+        if (childNode.toString().equals("<=")) {
+            Object hijoDerecho = model.getChild(childNode, 0);
+            Object hijoIzquierdo = model.getChild(childNode, 1);
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFMENORIGUAL, hijoDerecho.toString(), hijoIzquierdo.toString(), siguienteEtiqueta[0]));
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
+        }
+        if (childNode.toString().equals("=>")) {
+            Object hijoDerecho = model.getChild(childNode, 0);
+            Object hijoIzquierdo = model.getChild(childNode, 1);
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFMAYORIGUAL, hijoDerecho.toString(), hijoIzquierdo.toString(), siguienteEtiqueta[0]));
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
+        }
+        if (childNode.toString().equals("!=")) {
+            Object hijoDerecho = model.getChild(childNode, 0);
+            Object hijoIzquierdo = model.getChild(childNode, 1);
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFDISTINTO, hijoDerecho.toString(), hijoIzquierdo.toString(), siguienteEtiqueta[0]));
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
         }
     }
     
