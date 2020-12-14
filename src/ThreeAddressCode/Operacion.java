@@ -17,5 +17,12 @@ public enum Operacion {
     ASIGNACION,
     NEGACION,
     GOTO,
-    ASIGNARREGLO
+    ASIGNARREGLO,
+    ETIQUETA,
+    IFIGUAL,
+    IFMAYOR,
+    IFMENOR,
+    IFMAYORIGUAL,
+    IFMENORIGUAL,
+    IFDISTINTO
 }
