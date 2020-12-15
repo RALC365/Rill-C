@@ -1,0 +1,16 @@
+()(main:
+	mtx int matriz: [[1],[2],[3],[4],[9],[10]].,
+:)
+
+()pruebaCase(fun:int 
+	int z.,
+	(z)(if:
+		(< 10):
+			z: 10.,
+		(= 20):
+			z: 40.,
+		(els):
+			z: 60.,
+	:)
+	ret z.,
+:)

@@ -9,15 +9,9 @@
 	b: (5-6*4)*a+a/(2+3).,
 	c: -a*a+b/2.,
 	d: 0.,
-	(a = 5)(if:
+	(a <= 20 and b > c or a > b)(if:
 		d: 10.,
 		a: 4.,
-	(a <= 20 and b > c or a > b):
-		d: 25.,
-		a: 30.,
-	(a > 20 or a > 15 and c > b or d = 0):
-		d: 25.,
-		a: 30.,
 	(els):
 		d: 20.,
 		a: 8.,
@@ -26,13 +20,27 @@
 	ret c.,
 :)
 
-()pruebawhile(fun:int 
-	int a,b.,
+()pruebaWhile(fun:int 
+	int a,b,c.,
 	b: 1.,
 	a: 5.,
+	c: 1.,
 	(a < 11)(wh: 
 		b: b+a*b.,
 		a: a+1.,
 	:)
 	ret b.,	
+:)
+
+()pruebaCase(fun:int 
+	int z.,
+	(z)(if:
+		(< 10):
+			z: 10.,
+		(= 20):
+			z: 40.,
+		(els):
+			z: 60.,
+	:)
+	ret z.,
 :)
