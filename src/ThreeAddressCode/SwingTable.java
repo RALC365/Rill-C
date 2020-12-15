@@ -50,7 +50,7 @@ public class SwingTable {
         
         JDialog dialog = new JDialog();
         JScrollPane scrollPane = new JScrollPane(table);
-        dialog.setBounds(100, 100, 1300, 700);
+        dialog.setBounds(100, 100, 600, 800);
         dialog.getContentPane().setLayout(new BorderLayout(0, 0));
         dialog.getContentPane().add(scrollPane, BorderLayout.CENTER);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
