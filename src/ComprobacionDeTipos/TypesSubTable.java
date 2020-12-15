@@ -68,9 +68,7 @@ public class TypesSubTable {
         int cc = model.getChildCount(a);
         //Agregan el ID del FOR a su tabla de IDs
         if (a.toString().equals("FOR")) {
-            String for_txt[] = model.getChild(a, 0).toString().split(",");
-            TableRow row = new TableRow(for_txt[0], "int", offsetActual);
-            addIDToSubTable(row);
+            checkForParameters(a);
         }
 
         //Recoree los Hijo del nodo Actual 
@@ -171,7 +169,7 @@ public class TypesSubTable {
             //Declaraciones sin valores
             if (o.toString().equals("DECLR NEST/NO_VAL")) {
                 if (checkIDExistence(model.getChild(o, 1).toString()) != null) {
-                    errors.add("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito. " + ((InstructionCode) ((DefaultMutableTreeNode) model.getChild(o, 0)).getUserObject()).getCodeLine());
+                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito");
                 } else {
                     TableRow row = new TableRow(model.getChild(o, 1).toString(), model.getChild(o, 0).toString(), offsetActual);
                     addIDToSubTable(row);
@@ -190,7 +188,7 @@ public class TypesSubTable {
                 if (ccc > 2) {
                     for (int j = 2; j < ccc; j++) {
                         if (checkIDExistence(model.getChild(o, j).toString()) != null) {
-                            errors.add("Error de Declaración2. La variable: " + model.getChild(o, j).toString() + " ya existe en el ámbito. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) model.getChild(o, j)).getUserObject()).getCodeLine());
+                            errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    La variable: " + model.getChild(o, j).toString() + " ya existe en el ámbito");
                         } else {
                             TableRow row = new TableRow(model.getChild(o, j).toString(), model.getChild(o, 0).toString(), offsetActual);
                             addIDToSubTable(row);
@@ -220,7 +218,7 @@ public class TypesSubTable {
             //Declaraciones de Matrices Vacías
             if (o.toString().equals("DECLR MATRIX EMPTY")) {
                 if (checkIDExistence(model.getChild(o, 2).toString()) != null) {
-                    errors.add("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito. " + ((InstructionCode) ((DefaultMutableTreeNode) model.getChild(o, 1)).getUserObject()).getCodeLine());
+                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito. ");
                 } else {
                     String id = model.getChild(o, 2).toString();
                     int filas = Integer.parseInt(model.getChild(model.getChild(o, 0), 0).toString());
@@ -245,7 +243,7 @@ public class TypesSubTable {
             //Declaraciones de Matrices
             if (o.toString().equals("DECLR MATRIX")) {
                 if (checkIDExistence(model.getChild(o, 2).toString()) != null) {
-                    errors.add("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito. " + ((InstructionCode) ((DefaultMutableTreeNode) model.getChild(o, 1)).getUserObject()).getCodeLine());
+                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n     La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito. ");
                 } else {
                     String id = model.getChild(o, 2).toString();
                     int[] size = checkMatrix(model.getChild(o, 1).toString(), model.getChild(o, 3));
@@ -269,7 +267,7 @@ public class TypesSubTable {
             //Declaraciones de Arreglos Vacía
             if (o.toString().equals("DECLR ARRAY EMPTY")) {
                 if (checkIDExistence(model.getChild(o, 2).toString()) != null) {
-                    errors.add("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito.. " + ((InstructionCode) ((DefaultMutableTreeNode) model.getChild(o, 1)).getUserObject()).getCodeLine());
+                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n     La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito.. ");
                 } else {
                     String id = model.getChild(o, 2).toString();
                     int els = Integer.parseInt(model.getChild(model.getChild(o, 0), 0).toString());
@@ -292,7 +290,7 @@ public class TypesSubTable {
             //Declaraciones de Arreglos
             if (o.toString().equals("DECLR ARRAY")) {
                 if (checkIDExistence(model.getChild(o, 2).toString()) != null) {
-                    errors.add("Error de Declaración. La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito.. " + ((InstructionCode) ((DefaultMutableTreeNode) model.getChild(o, 1)).getUserObject()).getCodeLine());
+                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito.. ");
                 } else {
                     String id = model.getChild(o, 2).toString();
                     int els = checkArray(model.getChild(o, 1).toString(), model.getChild(o, 3));
@@ -409,7 +407,8 @@ public class TypesSubTable {
             if (checkFunctionParams(fun.split(" -> ")[0], o)) {
                 return fun.split(" -> ")[1];
             } else {
-                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    No hay función '" + root.replace(":fun", "") + "' con esos tipos de parámetros. " + ((InstructionCode) ((DefaultMutableTreeNode) model.getChild(o, i)).getUserObject()).getCodeLine());
+                //---------------------------ESTA LINEA DA ERROR Y NO SÉ PORQUÉ
+                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) model.getChild(o, i)).getUserObject()).getCodeLine() + "\n    No hay función '" + root.replace(":fun", "") + "' con esos tipos de parámetros. ");
                 return "nll";
             }
         } else {
@@ -660,6 +659,57 @@ public class TypesSubTable {
             }
         }
         return size;
+    }
+
+    private boolean checkForParameters(Object o) {
+        int cc = model.getChildCount(o);
+        Object c = model.getChild(o, 0);
+        for (int j = 0; j < model.getChildCount(c); j++) {
+            checkBoolFOR(model.getChild(c, j));
+        }
+        c = model.getChild(o, 1);
+        String step = model.getChild(c, 0).toString();
+        if (step.contains("+")) {
+            step = step.replace("+", "");
+        }
+        if (step.contains("-")) {
+            step = step.replace("-", "");
+        }
+
+        if (!isNumeric(step)) {
+            TableRow id = checkIDExistence(step);
+            if (id != null) {
+                return true;
+            } else {
+                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) c).getUserObject()).getCodeLine() + "\n    No hay variable de nombre: '"
+                        + step + "' accesible desde este ámbito actual. ");
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    private boolean checkBoolFOR(Object o) {
+        Object childI = model.getChild(o, 0);
+        TableRow row = new TableRow(childI.toString(), "int", offsetActual);
+        if (addIDToSubTable(row)) {
+            offsetActual += 4;
+        }
+        //verificar si el otro elemento es un ID o un integer
+        Object childD = model.getChild(o, 1);
+        if (!isNumeric(childD.toString())) {
+            TableRow id = checkIDExistence(childD.toString());
+            if (id != null) {
+                return true;
+            } else {
+                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) childD).getUserObject()).getCodeLine() + "\n    No hay variable de nombre: '"
+                        + childD.toString() + "' accesible desde este ámbito actual. ");
+                return false;
+            }
+        } else {
+            return true;
+        }
     }
 
     @Override

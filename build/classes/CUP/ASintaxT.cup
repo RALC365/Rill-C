@@ -641,7 +641,27 @@ N_FOR ::=
     N_SENTENCIA:n
     CLOSE_BLOCK
     {:
-        DefaultMutableTreeNode parametros = parser.createNodoObject(id+","+n1+","+n2+","+o+n3,idright);
+        String desde = "";
+        String hasta = "";
+        if ((o+"").equals("+")){
+            desde=">=";
+            hasta= "<";
+        }else{
+            desde="<=";
+            hasta= ">";
+        }
+        DefaultMutableTreeNode parametros = parser.createNodoObject("AND",idright);
+        DefaultMutableTreeNode mayorIgual = parser.createNodoObject(desde,idright);
+        mayorIgual.insert(parser.createNodoObject(n1+"",idright),0);
+        mayorIgual.insert(parser.createNodoObject(id+"",idright),0);
+        DefaultMutableTreeNode menor = parser.createNodoObject(hasta,idright);
+        menor.insert(parser.createNodoObject(n2+"",idright),0);
+        menor.insert(parser.createNodoObject(id+"",idright),0);
+        DefaultMutableTreeNode step = parser.createNodoObject("STEP",idright);
+        step.insert(parser.createNodoObject(""+o+n3,idright),0);
+        parametros.insert(menor,0);
+        parametros.insert(mayorIgual,0);
+        ((DefaultMutableTreeNode)n).insert(step,0);
         ((DefaultMutableTreeNode)n).insert(parametros,0);
         ((DefaultMutableTreeNode)n).setUserObject(parser.createNodoObject("FOR",idright));
         ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
