@@ -903,7 +903,7 @@ N_CALL_FUNCTION::=
 N_CALL_FUNCTION_PARAMETROS::=
     N_VALOR_VARIABLE:e1 COMA N_CALL_FUNCTION_PARAMETROS:e 
         {:
-            ((DefaultMutableTreeNode)e).add((DefaultMutableTreeNode)e1);
+            ((DefaultMutableTreeNode)e).insert((DefaultMutableTreeNode)e1,0);
             RESULT = e;
         :}
     |

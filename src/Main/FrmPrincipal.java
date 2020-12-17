@@ -228,13 +228,13 @@ public class FrmPrincipal extends javax.swing.JFrame {
             } else {
                 console_txt.setForeground(Color.red);
                 console_txt.setText("Cantidad de Errores: " + s.getcERRORES() + "\n" + s.getERRORES());
-                throw new TypeErrorException("No se puedo completar el analisis sintáctico.");
+                //throw new TypeErrorException("No se puedo completar el analisis sintáctico.");
             }
         } catch (Exception ex) {
             Symbol sym = s.getS();
             console_txt.setForeground(Color.red);
             console_txt.setText("Error de sintaxis. Linea: " + (sym.right + 1) + " Columna: " + (sym.left + 1) + ", Texto: \"" + sym.value + "\"");
-            throw new TypeErrorException("No se puedo completar el analisis sintáctico.");
+            //throw new TypeErrorException("No se puedo completar el analisis sintáctico.");
         }
         //Setearear errores
         s.setERRORES("");
