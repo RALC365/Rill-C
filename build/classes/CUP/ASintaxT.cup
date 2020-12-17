@@ -1908,21 +1908,11 @@ N_BOOLEAN_VALUE::=
         :}
     | 
     
-    ID:id OPEN_PARENTESIS N_ARGUMENTOS:ar CLOSE_PARENTESIS 
+    N_CALL_FUNCTION:ar 
         {:
-            DefaultMutableTreeNode nodo = parser.createNodoObject("N_value_boolean",idright);//DefaultMutableTreeNode nodo = parser.createNodo("N_value_boolean");
-            nodo.add(parser.createNodoObject(id+"",idright));//nodo.add(parser.createNodo(id+""));
-            nodo.add((DefaultMutableTreeNode)ar);
-            RESULT = nodo;
+            RESULT = ar;
         :}
     | 
-    ID:id OPEN_PARENTESIS CLOSE_PARENTESIS
-        {:
-            DefaultMutableTreeNode nodo = parser.createNodoObject("N_value_boolean",idright);//DefaultMutableTreeNode nodo = parser.createNodo("N_value_boolean");
-            nodo.add(parser.createNodoObject(id+"",idright));//nodo.add(parser.createNodo(id+""));
-            RESULT = nodo;
-        :}
-    |
         error:err{:
         String desc = "Error en el valor booleno, tipo no compatible con Boolean";
         String mes = parser.errorMessage(desc, parser.getS());

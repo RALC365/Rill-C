@@ -542,8 +542,8 @@ public class TypesSubTable {
                     }
 
                 } else {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + 
-                            "\n    La expresión del lado derecho de '" + id + "' no es del tipo esperado. ");
+                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
+                            + "\n    La expresión del lado derecho de '" + id + "' no es del tipo esperado. ");
                     return false;
                 }
             }
@@ -796,13 +796,15 @@ public class TypesSubTable {
 
     //Verifica si parametros del llamado son corectos
     public boolean checkFunctionParams(String paramsID, Object o) {
+        System.out.println(paramsID);
         int cc = model.getChildCount(o);
         String params[] = paramsID.split(" x ");
         if (cc != params.length) {
-            return false;
+            return params[0].equals("nll") && cc == 0;
         } else {
             for (int i = 0; i < cc; i++) {
                 Object c = model.getChild(o, i);
+                System.out.println(c.toString());
                 String type = checkTypeofValue(c);
                 if (!type.equals(params[i])) {
                     if (type.contains("array") && (type.replace("..", "#")).split("#").length == 2 && params[i].equals("arr")) {
