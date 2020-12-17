@@ -228,13 +228,13 @@ public class FrmPrincipal extends javax.swing.JFrame {
             } else {
                 console_txt.setForeground(Color.red);
                 console_txt.setText("Cantidad de Errores: " + s.getcERRORES() + "\n" + s.getERRORES());
-                throw new Exception();
+                throw new TypeErrorException("No se puedo completar el analisis sintáctico.");
             }
         } catch (Exception ex) {
             Symbol sym = s.getS();
             console_txt.setForeground(Color.red);
             console_txt.setText("Error de sintaxis. Linea: " + (sym.right + 1) + " Columna: " + (sym.left + 1) + ", Texto: \"" + sym.value + "\"");
-            throw new Exception();
+            throw new TypeErrorException("No se puedo completar el analisis sintáctico.");
         }
         //Setearear errores
         s.setERRORES("");
@@ -258,7 +258,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
         sintaxTree.showTree();
     }
 
-    private void ComprobacionTipos() {
+    private void ComprobacionTipos() throws TypeErrorException {
         tt = new TypesTable(ASTree.getTreeSintaxModel());
         if (tt.errors.isEmpty()) {
             console_txt.setForeground(Color.green);
@@ -557,7 +557,11 @@ public class FrmPrincipal extends javax.swing.JFrame {
         } catch (Exception ex) {
             Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
-        ComprobacionTipos();
+        try {
+            ComprobacionTipos();
+        } catch (TypeErrorException ex) {
+            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
@@ -566,7 +570,11 @@ public class FrmPrincipal extends javax.swing.JFrame {
         } catch (Exception ex) {
             Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
-        ComprobacionTipos();
+        try {
+            ComprobacionTipos();
+        } catch (TypeErrorException ex) {
+            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
         console_txt.setText("");
         VerTablasDeTipo(tt.root);
     }//GEN-LAST:event_jMenuItem9ActionPerformed

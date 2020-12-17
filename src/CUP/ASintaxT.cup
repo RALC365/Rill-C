@@ -1485,6 +1485,19 @@ N_DECLARACION ::=
             RESULT = nodo;
         :}
     |
+    ID:id
+    OPEN_SQR_BRACKET N_TO_FOR:n1 CLOSE_SQR_BRACKET
+    COLON
+    N_CALL_FUNCTION:ex
+        {:
+            DefaultMutableTreeNode nodo = parser.createNodoObject("ASSIGN ARRAY",idright);//DefaultMutableTreeNode nodo = parser.createNodo("ASSIGN ARRAY");
+            DefaultMutableTreeNode mt = parser.createNodoObject(id+"",idright);//DefaultMutableTreeNode mt = parser.createNodo(id+"");
+            mt.add(parser.createNodoObject(n1+"",idright));//mt.add(parser.createNodo(n1+""));
+            nodo.add(mt);
+            nodo.add((DefaultMutableTreeNode) ex);
+            RESULT = nodo;
+        :}
+    |
     //solo declaracion variable: arr [1] Int id
     ARRAY :i
     OPEN_SQR_BRACKET N_TO_FOR:n1 CLOSE_SQR_BRACKET
@@ -1538,6 +1551,21 @@ N_DECLARACION ::=
     OPEN_SQR_BRACKET:m2 N_TO_FOR:n2 CLOSE_SQR_BRACKET
     COLON
     N_SENTENCIA_BOOLEANA_ANIDADA:ex
+        {:
+            DefaultMutableTreeNode nodo = parser.createNodoObject("ASSIGN MATRIX",idright);//DefaultMutableTreeNode nodo = parser.createNodo("ASSIGN MATRIX");
+            DefaultMutableTreeNode mt = parser.createNodoObject(id+"",idright);//DefaultMutableTreeNode mt = parser.createNodo(id+"");
+            mt.add(parser.createNodoObject(n1+"",m1right));//mt.add(parser.createNodo(n1+""));
+            mt.add(parser.createNodoObject(n2+"",m2right));//mt.add(parser.createNodo(n2+""));
+            nodo.add(mt);
+            nodo.add((DefaultMutableTreeNode) ex);
+            RESULT = nodo;
+        :}
+    |
+    ID:id
+    OPEN_SQR_BRACKET:m1 N_TO_FOR:n1 CLOSE_SQR_BRACKET
+    OPEN_SQR_BRACKET:m2 N_TO_FOR:n2 CLOSE_SQR_BRACKET
+    COLON
+    N_CALL_FUNCTION:ex
         {:
             DefaultMutableTreeNode nodo = parser.createNodoObject("ASSIGN MATRIX",idright);//DefaultMutableTreeNode nodo = parser.createNodo("ASSIGN MATRIX");
             DefaultMutableTreeNode mt = parser.createNodoObject(id+"",idright);//DefaultMutableTreeNode mt = parser.createNodo(id+"");
