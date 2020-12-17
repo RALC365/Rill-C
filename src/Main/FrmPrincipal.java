@@ -51,7 +51,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
 
     private void analizarLexico() throws IOException {
         int cont = 1;
-
+        bandera = true;
         String expr = (String) txtCodigo.getText();
         Lexer lexer = new Lexer(new StringReader(expr));
         String resultado = "LINEA " + cont + "\t\tSIMBOLO\n";
@@ -195,6 +195,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
                     break;
                 case ERROR:
                     resultado += "  <Simbolo no definido>\t\t" + lexer.lexeme + "\n";
+                    bandera = false;
                     break;
 
                 default:
@@ -205,52 +206,55 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }
 
     private void analizarSintactico() throws Exception {
-        // TODO add your handling code here:
-        //Only Lexer
-        try {
-            analizarLexico();
-        } catch (IOException ex) {
-            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        //Cup and Lexer
-        //String ST = txtResultado.getText();
-        String ST = txtCodigo.getText();
-        s = new Sintax(new CUP.LexerCup(new StringReader(ST)));
-        try {
-            //jtSintactico.setModel(s.createTreeSintax("SintaxTree"));
-            s.createTreeSintax("Program");
-            s.parse();
-            if (s.getERRORES().equalsIgnoreCase("")) {
-                /*txtAnalizarSin.setText("Analisis realizado correctamente");
-                txtAnalizarSin.setForeground(new Color(25, 111, 61));*/
-                console_txt.setForeground(Color.green);
-                console_txt.setText("Se completó el análisis Sintáctico sin errores");
-            } else {
-                console_txt.setForeground(Color.red);
-                console_txt.setText("Cantidad de Errores: " + s.getcERRORES() + "\n" + s.getERRORES());
-                //throw new TypeErrorException("No se puedo completar el analisis sintáctico.");
+        if (bandera) {
+
+            // TODO add your handling code here:
+            //Only Lexer
+            try {
+                analizarLexico();
+            } catch (IOException ex) {
+                Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (Exception ex) {
-            Symbol sym = s.getS();
-            console_txt.setForeground(Color.red);
-            console_txt.setText("Error de sintaxis. Linea: " + (sym.right + 1) + " Columna: " + (sym.left + 1) + ", Texto: \"" + sym.value + "\"");
-            //throw new TypeErrorException("No se puedo completar el analisis sintáctico.");
-        }
-        //Setearear errores
-        s.setERRORES("");
+            //Cup and Lexer
+            //String ST = txtResultado.getText();
+            String ST = txtCodigo.getText();
+            s = new Sintax(new CUP.LexerCup(new StringReader(ST)));
+            try {
+                //jtSintactico.setModel(s.createTreeSintax("SintaxTree"));
+                s.createTreeSintax("Program");
+                s.parse();
+                if (s.getERRORES().equalsIgnoreCase("")) {
+                    /*txtAnalizarSin.setText("Analisis realizado correctamente");
+                txtAnalizarSin.setForeground(new Color(25, 111, 61));*/
+                    console_txt.setForeground(Color.green);
+                    console_txt.setText("Se completó el análisis Sintáctico sin errores");
+                } else {
+                    console_txt.setForeground(Color.red);
+                    console_txt.setText("Cantidad de Errores: " + s.getcERRORES() + "\n" + s.getERRORES());
+                    bandera = false;
+                }
+            } catch (Exception ex) {
+                Symbol sym = s.getS();
+                console_txt.setForeground(Color.red);
+                console_txt.setText("Error de sintaxis. Linea: " + (sym.right + 1) + " Columna: " + (sym.left + 1) + ", Texto: \"" + sym.value + "\"");
+                bandera = false;
+            }
+            //Setearear errores
+            s.setERRORES("");
 
-        ASTree = new ASintaxT(new CUP.LexerCup(new StringReader(ST)));
+            ASTree = new ASintaxT(new CUP.LexerCup(new StringReader(ST)));
 
-        try {
-            //jtSintactico.setModel(s.createTreeSintax("SintaxTree"));
-            ASTree.createTreeSintax("Program");
-            ASTree.parse();
-        } catch (Exception ex) {
-            Symbol sym = ASTree.getS();
-            console_txt.setText("Ups! Algo inesperado sucecido. No se logró generar el árbol");
-            console_txt.setForeground(Color.red);
+            try {
+                //jtSintactico.setModel(s.createTreeSintax("SintaxTree"));
+                ASTree.createTreeSintax("Program");
+                ASTree.parse();
+            } catch (Exception ex) {
+                Symbol sym = ASTree.getS();
+                console_txt.setText("Ups! Algo inesperado sucecido. No se logró generar el árbol");
+                console_txt.setForeground(Color.red);
+            }
+            s = null;
         }
-        s = null;
     }
 
     private void showTree() {
@@ -259,17 +263,20 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }
 
     private void ComprobacionTipos() throws TypeErrorException {
-        tt = new TypesTable(ASTree.getTreeSintaxModel());
-        if (tt.errors.isEmpty()) {
-            console_txt.setForeground(Color.green);
-            console_txt.setText("Analisis Léxico, Sintáctico y de Tipo Completos y Sin errores.");
-        } else {
-            String errors = "";
-            for (String i : tt.errors) {
-                errors += i + "\n";
+        if (bandera) {
+            tt = new TypesTable(ASTree.getTreeSintaxModel());
+            if (tt.errors.isEmpty()) {
+                console_txt.setForeground(Color.green);
+                console_txt.setText("Analisis Léxico, Sintáctico y de Tipo Completos y Sin errores.");
+            } else {
+                bandera = false;
+                String errors = "";
+                for (String i : tt.errors) {
+                    errors += i + "\n";
+                }
+                console_txt.setForeground(Color.red);
+                console_txt.setText(errors);
             }
-            console_txt.setForeground(Color.red);
-            console_txt.setText(errors);
         }
     }
 
@@ -514,6 +521,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenu1ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        bandera=true;
         try {
             analizarLexico();
         } catch (IOException ex) {
@@ -522,6 +530,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        bandera=true;
         try {
             analizarLexico();
         } catch (IOException ex) {
@@ -540,6 +549,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenu5ActionPerformed
 
     private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
+        bandera=true;
         try {
             analizarSintactico();
         } catch (Exception ex) {
@@ -548,6 +558,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem11ActionPerformed
 
     private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
+        bandera=true;
         jdConsole.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         jdConsole.setLocationRelativeTo(this);
         jdConsole.setVisible(true);
@@ -565,6 +576,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
+        bandera=true;
         try {
             analizarSintactico();
         } catch (Exception ex) {
@@ -636,14 +648,11 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }
 
     public void guardarFichero(String cadena, File archivo) {
-
         FileWriter escribir;
         try {
-
             escribir = new FileWriter(archivo, true);
             escribir.write(cadena);
             escribir.close();
-
         } catch (FileNotFoundException ex) {
             JOptionPane.showMessageDialog(null, "Error al guardar, ponga nombre al archivo");
         } catch (IOException ex) {
@@ -652,6 +661,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }
     Sintax s;
     ASintaxT ASTree;
+    boolean bandera = true;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextPane console_txt;
     private javax.swing.JLabel jLabel1;
