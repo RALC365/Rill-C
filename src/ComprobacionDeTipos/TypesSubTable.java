@@ -75,31 +75,68 @@ public class TypesSubTable {
         for (int i = 0; i < cc; i++) {
             Object o = model.getChild(a, i);
 
+            if (o.toString().contains(":fun")) {
+                String fun = checkFunction(o.toString().replace(":fun", ""));
+                if (!checkFunctionParams(fun.split(" -> ")[0], o)) {
+                    errors.add(">!<Error de Tipo. Linea: "
+                            /*+ ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() */ + "\n    No hay función '" + o.toString().replace(":fun", "") + "' con esos tipos de parámetros. ");
+                }
+            }
+
+            //Revisar si la variable de retorno del tipo correcto
+            if (o.toString().contains(":ret")) {
+                String id = o.toString().replace(":ret", "");
+                String ret_type = "";
+                if (id.equals("false") || id.equals("true")) {
+                    ret_type = "bln";
+                } else if (id.equals("nll")) {
+                    ret_type = "nll";
+                } else if (isNumeric(id)) {
+                    ret_type = "int";
+                } else if (id.contains("'") || id.contains("‘") || id.contains("’")) {
+                    ret_type = "chr";
+                } else {
+                    TableRow id1 = checkIDExistence(id);
+                    if (id1 != null) {
+                        ret_type = id1.type;
+                    } else {
+                        errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    No hay variable de nombre: '"
+                                + id + "' accesible desde este ámbito actual. ");
+                        ret_type = "nll";
+                    }
+                }
+                String fun_ret_type = (functionType.split("->")[1]).substring(1);
+                if (!ret_type.equals(fun_ret_type)) {
+                    if (ret_type.contains("array")) {
+                        if (((ret_type.replace("..", "#")).split("#").length == 3 && fun_ret_type.contains("mtx"))
+                                && (ret_type.contains(fun_ret_type.split(" ")[1]))) {
+                            //Son del mismo tipo
+                        } else if (((ret_type.replace("..", "#")).split("#").length == 2 && fun_ret_type.contains("arr"))
+                                && (ret_type.contains(fun_ret_type.split(" ")[1]))) {
+                            //Son del mismo tipo
+                        } else {
+                            errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
+                                    + "\n    El valor de retorno: '" + id + "' no es del tipo esperado.");
+                        }
+                    } else {
+                        errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
+                                + "\n    El valor de retorno: '" + id + "' no es del tipo esperado.");
+                    }
+                }
+            }
+
             //PARAMETERS
             if (o.toString().equals("PARAMETERS")) {
                 for (int j = 0; j < model.getChildCount(o); j++) {
                     String[] p = model.getChild(o, j).toString().split(" ");
-                    if (p[0].equals("int")) {
-                        TableRow row = new TableRow(p[1], p[0], offsetActual);
-                        addIDToSubTable(row);
-                        offsetActual += 4;
-                    }
-                    if (p[0].equals("chr")) {
-                        TableRow row = new TableRow(p[1], p[0], offsetActual);
-                        addIDToSubTable(row);
-                        offsetActual += 4;
-                    }
-                    if (p[0].equals("bln")) {
-                        TableRow row = new TableRow(p[1], p[0], offsetActual);
-                        addIDToSubTable(row);
-                        offsetActual += 1;
-                    }
-                    if (p[0].equals("mtx")) {
+                    if (p[0].contains("mtx")) {
                         TableRow row = new TableRow(p[2], "array(0..0,array(0..0," + p[1] + "))", offsetActual);
                         addIDToSubTable(row);
-                    }
-                    if (p[0].equals("arr")) {
+                    } else if (p[0].contains("arr")) {
                         TableRow row = new TableRow(p[2], "array(0..0," + p[1] + ")", offsetActual);
+                        addIDToSubTable(row);
+                    } else {
+                        TableRow row = new TableRow(p[1], p[0], offsetActual);
                         addIDToSubTable(row);
                     }
                 }
@@ -111,7 +148,6 @@ public class TypesSubTable {
                 this.children.put("FOR " + this.children.size(), st);
                 st.getDeclarations(o);
                 this.errors.addAll(st.errors);
-                // System.out.println(st.toString());
             }
 
             //WHILE
@@ -121,7 +157,6 @@ public class TypesSubTable {
                     this.children.put("WHILE " + this.children.size(), st);
                     st.getDeclarations(o);
                     this.errors.addAll(st.errors);
-                    // System.out.println(st.toString());
                 }
             }
 
@@ -132,7 +167,6 @@ public class TypesSubTable {
                     this.children.put("IF " + this.children.size(), st);
                     st.getDeclarations(o);
                     this.errors.addAll(st.errors);
-                    // System.out.println(st.toString());
                 }
             }
 
@@ -153,7 +187,6 @@ public class TypesSubTable {
                     this.children.put("ELSE_IF " + this.children.size(), st);
                     st.getDeclarations(o);
                     this.errors.addAll(st.errors);
-                    // System.out.println(st.toString());
                 }
             }
 
@@ -163,7 +196,6 @@ public class TypesSubTable {
                 this.children.put("ELSE " + this.children.size(), st);
                 st.getDeclarations(o);
                 this.errors.addAll(st.errors);
-                // System.out.println(st.toString());
             }
 
             //SWITCH
@@ -192,7 +224,6 @@ public class TypesSubTable {
                     this.children.put("CASE " + this.children.size(), st);
                     st.getDeclarations(o);
                     this.errors.addAll(st.errors);
-                    // System.out.println(st.toString());
                 }
             }
 
@@ -368,7 +399,7 @@ public class TypesSubTable {
                     if (de_type.contains("array")) {
                         if ((x.type.replace("..", "#")).split("#").length != 3) {
                             errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                    + "\n    La expresion de lado derecho de '" + id + "' no es del mismo tipo que " + id + ". ");
+                                    + "\n    La expresion de lado derecho de '" + id + "' no es del tipos esperado. ");
                             return;
                         }
                     }
@@ -377,7 +408,7 @@ public class TypesSubTable {
                             || (de_type.contains("chr") && x.type.contains("chr"))) {
                     } else {
                         errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                + "\n    La expresion de lado derecho de '" + id + "' no es del mismo tipo que " + id + ". ");
+                                + "\n    La expresion de lado derecho de '" + id + "' no es del tipo esperado. ");
                     }
                 } else {
                     errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
@@ -400,7 +431,7 @@ public class TypesSubTable {
                     if (de_type.contains("array")) {
                         if ((x.type.replace("..", "#")).split("#").length != 2) {
                             errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                    + "\n    La expresion de lado derecho de '" + id + "' no es del mismo tipo que " + id + ". ");
+                                    + "\n    La expresion de lado derecho de '" + id + "' no es del tipo esperado. ");
                             return;
                         }
                     }
@@ -409,7 +440,7 @@ public class TypesSubTable {
                             || (de_type.contains("chr") && x.type.contains("chr"))) {
                     } else {
                         errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                + "\n    La expresion de lado derecho de '" + id + "' no es del mismo tipo que " + id + ". ");
+                                + "\n    La expresion de lado derecho de '" + id + "' no es del tipo esperado. ");
                     }
                 } else {
                     errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
@@ -666,7 +697,7 @@ public class TypesSubTable {
             if (o.toString().contains(":fun")) {
                 String fun = checkFunction(o.toString().replace(":fun", ""));
                 if (!fun.split(" -> ")[1].equals("int")) {
-                    errors.add(">!<Error de Tipo. Linea: "  /* + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()*/
+                    errors.add(">!<Error de Tipo. Linea: " /* + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()*/
                             + "\n    La función '" + fun + "' no devuelve un int. ");
                     return false;
                 } else {
@@ -758,8 +789,8 @@ public class TypesSubTable {
             if (o.toString().contains(":fun")) {
                 String fun = checkFunction(o.toString().replace(":fun", ""));
                 if (!fun.split(" -> ")[1].equals("nll")) {
-                    errors.add(">!<Error de Tipo. Linea: " + /*((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + */
-                            "\n    La función '" + fun + "' no devuelve un nada. ");
+                    errors.add(">!<Error de Tipo. Linea: "
+                            + /*((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + */ "\n    La función '" + fun + "' no devuelve un nada. ");
                     return false;
                 } else {
                     if (checkFunctionParams(fun.split(" -> ")[0], o)) {
@@ -829,7 +860,6 @@ public class TypesSubTable {
 
     //Verifica si parametros del llamado son corectos
     public boolean checkFunctionParams(String paramsID, Object o) {
-        System.out.println(paramsID);
         int cc = model.getChildCount(o);
         String params[] = paramsID.split(" x ");
         if (cc != params.length) {
@@ -837,20 +867,24 @@ public class TypesSubTable {
         } else {
             for (int i = 0; i < cc; i++) {
                 Object c = model.getChild(o, i);
-                System.out.println(c.toString());
                 String type = checkTypeofValue(c);
                 if (!type.equals(params[i])) {
-                    if (type.contains("array") && (type.replace("..", "#")).split("#").length == 2 && params[i].equals("arr")) {
-                        break;
-                    } else if (type.contains("array") && (type.replace("..", "#")).split("#").length == 3 && params[i].equals("mtx")) {
-                        break;
+                    if (type.contains("array") && (type.replace("..", "#")).split("#").length == 2 && params[i].contains("arr")
+                            && type.contains(params[i].split(" ")[1])) {
+                        return true;
+                    } else if (type.contains("array") && (type.replace("..", "#")).split("#").length == 3 && params[i].contains("mtx")
+                            && type.contains(params[i].split(" ")[1])) {
+                        return true;
                     } else {
+                        errors.add(">!<Error de Tipo. Linea: "
+                                /*+ ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()*/ + "\n    Los parametros enviados son de tipo distinto a los parametros de la función. ");
+
                         return false;
                     }
                 }
             }
         }
-        return true;
+        return false;
     }
 
     private String checkFunction(String id) {
@@ -893,14 +927,11 @@ public class TypesSubTable {
             String fun = checkFunction(o.toString().replace(":fun", ""));
             if (fun.split(" -> ")[1].contains("mtx")) {
                 if (!fun.split(" -> ")[1].contains(type)) {
-                    System.out.println("error");
                     errors.add(">!<Error de Tipo. Linea: " /*+ ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()*/
                             + "\n    La función '" + o.toString().replace(":fun", "") + "' no devuelve el tipo mtx " + type + ".");
                 }
             } else {
-                if (checkFunctionParams(fun.split(" -> ")[0], o)) {
-                    System.out.println("Todo bien");
-                } else {
+                if (!checkFunctionParams(fun.split(" -> ")[0], o)) {
                     errors.add(">!<Error de Tipo. Linea: " /*+ ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()*/
                             + "\n    No hay función '" + o.toString().replace(":fun", "") + "' con esos tipos de parámetros. ");
                 }
@@ -929,14 +960,11 @@ public class TypesSubTable {
             String fun = checkFunction(o.toString().replace(":fun", ""));
             if (fun.split(" -> ")[1].contains("mtx")) {
                 if (!fun.split(" -> ")[1].contains(type)) {
-                    System.out.println("error");
                     errors.add(">!<Error de Tipo. Linea: " /*+ ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()*/
                             + "\n    La función '" + o.toString().replace(":fun", "") + "' no devuelve el tipo mtx " + type + ".");
                 }
             } else {
-                if (checkFunctionParams(fun.split(" -> ")[0], o)) {
-                    System.out.println("Todo bien");
-                } else {
+                if (!checkFunctionParams(fun.split(" -> ")[0], o)) {
                     errors.add(">!<Error de Tipo. Linea: " /*+ ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()*/
                             + "\n    No hay función '" + o.toString().replace(":fun", "") + "' con esos tipos de parámetros. ");
                 }
@@ -1044,4 +1072,3 @@ public class TypesSubTable {
     }
 
 }
-

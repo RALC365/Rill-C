@@ -5416,7 +5416,7 @@ class CUP$ASintaxT$actions {
 		
             ((DefaultMutableTreeNode)n).insert((DefaultMutableTreeNode)e1, 0);
             //DefaultMutableTreeNode ret = parser.createNodo("ret " + "" +vb+ "");
-            DefaultMutableTreeNode ret = parser.createNodoObject("ret " + "" +vb+ "",rright);
+            DefaultMutableTreeNode ret = parser.createNodoObject(vb+ ":ret",rright);
             ((DefaultMutableTreeNode)n).add((DefaultMutableTreeNode)ret);
             ((DefaultMutableTreeNode)n).setUserObject(parser.createNodoObject(e2+":"+e3+"",e2right));
             ((DefaultTreeModel) parser.sintaxTreeModel).nodeChanged(((DefaultMutableTreeNode)n));
