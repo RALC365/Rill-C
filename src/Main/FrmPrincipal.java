@@ -293,7 +293,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }
 
     private void VerTablasDeTipo(TypesSubTable t) {
-        console_txt.setText(console_txt.getText() + t + "\n");
+        console_txt.setText(console_txt.getText() + "   " + t + "\n");
         if (!t.children.isEmpty()) {
             t.children.keySet().forEach((i) -> {
                 VerTablasDeTipo(t.children.get(i));
@@ -521,7 +521,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenu1ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        bandera=true;
+        bandera = true;
         try {
             analizarLexico();
         } catch (IOException ex) {
@@ -530,7 +530,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        bandera=true;
+        bandera = true;
         try {
             analizarLexico();
         } catch (IOException ex) {
@@ -549,7 +549,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenu5ActionPerformed
 
     private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
-        bandera=true;
+        bandera = true;
         try {
             analizarSintactico();
         } catch (Exception ex) {
@@ -558,7 +558,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem11ActionPerformed
 
     private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
-        bandera=true;
+        bandera = true;
         jdConsole.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         jdConsole.setLocationRelativeTo(this);
         jdConsole.setVisible(true);
@@ -576,7 +576,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
-        bandera=true;
+        bandera = true;
         try {
             analizarSintactico();
         } catch (Exception ex) {

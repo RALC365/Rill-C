@@ -20,7 +20,7 @@ public class TypesTable {
 
     public TypesTable(DefaultTreeModel model) {
         createSubtables(model);
-        errors=root.errors;
+        errors = root.errors;
     }
 
     //Crea las subTablaas de Tipos en Base a las funciones dentro del programa
@@ -70,12 +70,17 @@ public class TypesTable {
                     }
                     for (int j = 0; j < cccc; j++) {
                         Object ch = model.getChild(child, j);
-                        if (j < cccc - 1) {
-                            p += (ch.toString().split(" "))[0] + " x ";
+                        String type = "";
+                        if (ch.toString().split(" ").length > 2) {
+                            type = (ch.toString().split(" "))[0] + " " +(ch.toString().split(" "))[1];
                         } else {
-                            p += (ch.toString().split(" "))[0];
+                            type = (ch.toString().split(" "))[0];
                         }
-
+                        if (j < cccc - 1) {
+                            p += type + " x ";
+                        } else {
+                            p += type;
+                        }
                     }
                 }
             }
