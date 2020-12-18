@@ -239,11 +239,7 @@ N_INICIO ::=
         {:
             parser.insertInicioNodo((DefaultMutableTreeNode)e1);
         :}
-    |
-    N_FUNCTIONS N_MAIN:e1
-        {:
-            parser.insertInicioNodo((DefaultMutableTreeNode)e1);
-        :}
+    //Se elimino que comenzará con las funciones
     /*error:e {: 
         String report = "Syntax error in line " + parser.getS().right + " Column " + parser.getS().left + ". No se esperaba este componente: " +parser.getS().value;
         //parser.addError(report + "\n");
@@ -988,40 +984,6 @@ N_AND_OR::=
 ;
 
 N_SENTENCIA_BOOLEANA ::= 
-    /*ID
-    ID:id1 OP_REL:op ID:id2
-        {:
-            DefaultMutableTreeNode nodo = parser.createNodoObject(op+"",opright);
-            nodo.add(parser.createNodoObject(id1+"",id1right));
-            nodo.add(parser.createNodoObject(id2+"",id2right));
-            RESULT = nodo;
-        :}
-    |*/
-    /*ID:id OP_REL:op STRING:s
-        {:
-            DefaultMutableTreeNode nodo = parser.createNodoObject(op+"",opright);
-            nodo.add(parser.createNodoObject(id+"",idright));
-            nodo.add(parser.createNodoObject(s+"",sright));
-            RESULT = nodo;
-        :}
-    |
-    ID:id OP_REL:op FALSE:f  
-        {:
-            DefaultMutableTreeNode nodo = parser.createNodoObject(op+"",opright);
-            nodo.add(parser.createNodoObject(id+"",idright));
-            nodo.add(parser.createNodoObject(f+"",fright));
-            RESULT = nodo;
-        :}
-    |
-    ID:id OP_REL:op TRUE:t  
-        {:
-            DefaultMutableTreeNode nodo = parser.createNodoObject(op+"",opright);
-            nodo.add(parser.createNodoObject(id+"",idright));
-            nodo.add(parser.createNodoObject(t+"",tright));
-            RESULT = nodo;
-        :}
-    |*/
-    //Simplifica a los de arriba
     ID:id OP_REL:op EXPR_LIST:n 
         {:
             DefaultMutableTreeNode nodo = parser.createNodoObject(op+"",opright);
@@ -1369,22 +1331,6 @@ N_SENTENCIA_BOOLEANA_SWITCH::=
 ;
 
 N_DECLARACION ::= 
-    /*ID:id COLON ID:id2 
-    {:
-        DefaultMutableTreeNode nodo = parser.createNodoObject("ASSIGN",idright);
-        nodo.add(parser.createNodoObject(id+"",idright));
-        nodo.add(parser.createNodoObject(id2+"",id2right));
-        RESULT = nodo;
-    :}
-    |*/
-    //ID:id COLON NULL:nl 
-    /*{:
-        DefaultMutableTreeNode nodo = parser.createNodoObject("ASSIGN",idright);
-        nodo.add(parser.createNodoObject(id+"",idright));
-        nodo.add(parser.createNodoObject(nl+"",nlright));
-        RESULT = nodo;
-    :}
-    |*/
     ID:id COLON N_SENTENCIA_BOOLEANA_ANIDADA:bn 
     {:
         DefaultMutableTreeNode nodo = parser.createNodoObject("ASSIGN",idright);
@@ -2170,6 +2116,7 @@ EXPR_LIST   ::= EXPR_LIST:e1 EXPR:e2
                     DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
                     RESULT = nodo;
                     parser.report_error(mes ,err);
+                    //NO ESTA EN EL CUP------------------
                 :}
             |OPEN_PARENTESIS error: err 
                 {:
@@ -2178,6 +2125,7 @@ EXPR_LIST   ::= EXPR_LIST:e1 EXPR:e2
                     DefaultMutableTreeNode nodo = parser.createNodo("ERROR");
                     RESULT = nodo;
                     parser.report_error(mes ,err);
+                    //NO ESTA EN EL CUPPP----------------
                 :}
            
 ;
