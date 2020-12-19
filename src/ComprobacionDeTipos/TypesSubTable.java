@@ -83,6 +83,20 @@ public class TypesSubTable {
                 }
             }
 
+            //Revisar si las variables del print existen
+            if (o.toString().equals("PRINT")) {
+                int p_cc = model.getChildCount(o);
+                for (int j = 0; j < p_cc; j++) {
+                    Object p_ch = model.getChild(o, i);
+                    if (!p_ch.toString().contains("\"") && p_ch.toString().equals("ln")) {
+                        if (checkIDExistence(p_ch.toString()) == null) {
+                            errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    La variable de nombre: '"
+                                    + p_ch.toString() + "' no fue encontrada en el ámbito actual. ");
+                        }
+                    }
+                }
+            }
+
             //Revisar si la variable de retorno del tipo correcto
             if (o.toString().contains(":ret")) {
                 String id = o.toString().replace(":ret", "");
