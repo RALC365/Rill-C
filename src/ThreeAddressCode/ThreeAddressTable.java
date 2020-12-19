@@ -41,7 +41,9 @@ public class ThreeAddressTable {
         for (int i = minlimit; i < maxlimit; i++) {
             Object child = model.getChild(eachNode, i);
             if (eachNode.equals(model.getRoot())) {
+                this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, eachNode.toString(), "", ""));
                 iterateTree(child, siguienteEtiqueta, 0, "");
+                this.tablaCuadruplos.add(new Cuadruplos(Operacion.FINFUNCION, "", "", ""));
             }
             
             if (child.toString().equals("FOR")) {

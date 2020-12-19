@@ -24,5 +24,6 @@ public enum Operacion {
     IFMENOR,
     IFMAYORIGUAL,
     IFMENORIGUAL,
-    IFDISTINTO
+    IFDISTINTO, 
+    FINFUNCION
 }
