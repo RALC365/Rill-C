@@ -28,6 +28,6 @@ public enum Operacion {
     PRINT,
     INPUT,
     PARAM,
-    CALL, 
-    FINFUNCION
+    CALL,
+    ETIQUETAMAIN,
 }

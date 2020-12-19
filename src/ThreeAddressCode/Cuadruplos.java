@@ -5,6 +5,8 @@
  */
 package ThreeAddressCode;
 
+import ComprobacionDeTipos.TypesSubTable;
+
 /**
  *
  * @author Julio Marin
@@ -14,6 +16,7 @@ public class Cuadruplos {
     private String parametroA;
     private String parametroB;
     private String resultado;
+    private TypesSubTable ambito;
 
     public Cuadruplos(Operacion operacion, String parametroA, String parametroB, String resultado) {
         this.operacion = operacion;
