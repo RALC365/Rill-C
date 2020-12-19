@@ -7,11 +7,11 @@ package ComprobacionDeTipos;
 
 /**
  *
- * @author Usuario
+ * @author Will
  */
-public class TypeErrorException extends Exception{
+public class CustomErrorException extends Exception{
 
-    public TypeErrorException(String message) {
+    public CustomErrorException(String message) {
         super(message);
     }
     

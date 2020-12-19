@@ -13,7 +13,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 /**
  *
- * @author Usuario
+ * @author Will
  */
 public class TypesSubTable {
 
@@ -89,9 +89,16 @@ public class TypesSubTable {
             if (o.toString().equals("PRINT")) {
                 int p_cc = model.getChildCount(o);
                 for (int j = 0; j < p_cc; j++) {
-                    if (!model.getChild(o, j).toString().contains("\"") && !model.getChild(o, j).toString().equals("ln")) {
+                    if (!model.getChild(o, j).toString().contains("\"") && !model.getChild(o, j).toString().equals("ln") && !model.getChild(o, j).toString().equals("")) {
                         checkTypeofValue(model.getChild(o, j));
                     }
+                }
+            }
+
+            if (o.toString().contains("IN:")) {
+                TableRow id = checkIDExistence(o.toString().split(":")[1].substring(1));
+                if (id == null) {
+                    addError(o, "No hay variable de nombre: '" + o.toString().split(":")[1].substring(1) + "' accesible desde este ámbito actual. ");
                 }
             }
 
@@ -871,6 +878,8 @@ public class TypesSubTable {
                         addError(o, "Los parametros enviados son de tipo distinto a los parametros de la función. ");
                         return false;
                     }
+                } else {
+                    return true;
                 }
             }
         }

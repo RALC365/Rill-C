@@ -10,7 +10,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 /**
  *
- * @author Usuario
+ * @author Will
  */
 public class TypesTable {
 

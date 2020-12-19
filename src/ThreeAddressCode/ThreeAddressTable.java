@@ -5,24 +5,23 @@
  */
 package ThreeAddressCode;
 
-import ComprobacionDeTipos.TypeErrorException;
-import ThreeAddressCode.Operacion;
+import ComprobacionDeTipos.CustomErrorException;
 import java.util.ArrayList;
 import javax.swing.tree.DefaultTreeModel;
 
 /**
  *
- * 
+ *
  * @author Julio Marin
  */
-public class ThreeAddressTable { 
-    
-    private ArrayList<Cuadruplos> tablaCuadruplos = new ArrayList();
+public class ThreeAddressTable {
+
+    private final ArrayList<Cuadruplos> tablaCuadruplos = new ArrayList();
     private final DefaultTreeModel model;
     private int conteoTemporales;
     private int conteoEtiquetas;
-    
-    public ThreeAddressTable(DefaultTreeModel model) throws TypeErrorException {
+
+    public ThreeAddressTable(DefaultTreeModel model) throws CustomErrorException {
         this.model = model;
         this.conteoTemporales = 0;
         this.conteoEtiquetas = 0;
@@ -31,7 +30,7 @@ public class ThreeAddressTable {
     }
 
     //flowAllower: 0 default, 1 if, 2 while
-    private String iterateTree(Object eachNode, String[] siguienteEtiqueta, int flowAllower, String switchVar) throws TypeErrorException {
+    private String iterateTree(Object eachNode, String[] siguienteEtiqueta, int flowAllower, String switchVar) throws CustomErrorException {
         int minlimit = 0;
         int maxlimit = model.getChildCount(eachNode);
         if (flowAllower == 1) {
@@ -43,135 +42,157 @@ public class ThreeAddressTable {
             if (eachNode.equals(model.getRoot())) {
                 iterateTree(child, siguienteEtiqueta, 0, "");
             }
-            
+
             if (child.toString().equals("FOR")) {
                 iterateTree(child, siguienteEtiqueta, 0, "");
             }
-            
+
             if (child.toString().equals("SWITCH")) {
                 String[] nuevasEtiquetas = new String[3];
-                nuevasEtiquetas[0] = "tag"+(this.conteoEtiquetas++);
-                nuevasEtiquetas[1] = "tag"+(this.conteoEtiquetas++);
-                nuevasEtiquetas[2] = "tag"+(this.conteoEtiquetas++);
-                
+                nuevasEtiquetas[0] = "tag" + (this.conteoEtiquetas++);
+                nuevasEtiquetas[1] = "tag" + (this.conteoEtiquetas++);
+                nuevasEtiquetas[2] = "tag" + (this.conteoEtiquetas++);
+
                 String switchVariable = model.getChild(child, 0).toString();
-                
+
                 Object casesChild = model.getChild(child, 1);
                 iterateTree(casesChild, nuevasEtiquetas, 0, switchVariable);
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[2], "", ""));
             }
-            
+
             if (child.toString().equals("WHILE")) {
-                
+
                 String[] nuevasEtiquetas = new String[3];
-                nuevasEtiquetas[2] = "tag"+(this.conteoEtiquetas++);
-                nuevasEtiquetas[0] = "tag"+(this.conteoEtiquetas++);
-                nuevasEtiquetas[1] = "tag"+(this.conteoEtiquetas++);
-                
+                nuevasEtiquetas[2] = "tag" + (this.conteoEtiquetas++);
+                nuevasEtiquetas[0] = "tag" + (this.conteoEtiquetas++);
+                nuevasEtiquetas[1] = "tag" + (this.conteoEtiquetas++);
+
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[2], "", ""));
-                
+
                 Object expresionChild = model.getChild(child, 0);
                 ExpresionsTree(expresionChild, nuevasEtiquetas);
-                
+
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[0], "", ""));
-                
+
                 iterateTree(child, nuevasEtiquetas, 2, "");
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[1], "", ""));
-                
+
             }
-            
+
             if (child.toString().equals("IF")) {
                 int lastChild = model.getChildCount(child) - 1;
-                
+
                 String[] nuevasEtiquetas = new String[3];
-                nuevasEtiquetas[0] = "tag"+(this.conteoEtiquetas++);
-                nuevasEtiquetas[1] = "tag"+(this.conteoEtiquetas++);
+                nuevasEtiquetas[0] = "tag" + (this.conteoEtiquetas++);
+                nuevasEtiquetas[1] = "tag" + (this.conteoEtiquetas++);
                 nuevasEtiquetas[2] = "";
-                
+
                 Object expresionChild = model.getChild(child, 0);
                 ExpresionsTree(expresionChild, nuevasEtiquetas);
-                
+
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[0], "", ""));
-                
-                if ((model.getChild(child, lastChild) == null)||(model.getChild(child, lastChild).toString().isEmpty())) {
-                    
+
+                if ((model.getChild(child, lastChild) == null) || (model.getChild(child, lastChild).toString().isEmpty())) {
+
                     iterateTree(child, nuevasEtiquetas, 1, "");
                     this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[1], "", ""));
-                    
+
                 } else {
-                    
-                    nuevasEtiquetas[2] = "tag"+(this.conteoEtiquetas++);
+
+                    nuevasEtiquetas[2] = "tag" + (this.conteoEtiquetas++);
                     iterateTree(child, nuevasEtiquetas, 1, "");
                     this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, nuevasEtiquetas[2], "", ""));
-                    
+
                     Object elseChild = model.getChild(child, lastChild);
                     iterateTree(elseChild, nuevasEtiquetas, 0, "");
                     this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[2], "", ""));
-                    
+
                 }
-                
+
             }
-            
+
             if (child.toString().equals("ELSE_IF")) {
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, siguienteEtiqueta[1], "", ""));
-                
-                siguienteEtiqueta[0] = "tag"+(this.conteoEtiquetas++);
-                siguienteEtiqueta[1] = "tag"+(this.conteoEtiquetas++);
-                
+
+                siguienteEtiqueta[0] = "tag" + (this.conteoEtiquetas++);
+                siguienteEtiqueta[1] = "tag" + (this.conteoEtiquetas++);
+
                 Object expresionChild = model.getChild(child, 0);
                 ExpresionsTree(expresionChild, siguienteEtiqueta);
-                
+
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, siguienteEtiqueta[0], "", ""));
                 Object sentenceChild = model.getChild(child, 1);
                 iterateTree(sentenceChild, siguienteEtiqueta, 0, "");
-                this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[2], "", ""));   
+                this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[2], "", ""));
             }
-            
+
             if (child.toString().equals("SWITCH_CASE")) {
                 if (i > 0) {
                     this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, siguienteEtiqueta[1], "", ""));
-                    siguienteEtiqueta[0] = "tag"+(this.conteoEtiquetas++);
-                    siguienteEtiqueta[1] = "tag"+(this.conteoEtiquetas++);
+                    siguienteEtiqueta[0] = "tag" + (this.conteoEtiquetas++);
+                    siguienteEtiqueta[1] = "tag" + (this.conteoEtiquetas++);
                 }
 
                 Object expresionChild = model.getChild(child, 0);
                 SubExpresionsTree(expresionChild, siguienteEtiqueta, switchVar);
-                
+
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, siguienteEtiqueta[0], "", ""));
                 Object sentenceChild = model.getChild(child, 1);
-                
+
                 iterateTree(sentenceChild, siguienteEtiqueta, 0, "");
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[2], "", ""));
             }
-            
+
             if (child.toString().equals("ELSE")) {
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, siguienteEtiqueta[1], "", ""));
                 iterateTree(child, siguienteEtiqueta, 0, "");
             }
-            
+
             if (child.toString().equals("ASSIGN")) {
                 AsignationBuild(child);
             }
-            
+
             if (child.toString().equals("DECLR ARRAY")) {
                 AsignationArray(model.getChild(child, 1).toString(), model.getChild(child, 2).toString(), model.getChild(child, 3));
             }
-            
+
             if (child.toString().equals("DECLR MATRIX")) {
-            
+                //pendiente
             }
-            
+
+            if (child.toString().equals("PRINT")) {
+                int cc = model.getChildCount(child);
+                for (int j = 0; j < cc; j++) {
+                    String print_child = model.getChild(child, j).toString();
+                    if (!print_child.equals("")) {
+                        if (print_child.equals("ln")) {
+                            this.tablaCuadruplos.add(new Cuadruplos(Operacion.PRINT, "", "", "\\n"));
+                        } else {
+                            this.tablaCuadruplos.add(new Cuadruplos(Operacion.PRINT, "", "", print_child));
+                        }
+                    }
+                }
+            }
+
+            if (child.toString().contains("IN:")) {
+                this.tablaCuadruplos.add(new Cuadruplos(Operacion.INPUT, "", "", child.toString().split(":")[1]));
+            }
+
+            if (child.toString().contains(":fun")) {
+                String t_ret = callFunction(child);
+            }
+
         }
-        
+
         if (flowAllower == 2) {
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[2], "", ""));
         }
-        
+
         return null;
-     
+
     }
-    
-    private void SubExpresionsTree(Object childNode, String[] siguienteEtiqueta, String switchVariable) throws TypeErrorException {
+
+    private void SubExpresionsTree(Object childNode, String[] siguienteEtiqueta, String switchVariable) throws CustomErrorException {
         if (childNode.toString().equals("=")) {
             Object hijoIzquierdo = model.getChild(childNode, 0);
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFIGUAL, switchVariable, hijoIzquierdo.toString(), siguienteEtiqueta[0]));
@@ -203,15 +224,15 @@ public class ThreeAddressTable {
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
         }
     }
-    
+
     //siguienteEtiqueta[0] (Verdadero)
     //siguienteEtiqueta[1] (Falso)
-    private void ExpresionsTree(Object childNode, String[] siguienteEtiqueta) throws TypeErrorException {
+    private void ExpresionsTree(Object childNode, String[] siguienteEtiqueta) throws CustomErrorException {
         if (childNode.toString().equals("AND")) {
             Object hijoIzquierdo = model.getChild(childNode, 0);
             Object hijoDerecho = model.getChild(childNode, 1);
             String[] nuevaEtiqueta = new String[2];
-            nuevaEtiqueta[0] = "tag"+(this.conteoEtiquetas++);
+            nuevaEtiqueta[0] = "tag" + (this.conteoEtiquetas++);
             nuevaEtiqueta[1] = siguienteEtiqueta[1];
             ExpresionsTree(hijoIzquierdo, nuevaEtiqueta);
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevaEtiqueta[0], "", ""));
@@ -222,7 +243,7 @@ public class ThreeAddressTable {
             Object hijoDerecho = model.getChild(childNode, 1);
             String[] nuevaEtiqueta = new String[2];
             nuevaEtiqueta[0] = siguienteEtiqueta[0];
-            nuevaEtiqueta[1] = "tag"+(this.conteoEtiquetas++);
+            nuevaEtiqueta[1] = "tag" + (this.conteoEtiquetas++);
             ExpresionsTree(hijoIzquierdo, nuevaEtiqueta);
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevaEtiqueta[1], "", ""));
             ExpresionsTree(hijoDerecho, siguienteEtiqueta);
@@ -251,7 +272,7 @@ public class ThreeAddressTable {
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFMENORIGUAL, hijoDerecho.toString(), hijoIzquierdo.toString(), siguienteEtiqueta[0]));
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
         }
-        if (childNode.toString().equals("=>")) {
+        if (childNode.toString().equals(">=")) {
             Object hijoDerecho = model.getChild(childNode, 0);
             Object hijoIzquierdo = model.getChild(childNode, 1);
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFMAYORIGUAL, hijoDerecho.toString(), hijoIzquierdo.toString(), siguienteEtiqueta[0]));
@@ -264,81 +285,84 @@ public class ThreeAddressTable {
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
         }
     }
-    
-    private String ArithmeticTree(Object childNode) throws TypeErrorException {
-        
+
+    private String ArithmeticTree(Object childNode) throws CustomErrorException {
+
         if (childNode.toString().equals("+")) {
             return ArithmeticBuild(childNode, Operacion.SUMA);
-        }
-
-        if (childNode.toString().equals("-")) {
+        } else if (childNode.toString().equals("-")) {
             if ((model.getChildCount(childNode) == 1)) {
-                String temporalRetorno = "t"+(this.conteoTemporales++);
+                String temporalRetorno = "t" + (this.conteoTemporales++);
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.NEGACION, model.getChild(childNode, 0).toString(), "", temporalRetorno));
                 return temporalRetorno;
             } else {
                 return ArithmeticBuild(childNode, Operacion.RESTA);
             }
-        }
-
-        if (childNode.toString().equals("*")) {
+        } else if (childNode.toString().equals("*")) {
             return ArithmeticBuild(childNode, Operacion.MULTIPLICACION);
-        }
-
-        if (childNode.toString().equals("/")) {
+        } else if (childNode.toString().equals("/")) {
             return ArithmeticBuild(childNode, Operacion.DIVISION);
         }
-        
+
         return null;
-        
+
     }
-    
-    private void AsignationBuild(Object currentNode) throws TypeErrorException {
-        
+
+    private void AsignationBuild(Object currentNode) throws CustomErrorException {
+
         Object leftChild = model.getChild(currentNode, 0);
         Object rightChild = model.getChild(currentNode, 1);
 
-        if ((model.getChildCount(leftChild) == 0)&&(model.getChildCount(rightChild) == 0)) {
+        if ((model.getChildCount(leftChild) == 0) && (model.getChildCount(rightChild) == 0)) {
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNACION, rightChild.toString(), "", leftChild.toString()));
         } else {
-            String temporalRetorno = ArithmeticTree(rightChild);
-            this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNACION, temporalRetorno, "", leftChild.toString()));
+            if (rightChild.toString().contains(":fun")) {
+                String t_ret = callFunction(rightChild);
+                this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNACION, t_ret, "", leftChild.toString()));
+            } else if (rightChild.toString().contains("AND") || rightChild.toString().contains("OR")
+                    || rightChild.toString().contains("<") || rightChild.toString().contains(">")
+                    || rightChild.toString().contains("=") || rightChild.toString().contains("!=")) {
+                //CONSTRUIR EXPRESIONES BOOLEANAS
+            } else {
+                String temporalRetorno = ArithmeticTree(rightChild);
+                this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNACION, temporalRetorno, "", leftChild.toString()));
+            }
         }
-        
+
     }
-    
-    private void AsignationArray(String tipo, String identificador, Object currentNode) throws TypeErrorException {
-        
+
+    private void AsignationArray(String tipo, String identificador, Object currentNode) throws CustomErrorException {
+
         int cc = model.getChildCount(currentNode);
         int tamanio = 0;
-        
-        switch(tipo) {
+
+        switch (tipo) {
             case "chr":
                 tamanio = 2;
                 break;
-            case "int": 
+            case "int":
                 tamanio = 4;
                 break;
-            case "bln": 
+            case "bln":
                 tamanio = 1;
                 break;
         }
-        
+
         for (int i = 0; i < cc; i++) {
             Object child = model.getChild(currentNode, i);
-            String temporalIndice = "t"+(this.conteoTemporales++);
-            this.tablaCuadruplos.add(new Cuadruplos(Operacion.MULTIPLICACION, i+"", tamanio+"", temporalIndice));
+            String temporalIndice = "t" + (this.conteoTemporales++);
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.MULTIPLICACION, i + "", tamanio + "", temporalIndice));
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNARREGLO, child.toString(), temporalIndice, identificador));
         }
     }
 
-    private String ArithmeticBuild(Object currentNode, Operacion operacionEnum) throws TypeErrorException {
+    private String ArithmeticBuild(Object currentNode, Operacion operacionEnum) throws CustomErrorException {
         Object leftChild = model.getChild(currentNode, 0);
         Object rightChild = model.getChild(currentNode, 1);
         String temporalRetorno;
 
-        if ((model.getChildCount(leftChild) == 0)&&(model.getChildCount(rightChild) == 0)) {
-            temporalRetorno = "t"+(this.conteoTemporales++);
+        if ((model.getChildCount(leftChild) == 0) && (model.getChildCount(rightChild) == 0)) {
+            temporalRetorno = "t" + (this.conteoTemporales++);
             this.tablaCuadruplos.add(new Cuadruplos(operacionEnum, leftChild.toString(), rightChild.toString(), temporalRetorno));
             return temporalRetorno;
         } else {
@@ -350,7 +374,7 @@ public class ThreeAddressTable {
             if (model.getChildCount(rightChild) > 0) {
                 temporalDerecho = ArithmeticTree(rightChild);
             }
-            temporalRetorno = "t"+(this.conteoTemporales++);
+            temporalRetorno = "t" + (this.conteoTemporales++);
             this.tablaCuadruplos.add(new Cuadruplos(operacionEnum, temporalIzquierdo, temporalDerecho, temporalRetorno));
             return temporalRetorno;
         }
@@ -359,12 +383,23 @@ public class ThreeAddressTable {
     public ArrayList<Cuadruplos> getTablaCuadruplos() {
         return tablaCuadruplos;
     }
-    
+
     private void imprimirCuadruplos() {
         int count = 1;
-        for(Cuadruplos cadaCuadruplo: this.tablaCuadruplos) {
-            System.out.println((count++)+": "+cadaCuadruplo.toString());
+        for (Cuadruplos cadaCuadruplo : this.tablaCuadruplos) {
+            System.out.println((count++) + ": " + cadaCuadruplo.toString());
         }
     }
-    
+
+    private String callFunction(Object o) {
+        for (int i = 0; i < model.getChildCount(o); i++) {
+            String param = model.getChild(o, i).toString();
+            this.tablaCuadruplos.add(new Cuadruplos(Operacion.PARAM, "", "", param));
+        }
+        this.tablaCuadruplos.add(new Cuadruplos(Operacion.CALL, "", "", o.toString().split(":")[0]));
+        String t_ret = "t" + (this.conteoTemporales++);
+        this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNACION, "RET", "", t_ret));
+        return t_ret;
+    }
+
 }

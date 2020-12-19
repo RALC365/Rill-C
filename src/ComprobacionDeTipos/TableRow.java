@@ -7,7 +7,7 @@ package ComprobacionDeTipos;
 
 /**
  *
- * @author Usuario
+ * @author Will
  */
 class TableRow {
 

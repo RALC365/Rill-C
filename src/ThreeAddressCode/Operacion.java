@@ -24,5 +24,9 @@ public enum Operacion {
     IFMENOR,
     IFMAYORIGUAL,
     IFMENORIGUAL,
-    IFDISTINTO
+    IFDISTINTO,
+    PRINT,
+    INPUT,
+    PARAM,
+    CALL
 }

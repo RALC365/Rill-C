@@ -7,7 +7,7 @@ package Main;
 
 import AST.SwingDemo;
 import CUP.*;
-import ComprobacionDeTipos.TypeErrorException;
+import ComprobacionDeTipos.CustomErrorException;
 import ComprobacionDeTipos.TypesSubTable;
 import ComprobacionDeTipos.TypesTable;
 import LexerS.Lexer;
@@ -262,7 +262,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
         sintaxTree.showTree();
     }
 
-    private void ComprobacionTipos() throws TypeErrorException {
+    private void ComprobacionTipos() throws CustomErrorException {
         if (bandera) {
             tt = new TypesTable(ASTree.getTreeSintaxModel());
             if (tt.errors.isEmpty()) {
@@ -286,7 +286,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
             SwingTable cuadruplosGraficos = new SwingTable(tablaCuadruplos.getTablaCuadruplos());
             cuadruplosGraficos.showInDialog();
             //console_txt.setForeground(Color.green);
-        } catch (TypeErrorException e) {
+        } catch (CustomErrorException e) {
             //console_txt.setText(e.getMessage());
             //console_txt.setForeground(Color.red);
         }
@@ -570,7 +570,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
         }
         try {
             ComprobacionTipos();
-        } catch (TypeErrorException ex) {
+        } catch (CustomErrorException ex) {
             Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jMenuItem10ActionPerformed
@@ -584,7 +584,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
         }
         try {
             ComprobacionTipos();
-        } catch (TypeErrorException ex) {
+        } catch (CustomErrorException ex) {
             Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
         console_txt.setText("");
