@@ -30,4 +30,6 @@ public enum Operacion {
     PARAM,
     CALL,
     ETIQUETAMAIN,
+    FINFUNCION,
+    ARREGLOASIGN
 }
