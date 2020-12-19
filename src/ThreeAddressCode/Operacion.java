@@ -28,5 +28,6 @@ public enum Operacion {
     PRINT,
     INPUT,
     PARAM,
-    CALL
+    CALL, 
+    FINFUNCION
 }
