@@ -29,5 +29,6 @@ public enum Operacion {
     INPUT,
     PARAM,
     CALL, 
-    FINFUNCION
+    FINFUNCION,
+    ARREGLOASIGN
 }
