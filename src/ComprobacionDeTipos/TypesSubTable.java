@@ -77,9 +77,21 @@ public class TypesSubTable {
 
             if (o.toString().contains(":fun")) {
                 String fun = checkFunction(o.toString().replace(":fun", ""));
-                if (!checkFunctionParams(fun.split(" -> ")[0], o)) {
-                    errors.add(">!<Error de Tipo. Linea: "
-                            /*+ ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() */ + "\n    No hay función '" + o.toString().replace(":fun", "") + "' con esos tipos de parámetros. ");
+                if (!fun.equals("")) {
+                    if (!checkFunctionParams(fun.split(" -> ")[0], o)) {
+                        addError(o, "No hay función '" + o.toString().replace(":fun", "") + "' con esos tipos de parámetros. ");
+                    }
+                } else {
+                    addError(o, "La función '" + o.toString().replace(":fun", "") + " no existe");
+                }
+            }
+
+            if (o.toString().equals("PRINT")) {
+                int p_cc = model.getChildCount(o);
+                for (int j = 0; j < p_cc; j++) {
+                    if (!model.getChild(o, j).toString().contains("\"") && !model.getChild(o, j).toString().equals("ln")) {
+                        checkTypeofValue(model.getChild(o, j));
+                    }
                 }
             }
 
@@ -100,8 +112,7 @@ public class TypesSubTable {
                     if (id1 != null) {
                         ret_type = id1.type;
                     } else {
-                        errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    No hay variable de nombre: '"
-                                + id + "' accesible desde este ámbito actual. ");
+                        addError(o, "No hay variable de nombre: '" + id + "' accesible desde este ámbito actual. ");
                         ret_type = "nll";
                     }
                 }
@@ -115,12 +126,10 @@ public class TypesSubTable {
                                 && (ret_type.contains(fun_ret_type.split(" ")[1]))) {
                             //Son del mismo tipo
                         } else {
-                            errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                    + "\n    El valor de retorno: '" + id + "' no es del tipo esperado.");
+                            addError(o, "El valor de retorno: '" + id + "' no es del tipo esperado.");
                         }
                     } else {
-                        errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                + "\n    El valor de retorno: '" + id + "' no es del tipo esperado.");
+                        addError(o, "El valor de retorno: '" + id + "' no es del tipo esperado.");
                     }
                 }
             }
@@ -207,8 +216,7 @@ public class TypesSubTable {
                     st.getDeclarations(o);
                     this.errors.addAll(st.errors);
                 } else {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    La variable de nombre: '"
-                            + model.getChild(o, 0).toString() + "' no fue encontrada en el ámbito actual. ");
+                    addError(o, "La variable de nombre: '" + model.getChild(o, 0).toString() + "' no fue encontrada en el ámbito actual. ");
                 }
             }
 
@@ -230,7 +238,7 @@ public class TypesSubTable {
             //Declaraciones sin valores
             if (o.toString().equals("DECLR NEST/NO_VAL")) {
                 if (checkIDExistence(model.getChild(o, 1).toString()) != null) {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito");
+                    addError(o, "La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito");
                 } else {
                     TableRow row = new TableRow(model.getChild(o, 1).toString(), model.getChild(o, 0).toString(), offsetActual);
                     addIDToSubTable(row);
@@ -249,7 +257,7 @@ public class TypesSubTable {
                 if (ccc > 2) {
                     for (int j = 2; j < ccc; j++) {
                         if (checkIDExistence(model.getChild(o, j).toString()) != null) {
-                            errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    La variable: " + model.getChild(o, j).toString() + " ya existe en el ámbito");
+                            addError(o, "La variable: " + model.getChild(o, j).toString() + " ya existe en el ámbito");
                         } else {
                             TableRow row = new TableRow(model.getChild(o, j).toString(), model.getChild(o, 0).toString(), offsetActual);
                             addIDToSubTable(row);
@@ -279,7 +287,7 @@ public class TypesSubTable {
             //Declaraciones de Matrices Vacías
             if (o.toString().equals("DECLR MATRIX EMPTY")) {
                 if (checkIDExistence(model.getChild(o, 2).toString()) != null) {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito. ");
+                    addError(o, "La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito. ");
                 } else {
                     String id = model.getChild(o, 2).toString();
 
@@ -308,7 +316,7 @@ public class TypesSubTable {
             //Declaraciones de Matrices
             if (o.toString().equals("DECLR MATRIX")) {
                 if (checkIDExistence(model.getChild(o, 2).toString()) != null) {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n     La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito. ");
+                    addError(o, " La variable: " + model.getChild(o, 2).toString() + " ya existe en el ámbito. ");
                 } else {
                     String id = model.getChild(o, 2).toString();
                     int[] size = checkMatrix(model.getChild(o, 1).toString(), model.getChild(o, 3));
@@ -332,7 +340,7 @@ public class TypesSubTable {
             //Declaraciones de Arreglos Vacía
             if (o.toString().equals("DECLR ARRAY EMPTY")) {
                 if (checkIDExistence(model.getChild(o, 2).toString()) != null) {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n     La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito.. ");
+                    addError(o, " La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito.. ");
                 } else {
                     String id = model.getChild(o, 2).toString();
                     String els = getSize(model.getChild(model.getChild(o, 0), 0).toString(), o);
@@ -357,7 +365,7 @@ public class TypesSubTable {
             //Declaraciones de Arreglos
             if (o.toString().equals("DECLR ARRAY")) {
                 if (checkIDExistence(model.getChild(o, 2).toString()) != null) {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito.. ");
+                    addError(o, "La variable: " + model.getChild(o, 1).toString() + " ya existe en el ámbito.. ");
                 } else {
                     String id = model.getChild(o, 2).toString();
                     int els = checkArray(model.getChild(o, 1).toString(), model.getChild(o, 3));
@@ -392,14 +400,12 @@ public class TypesSubTable {
                     String de_type = checkExpression(o, 1);
                     //Ver si realmente es matriz porque se le puede poner los [][] a cualquier varuable 
                     if ((x.type.replace("..", "#")).split("#").length != 3) {
-                        errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                + "\n    La variable de nombre '" + id + "' no es de tipo mtx. ");
+                        addError(o, "La variable de nombre '" + id + "' no es de tipo mtx. ");
                         return;
                     }
                     if (de_type.contains("array")) {
                         if ((x.type.replace("..", "#")).split("#").length != 3) {
-                            errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                    + "\n    La expresion de lado derecho de '" + id + "' no es del tipos esperado. ");
+                            addError(o, "La expresion de lado derecho de '" + id + "' no es del tipos esperado. ");
                             return;
                         }
                     }
@@ -407,12 +413,10 @@ public class TypesSubTable {
                             || (de_type.contains("bln") && x.type.contains("bln"))
                             || (de_type.contains("chr") && x.type.contains("chr"))) {
                     } else {
-                        errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                + "\n    La expresion de lado derecho de '" + id + "' no es del tipo esperado. ");
+                        addError(o, "La expresion de lado derecho de '" + id + "' no es del tipo esperado. ");
                     }
                 } else {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                            + "\n    No se encuentra el nombre: '" + id + "' accesible desde este ámbito. ");
+                    addError(o, "No se encuentra el nombre: '" + id + "' accesible desde este ámbito. ");
                 }
             }
 
@@ -424,14 +428,12 @@ public class TypesSubTable {
                     String de_type = checkExpression(o, 1);
                     //Ver si realmente es matriz porque se le puede poner los [][] a cualquier varuable 
                     if ((x.type.replace("..", "#")).split("#").length != 2) {
-                        errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                + "\n    La variable de nombre '" + id + "' no es de tipo arr. ");
+                        addError(o, "La variable de nombre '" + id + "' no es de tipo arr. ");
                         return;
                     }
                     if (de_type.contains("array")) {
                         if ((x.type.replace("..", "#")).split("#").length != 2) {
-                            errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                    + "\n    La expresion de lado derecho de '" + id + "' no es del tipo esperado. ");
+                            addError(o, "La expresion de lado derecho de '" + id + "' no es del tipo esperado. ");
                             return;
                         }
                     }
@@ -439,19 +441,17 @@ public class TypesSubTable {
                             || (de_type.contains("bln") && x.type.contains("bln"))
                             || (de_type.contains("chr") && x.type.contains("chr"))) {
                     } else {
-                        errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                + "\n    La expresion de lado derecho de '" + id + "' no es del tipo esperado. ");
+                        addError(o, "La expresion de lado derecho de '" + id + "' no es del tipo esperado. ");
                     }
                 } else {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                            + "\n    No se encuentra el nombre: '" + id + "' accesible desde este ámbito. ");
+                    addError(o, "No se encuentra el nombre: '" + id + "' accesible desde este ámbito. ");
                 }
             }
         }
     }
-
     //Solo para ver si un String es numérico
     //Dependiendo del signo
+
     private static boolean isNumeric(String cadena) {
         try {
             Integer.parseInt(cadena.replace(" ", ""));
@@ -509,13 +509,12 @@ public class TypesSubTable {
                     }
                     return true;
                 } else {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                            + "\n    La expresión del lado derecho de '" + id + "' no es del tipo esperado. ");
+                    addError(o, "La expresión del lado derecho de '" + id + "' no es del tipo esperado. ");
                     return false;
                 }
             }
         } else {
-            errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    La variable de nombre '" + id + "' ya existe en el ámbito actual. ");
+            addError(o, "La variable de nombre '" + id + "' ya existe en el ámbito actual. ");
             return false;
         }
     }
@@ -538,8 +537,7 @@ public class TypesSubTable {
                     } else if (x.type.contains("chr") && exp_type.contains("chr")) {
                         return true;
                     } else {
-                        errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                + "\n    La matriz del lado derecho de '" + id + "' no es del mismo tipo que " + id + ". ");
+                        addError(o, "La matriz del lado derecho de '" + id + "' no es del mismo tipo que " + id + ". ");
                         return false;
                     }
                 } else if (exp_type.contains("array") && model.getChildCount(model.getChild(o, 1)) != 0) {
@@ -551,22 +549,18 @@ public class TypesSubTable {
                             if (exp_type.contains(x.type)) {
                                 return true;
                             } else {
-                                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                        + "\n    La matriz del lado derecho de '" + id + "' no es del mismo tipo que " + id + ". ");
+                                addError(y, "La matriz del lado derecho de '" + id + "' no es del mismo tipo que " + id + ". ");
                                 return false;
                             }
                         } else {
-                            errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                    + "\n    La variable de nombre: '"
-                                    + indice + "' no es de tipo int.");
+                            addError(y, "La variable de nombre: '" + indice + "' no es de tipo int.");
                             return false;
                         }
                         //Matrices dentro de la expresíon entera
                     } else if ((exp_type.replace("..", "#")).split("#").length == 3 && model.getChildCount(y) == 2) {
                         Object indice = model.getChild(y, 0);
                         if (!checkIntExpression(indice)) {
-                            errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                    + "\n    La variable de nombre: '"
+                            addError(y, "La variable de nombre: '"
                                     + indice + "' no es de tipo int.");
                             return false;
                         }
@@ -575,19 +569,16 @@ public class TypesSubTable {
                             if (exp_type.contains(x.type)) {
                                 return true;
                             } else {
-                                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                        + "\n    La matriz del lado derecho de '" + id + "' no es del mismo tipo que " + id + ". ");
+                                addError(y, "La matriz del lado derecho de '" + id + "' no es del mismo tipo que " + id + ". ");
                                 return false;
                             }
                         } else {
-                            errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                    + "\n    La variable de nombre: '"
+                            addError(y, "La variable de nombre: '"
                                     + indice + "' no es de tipo int.");
                             return false;
                         }
                     } else {
-                        errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                + "\n    La matriz '" + y.toString() + "' no tiene el número de índices correctos. ");
+                        addError(y, "La matriz '" + y.toString() + "' no tiene el número de índices correctos. ");
                         return false;
                     }
                 } else if ((x.type.contains("array") && exp_type.contains("arr") && (x.type.replace("..", "#")).split("#").length == 2)
@@ -599,19 +590,17 @@ public class TypesSubTable {
                     } else if (x.type.contains("chr") && exp_type.contains("chr")) {
                         return true;
                     } else {
-                        errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                + "\n    La matriz del lado derecho de '" + id + "' no es del mismo tipo que " + id + ". ");
+                        addError(o, "La matriz del lado derecho de '" + id + "' no es del mismo tipo que " + id + ". ");
                         return false;
                     }
 
                 } else {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                            + "\n    La expresión del lado derecho de '" + id + "' no es del tipo esperado. ");
+                    addError(o, "La expresión del lado derecho de '" + id + "' no es del tipo esperado. ");
                     return false;
                 }
             }
         } else {
-            errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    No se encuentra el nombre: '" + id + "' accesible desde este ámbito. ");
+            addError(o, "No se encuentra el nombre: '" + id + "' accesible desde este ámbito. ");
             return false;
         }
     }
@@ -641,24 +630,26 @@ public class TypesSubTable {
             if (checkBlnExpression(o)) {
                 return "bln";
             } else {
-                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                        + "\n    Desconocido. ");
+                addError(o, "Error en la expresión del lado derecho de " + model.getChild(o, 0).toString() + ". ");
                 return "nll";
             }
         } else if (root.contains(":fun")) {
             String fun = checkFunction(root.replace(":fun", ""));
-            if (checkFunctionParams(fun.split(" -> ")[0], o)) {
-                return fun.split(" -> ")[1];
+            if (!fun.equals("")) {
+                if (checkFunctionParams(fun.split(" -> ")[0], o)) {
+                    return fun.split(" -> ")[1];
+                } else {
+                    addError(o, "No hay función '" + root.replace(":fun", "") + "' con esos tipos de parámetros. ");
+                    return "nll";
+                }
             } else {
-                errors.add(">!<Error de Tipo. Linea: "
-                        /*+ ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() */ + "\n    No hay función '" + root.replace(":fun", "") + "' con esos tipos de parámetros. ");
+                addError(o, "La función '" + o.toString().replace(":fun", "") + " no existe");
                 return "nll";
             }
         } else {
             TableRow id = checkIDExistence(root);
             if (id == null) {
-                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                        + "\n    La variable de nombre: '"
+                addError(o, "La variable de nombre: '"
                         + root + "' no fue encontrada en el ámbito actual ");
                 return "nll";
             } else {
@@ -673,10 +664,10 @@ public class TypesSubTable {
             if (isNumeric(o.toString())) {
                 return true;
             } else if (o.toString().contains("'") || o.toString().contains("‘") || o.toString().contains("’")) {
-                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    El caracter '" + o.toString() + "' no puede ir dentro de una expresión aritmética. ");
+                addError(o, "El caracter '" + o.toString() + "' no puede ir dentro de una expresión aritmética. ");
                 return false;
             } else if (o.toString().equals("true") || o.toString().equals("false")) {
-                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    El booleano '" + o.toString() + "' no puede ir dentro de una expresión aritmética. ");
+                addError(o, "El booleano '" + o.toString() + "' no puede ir dentro de una expresión aritmética. ");
                 return false;
             } else {
                 TableRow id = checkIDExistence(o.toString());
@@ -684,11 +675,11 @@ public class TypesSubTable {
                     if (id.type.equals("int")) {
                         return true;
                     } else {
-                        errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    El " + id.type + " '" + o.toString() + "' no puede ir dentro de una expresión aritmética. ");
+                        addError(o, "El " + id.type + " '" + o.toString() + "' no puede ir dentro de una expresión aritmética. ");
                         return false;
                     }
                 } else {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    No hay variable de nombre: '"
+                    addError(o, "No hay variable de nombre: '"
                             + o.toString() + "' accesible desde este ámbito actual. ");
                     return false;
                 }
@@ -696,18 +687,20 @@ public class TypesSubTable {
         } else {
             if (o.toString().contains(":fun")) {
                 String fun = checkFunction(o.toString().replace(":fun", ""));
-                if (!fun.split(" -> ")[1].equals("int")) {
-                    errors.add(">!<Error de Tipo. Linea: " /* + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()*/
-                            + "\n    La función '" + fun + "' no devuelve un int. ");
-                    return false;
-                } else {
-                    if (checkFunctionParams(fun.split(" -> ")[0], o)) {
-                        return true;
-                    } else {
-                        errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                + "\n    No hay función '" + fun + "' con esos tipos de parámetros. ");
+                if (!fun.equals("")) {
+                    if (!fun.split(" -> ")[1].equals("int")) {
+                        addError(o, "La función '" + fun + "' no devuelve un int. ");
                         return false;
+                    } else {
+                        if (checkFunctionParams(fun.split(" -> ")[0], o)) {
+                            return true;
+                        } else {
+                            addError(o, "No hay función '" + fun + "' con esos tipos de parámetros. ");
+                            return false;
+                        }
                     }
+                } else {
+                    addError(o, "La función '" + o.toString().replace(":fun", "") + " no existe");
                 }
             } else {
                 TableRow id = checkIDExistence(o.toString());
@@ -719,8 +712,7 @@ public class TypesSubTable {
                             if (checkIntExpression(indice)) {
                                 return true;
                             } else {
-                                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                        + "\n    La variable de nombre: '"
+                                addError(o, "La variable de nombre: '"
                                         + indice + "' no es de tipo int.");
                                 return false;
                             }
@@ -729,8 +721,7 @@ public class TypesSubTable {
                             Object indice = model.getChild(o, 0);
                             if (checkIntExpression(indice)) {
                             } else {
-                                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                        + "\n    La variable de nombre: '"
+                                addError(o, "La variable de nombre: '"
                                         + indice + "' no es de tipo int.");
                                 return false;
                             }
@@ -738,14 +729,12 @@ public class TypesSubTable {
                             if (checkIntExpression(indice)) {
                                 return true;
                             } else {
-                                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                        + "\n    La variable de nombre: '"
+                                addError(o, "La variable de nombre: '"
                                         + indice + "' no es de tipo int.");
                                 return false;
                             }
                         } else {
-                            errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                    + "\n    La matriz '" + o.toString() + "' no tiene el número de índices correctos. ");
+                            addError(o, "La matriz '" + o.toString() + "' no tiene el número de índices correctos. ");
                             return false;
                         }
                     }
@@ -780,7 +769,7 @@ public class TypesSubTable {
                 if (id != null) {
                     return true;
                 } else {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    No hay variable de nombre: '"
+                    addError(o, "No hay variable de nombre: '"
                             + o.toString() + "' accesible desde este ámbito actual. ");
                     return false;
                 }
@@ -788,18 +777,21 @@ public class TypesSubTable {
         } else {
             if (o.toString().contains(":fun")) {
                 String fun = checkFunction(o.toString().replace(":fun", ""));
-                if (!fun.split(" -> ")[1].equals("nll")) {
-                    errors.add(">!<Error de Tipo. Linea: "
-                            + /*((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + */ "\n    La función '" + fun + "' no devuelve un nada. ");
-                    return false;
-                } else {
-                    if (checkFunctionParams(fun.split(" -> ")[0], o)) {
-                        return true;
-                    } else {
-                        errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                                + "\n    No hay función '" + fun + "' con esos tipos de parámetros. ");
+                if (!fun.equals("")) {
+                    if (!fun.split(" -> ")[1].equals("nll")) {
+                        addError(o, "La función '" + fun + "' no devuelve un nada. ");
                         return false;
+                    } else {
+                        if (checkFunctionParams(fun.split(" -> ")[0], o)) {
+                            return true;
+                        } else {
+                            addError(o, "No hay función '" + fun + "' con esos tipos de parámetros. ");
+                            return false;
+                        }
                     }
+                } else {
+                    addError(o, "La función '" + o.toString().replace(":fun", "") + " no existe");
+                    return false;
                 }
             } else if (o.toString().equals("<") || o.toString().equals(">")
                     || o.toString().equals("<=") || o.toString().equals(">=")
@@ -807,14 +799,14 @@ public class TypesSubTable {
                 if (checkTypeofValue(model.getChild(o, 0)).equals("int") && checkTypeofValue(model.getChild(o, 1)).equals("int")) {
                     return true;
                 } else {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    Ambas variables en una comparación(<,>,<=.>=) deben ser de tipo int. ");
+                    addError(o, "Ambas variables en una comparación(<,>,<=.>=) deben ser de tipo int. ");
                     return false;
                 }
             } else if (o.toString().equals("!=") || o.toString().equals("=")) {
                 if (checkTypeofValue(model.getChild(o, 0)).equals(checkTypeofValue(model.getChild(o, 1)))) {
                     return true;
                 } else {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    Ambas variables en una comparación(=,!=) deben ser de del mismo tipo. ");
+                    addError(o, "Ambas variables en una comparación(=,!=) deben ser de del mismo tipo. ");
                     return false;
                 }
             } else {
@@ -823,7 +815,7 @@ public class TypesSubTable {
                 if (lc && rc) {
                     return true;
                 } else {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    Desconocido. ");
+                    addError(o, "Error en la expresión booleana. ");
                     return false;
                 }
             }
@@ -836,7 +828,7 @@ public class TypesSubTable {
             if (checkTypeofValue(model.getChild(o, 0)).equals("int") && checkTypeofValue(model.getChild(o, 1)).equals("int")) {
                 return true;
             } else {
-                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    Ambas variables en una comparación(...) deben ser de tipo int. ");
+                addError(o, "Ambas variables en una comparación(...) deben ser de tipo int. ");
                 return false;
             }
         } else if (o.toString().equals("<") || o.toString().equals(">")
@@ -844,14 +836,14 @@ public class TypesSubTable {
             if (checkTypeofValue(model.getChild(o, 0)).equals("int")) {
                 return true;
             } else {
-                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    La variable dentro del SWITCH en una comparación(<,>,<=.>=) deben se de tipo int. ");
+                addError(o, "La variable dentro del SWITCH en una comparación(<,>,<=.>=) deben se de tipo int. ");
                 return false;
             }
         } else if (o.toString().equals("!=") || o.toString().equals("=")) {
             if (!checkTypeofValue(model.getChild(o, 0)).equals("nill")) {
                 return true;
             } else {
-                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    La variable dentro del SWITCH no es de ningún tipo (nll). ");
+                addError(o, "La variable dentro del SWITCH no es de ningún tipo (nll). ");
                 return false;
             }
         }
@@ -876,9 +868,7 @@ public class TypesSubTable {
                             && type.contains(params[i].split(" ")[1])) {
                         return true;
                     } else {
-                        errors.add(">!<Error de Tipo. Linea: "
-                                /*+ ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()*/ + "\n    Los parametros enviados son de tipo distinto a los parametros de la función. ");
-
+                        addError(o, "Los parametros enviados son de tipo distinto a los parametros de la función. ");
                         return false;
                     }
                 }
@@ -900,7 +890,7 @@ public class TypesSubTable {
     }
 
     private String checkTypeofValue(Object o) {
-        String id = ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).toString();
+        String id = o.toString();
         if (id.equals("false") || id.equals("true")) {
             return "bln";
         } else if (id.equals("nll")) {
@@ -914,7 +904,7 @@ public class TypesSubTable {
             if (id1 != null) {
                 return id1.type;
             } else {
-                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    No hay variable de nombre: '"
+                addError(o, "No hay variable de nombre: '"
                         + id + "' accesible desde este ámbito actual. ");
                 return "nll";
             }
@@ -925,23 +915,25 @@ public class TypesSubTable {
         int cc = model.getChildCount(o);
         if (o.toString().contains(":fun")) {
             String fun = checkFunction(o.toString().replace(":fun", ""));
-            if (fun.split(" -> ")[1].contains("mtx")) {
-                if (!fun.split(" -> ")[1].contains(type)) {
-                    errors.add(">!<Error de Tipo. Linea: " /*+ ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()*/
-                            + "\n    La función '" + o.toString().replace(":fun", "") + "' no devuelve el tipo mtx " + type + ".");
+            if (!fun.equals("")) {
+                if (fun.split(" -> ")[1].contains("mtx")) {
+                    if (!fun.split(" -> ")[1].contains(type)) {
+                        addError(o, "La función '" + o.toString().replace(":fun", "") + "' no devuelve el tipo mtx " + type + ".");
+                    }
+                } else {
+                    if (!checkFunctionParams(fun.split(" -> ")[0], o)) {
+                        addError(o, "No hay función '" + o.toString().replace(":fun", "") + "' con esos tipos de parámetros. ");
+                    }
                 }
             } else {
-                if (!checkFunctionParams(fun.split(" -> ")[0], o)) {
-                    errors.add(">!<Error de Tipo. Linea: " /*+ ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()*/
-                            + "\n    No hay función '" + o.toString().replace(":fun", "") + "' con esos tipos de parámetros. ");
-                }
+                addError(o, "La función '" + o.toString().replace(":fun", "") + " no existe");
             }
         } else {
             for (int i = 0; i < cc; i++) {
                 if (checkExpression(o, i).equals(type)) {
                     return cc;
                 } else {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    "
+                    addError(o, ""
                             + "El elemento '" + model.getChild(o, i)
                             + "' no es de tipo " + type + ". "
                             + ((InstructionCode) ((DefaultMutableTreeNode) model.getChild(o, i)).getUserObject()).getCodeLine());
@@ -958,16 +950,18 @@ public class TypesSubTable {
             size[0] = 0;
             size[1] = 0;
             String fun = checkFunction(o.toString().replace(":fun", ""));
-            if (fun.split(" -> ")[1].contains("mtx")) {
-                if (!fun.split(" -> ")[1].contains(type)) {
-                    errors.add(">!<Error de Tipo. Linea: " /*+ ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()*/
-                            + "\n    La función '" + o.toString().replace(":fun", "") + "' no devuelve el tipo mtx " + type + ".");
+            if (!fun.equals("")) {
+                if (fun.split(" -> ")[1].contains("mtx")) {
+                    if (!fun.split(" -> ")[1].contains(type)) {
+                        addError(o, "La función '" + o.toString().replace(":fun", "") + "' no devuelve el tipo mtx " + type + ".");
+                    }
+                } else {
+                    if (!checkFunctionParams(fun.split(" -> ")[0], o)) {
+                        addError(o, "No hay función '" + o.toString().replace(":fun", "") + "' con esos tipos de parámetros. ");
+                    }
                 }
             } else {
-                if (!checkFunctionParams(fun.split(" -> ")[0], o)) {
-                    errors.add(">!<Error de Tipo. Linea: " /*+ ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()*/
-                            + "\n    No hay función '" + o.toString().replace(":fun", "") + "' con esos tipos de parámetros. ");
-                }
+                addError(o, "La función '" + o.toString().replace(":fun", "") + " no existe.");
             }
             return size;
         } else {
@@ -975,15 +969,13 @@ public class TypesSubTable {
             size[1] = 1;
             for (int i = 0; i < size[0]; i++) {
                 if (!model.getChild(o, i).toString().equals("ELEMENTS")) {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    "
-                            + "El elemento en la fila " + i + " no es de tipo arr. ");
+                    addError(o, "El elemento en la fila " + i + " no es de tipo arr. ");
                 }
                 int x = checkArray(type, model.getChild(o, i));
                 if (i == 0) {
                     size[1] = x;
                 } else if (size[1] != x) {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
-                            + "\n    " + "El arr en la fila " + i + " no es del mismo tamaño que arr en la fila " + (i - 1) + ". ");
+                    addError(o, "" + "El arr en la fila " + i + " no es del mismo tamaño que arr en la fila " + (i - 1) + ". ");
                 }
             }
             return size;
@@ -1010,7 +1002,7 @@ public class TypesSubTable {
             if (id != null) {
                 return true;
             } else {
-                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) c).getUserObject()).getCodeLine() + "\n    No hay variable de nombre: '"
+                addError(o, "No hay variable de nombre: '"
                         + step + "' accesible desde este ámbito actual. ");
                 return false;
             }
@@ -1032,7 +1024,7 @@ public class TypesSubTable {
             if (id != null) {
                 return true;
             } else {
-                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) childD).getUserObject()).getCodeLine() + "\n    No hay variable de nombre: '"
+                addError(o, "No hay variable de nombre: '"
                         + childD.toString() + "' accesible desde este ámbito actual. ");
                 return false;
             }
@@ -1050,23 +1042,32 @@ public class TypesSubTable {
                 if (id.type.equals("int")) {
                     return x;
                 } else {
-                    errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    La variable de nombre: '"
+                    addError(o, "La variable de nombre: '"
                             + x + "' debe ser de tipo int. ");
                     return "";
                 }
             } else {
-                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    No hay variable de nombre: '"
+                addError(o, "No hay variable de nombre: '"
                         + x + "' accesible desde este ámbito actual. ");
                 return "";
             }
         }
     }
 
+    public void addError(Object o, String msm) {
+        try {
+            errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine()
+                    + "\n   " + msm + "\n");
+        } catch (Exception e) {
+            errors.add(">!<Error de Tipo. Linea: Desconocida" + "\n    " + msm + "\n");
+        }
+    }
+
     @Override
     public String toString() {
-        String t = "function: " + functionName + "\n       ";
+        String t = "function: " + functionName + "   ";
         for (TableRow i : ids.values()) {
-            t += i.toString() + "\n       ";
+            t += i.toString() + "   ";
         }
         return t;
     }
