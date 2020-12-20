@@ -143,16 +143,18 @@ public class TypesSubTable {
 
             //PARAMETERS
             if (o.toString().equals("PARAMETERS")) {
+                String[] pos = {"$a0", "$a1", "$a2", "$a3", "$a4",
+                    "$s0", "$s1", "$s2", "$s3", "$s4", "$s5", "$s6", "$s7", "$s8", "$s9",};
                 for (int j = 0; j < model.getChildCount(o); j++) {
                     String[] p = model.getChild(o, j).toString().split(" ");
                     if (p[0].contains("mtx")) {
-                        TableRow row = new TableRow(p[2], "array(0..0,array(0..0," + p[1] + "))", offsetActual);
+                        TableRow row = new TableRow(p[2], "array(0..0,array(0..0," + p[1] + "))", offsetActual, pos[j]);
                         addIDToSubTable(row);
                     } else if (p[0].contains("arr")) {
-                        TableRow row = new TableRow(p[2], "array(0..0," + p[1] + ")", offsetActual);
+                        TableRow row = new TableRow(p[2], "array(0..0," + p[1] + ")", offsetActual, pos[j]);
                         addIDToSubTable(row);
                     } else {
-                        TableRow row = new TableRow(p[1], p[0], offsetActual);
+                        TableRow row = new TableRow(p[1], p[0], offsetActual, pos[j]);
                         addIDToSubTable(row);
                     }
                 }

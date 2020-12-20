@@ -14,16 +14,28 @@ class TableRow {
     public final String id;
     public final String type;
     private final int offset;
+    public String ubicacion;
+
+    public TableRow(String id, String type, int offset, String ubicacion) {
+        this.id = id;
+        this.type = type;
+        this.offset = offset;
+        this.ubicacion = ubicacion;
+    }
 
     public TableRow(String id, String type, int offset) {
         this.id = id;
         this.type = type;
         this.offset = offset;
+        if(offset!=0)
+            this.ubicacion = "-" + offset + "($sp)";
+        else
+            this.ubicacion =  offset + "($sp)";
     }
 
     @Override
     public String toString() {
-        return "id: " + id + ", type: " + type + ", offset: " + offset;
+        return "id: " + id + ", type: " + type + ", offset: " + offset+", ubicación: "+ubicacion;
     }
 
 }
