@@ -172,6 +172,7 @@ terminal
 /* Non terminals */
 non terminal 
     /* code blocks */
+    N_VARIABLES_GLOBALES,
     N_INICIO, 
     N_MAIN,
     N_FUNCTIONS,
@@ -225,7 +226,18 @@ precedence left OPEN_PARENTESIS, CLOSE_PARENTESIS;
                         start with N_INICIO;
 
 /* -------------------------CODE BLOCKS------------------------------------- */
+N_VARIABLES_GLOBALES ::=
+    VARIABLE N_DECLARACION PYC
+    |
+    N_VARIABLES_GLOBALES VARIABLE N_DECLARACION PYC
+;
+
+
 N_INICIO ::= 
+    N_VARIABLES_GLOBALES N_MAIN
+    |
+    N_VARIABLES_GLOBALES N_MAIN N_FUNCTIONS
+    |
     N_MAIN:e1
     |
     N_MAIN:e1 N_FUNCTIONS

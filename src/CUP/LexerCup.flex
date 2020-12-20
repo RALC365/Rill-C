@@ -65,7 +65,7 @@ BOOLEAN = "bln"
 CHAR = "chr"
 ARRAY = "arr"
 MATRIX = "mtx"
-VARIABLE = "vb"
+VARIABLE = "glb"
 
 /* identifier */
 ID = [:jletter:] [:jletterdigit:]*

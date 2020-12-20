@@ -176,6 +176,7 @@ terminal
 /* Non terminals */
 non terminal 
     /* code blocks */
+    N_VARIABLES_GLOBALES,
     N_INICIO, 
     N_MAIN,
     N_FUNCTIONS,
@@ -229,7 +230,34 @@ precedence left OPEN_PARENTESIS, CLOSE_PARENTESIS;
                         start with N_INICIO;
 
 /* -------------------------CODE BLOCKS------------------------------------- */
+N_VARIABLES_GLOBALES ::=
+    VARIABLE:glb N_DECLARACION:d PYC
+        {:
+            DefaultMutableTreeNode nodo = parser.createNodoObject("VARIABLES_GLOBALES",glbright);
+            nodo.add((DefaultMutableTreeNode)d);
+            RESULT = nodo;
+        :}
+    |
+    N_VARIABLES_GLOBALES:nglb VARIABLE:glb N_DECLARACION:d PYC
+        {:
+            ((DefaultMutableTreeNode)nglb).add((DefaultMutableTreeNode)d);
+            RESULT = ((DefaultMutableTreeNode)nglb);
+        :}
+;
+
 N_INICIO ::= 
+    N_VARIABLES_GLOBALES:glb N_MAIN:e1
+        {:
+            parser.agregarNodo((DefaultMutableTreeNode)glb);
+            parser.agregarNodo((DefaultMutableTreeNode)e1);
+        :}
+    |
+    N_VARIABLES_GLOBALES:glb N_MAIN:e1 N_FUNCTIONS
+        {:
+            parser.insertInicioNodo((DefaultMutableTreeNode)e1);
+            parser.insertInicioNodo((DefaultMutableTreeNode)glb);
+        :}
+    |
     N_MAIN:e1
         {:
             parser.agregarNodo((DefaultMutableTreeNode)e1);

@@ -914,7 +914,8 @@ public class TypesSubTable {
     }
 
     private String checkTypeofValue(Object o) {
-        String id = ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).toString();
+        String id = ( ((DefaultMutableTreeNode) o).getUserObject()).toString();
+        System.out.println("id: " + id);
         if (id.equals("false") || id.equals("true")) {
             return "bln";
         } else if (id.equals("nll")) {
@@ -928,7 +929,7 @@ public class TypesSubTable {
             if (id1 != null) {
                 return id1.type;
             } else {
-                errors.add(">!<Error de Tipo. Linea: " + ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    No hay variable de nombre: '"
+                errors.add(">!<Error de Tipo. Linea: " //+ ((InstructionCode) ((DefaultMutableTreeNode) o).getUserObject()).getCodeLine() + "\n    No hay variable de nombre: '"
                         + id + "' accesible desde este ámbito actual. ");
                 return "nll";
             }
@@ -1079,6 +1080,7 @@ public class TypesSubTable {
     @Override
     public String toString() {
         String t = "function: " + functionName + "\n       ";
+        
         for (TableRow i : ids.values()) {
             t += i.toString() + "\n       ";
         }

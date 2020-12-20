@@ -36,6 +36,9 @@ public class TypesTable {
                 //En el main devuelve nll->nll ya que éste no recibe ni devuelve
                 name = "main";
                 typeOfFuction = "nll -> nll";
+            } else if (child.toString().equals("VARIABLES_GLOBALES")){
+                root = new TypesSubTable("Program", "nill", model, child, null, 0);
+                continue;
             } else {
                 //Obtiene el tipo de la función en base a los parámetros
                 typeOfFuction = getParametersType(model, child);
@@ -47,6 +50,13 @@ public class TypesTable {
             root.children.put(name, x);
         }
         //System.out.println("--------------------------");
+        //Verificamos las variables globales
+        if(root.treepart != null){
+            root.getDeclarations(root.treepart);
+            root.errors.addAll(root.errors);
+        }
+        
+        //Verificamos las declaraciones de los funciones del programa
         for (String i : root.children.keySet()) {
             TypesSubTable child = root.children.get(i);
             child.getDeclarations(child.treepart);
