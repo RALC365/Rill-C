@@ -16,13 +16,30 @@ public class Cuadruplos {
     private String parametroA;
     private String parametroB;
     private String resultado;
-    private TypesSubTable ambito;
+    private int offset;
+    private String type;
 
     public Cuadruplos(Operacion operacion, String parametroA, String parametroB, String resultado) {
         this.operacion = operacion;
         this.parametroA = parametroA;
         this.parametroB = parametroB;
         this.resultado = resultado;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Operacion getOperacion() {

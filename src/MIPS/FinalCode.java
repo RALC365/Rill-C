@@ -10,6 +10,7 @@ import MIPS.Instrucciones;
 import ThreeAddressCode.Cuadruplos;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -21,6 +22,7 @@ public class FinalCode {
     private TypesSubTable ambitoTree;
     private Instrucciones instruccion;
     private HashMap<String, String> registrosTemporales;
+    private final String registroZero = "$zero";
     
     public FinalCode(ArrayList<Cuadruplos> tablaCuadruplos, TypesSubTable ambitoTree) {
         this.tablaCuadruplos = tablaCuadruplos;
@@ -44,8 +46,13 @@ public class FinalCode {
         for (Cuadruplos cadaCuadruplo : this.tablaCuadruplos) {
             switch (cadaCuadruplo.getOperacion()) {
                 case ETIQUETAMAIN: {
-                    codigoMIPS += ".main:\n";
-                } 
+                    codigoMIPS += this.instruccion.InstruccionMain();
+                }
+                case ASIGNACION: {
+                    String registroLibre = getRegistroVacio();
+                    codigoMIPS += this.instruccion.InstruccionSuma(registroZero, cadaCuadruplo.getParametroA(), registroLibre);
+                    codigoMIPS += this.instruccion.InstruccionMain();
+                }
                 case SUMA: {
                     codigoMIPS += this.instruccion.InstruccionSuma(cadaCuadruplo.getParametroA(), cadaCuadruplo.getParametroB(), cadaCuadruplo.getResultado());
                 }
@@ -93,5 +100,16 @@ public class FinalCode {
         
         
     }
+    
+    private String getRegistroVacio() {
+        for(Map.Entry<String, String> cadaRegistro: this.registrosTemporales.entrySet()) {
+            if (cadaRegistro.getValue().isEmpty()) {
+                return cadaRegistro.getKey();
+            }
+        }
+        return "";
+    }
+    
+    private void LiberarRegistro() {}
     
 }

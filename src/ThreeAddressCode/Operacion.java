@@ -31,5 +31,6 @@ public enum Operacion {
     CALL,
     ETIQUETAMAIN,
     FINFUNCION,
-    ARREGLOASIGN
+    ARREGLOASIGN,
+    DECLARACION
 }

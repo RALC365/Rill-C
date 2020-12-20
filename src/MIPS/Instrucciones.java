@@ -5,14 +5,15 @@
  */
 package MIPS;
 
-import ThreeAddressCode.Cuadruplos;
-import ThreeAddressCode.Operacion;
-
 /**
  *
  * @author Julio Marin
  */
 public class Instrucciones {
+    
+    public String InstruccionMain() {
+        return ".main: \n";
+    }
     
     public String InstruccionEtiqueta(String etiqueta) {
         return ".etiqueta: ";
