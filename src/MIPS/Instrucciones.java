@@ -29,8 +29,8 @@ public class Instrucciones {
         return "sw "+registro+", "+offset+"("+registroFuente+")\n";
     }
     
-    public String Montaje(String registro, String identificador) {
-        return "lw "+registro+", "+identificador+"\n";
+    public String InstruccionMontaje(String registro, int offset, String registroFuente) {
+        return "lw "+registro+", "+offset+"("+registroFuente+")\n";
     }
     
     public String InstruccionSuma(String izquierdo, String derecho, String resultado) {
@@ -38,15 +38,15 @@ public class Instrucciones {
     }
     
     public String InstruccionResta(String izquierdo, String derecho, String resultado) {
-        return "sub Rdestino, Rfuente1, Rfuente2+\n";
+        return "sub "+resultado+", "+izquierdo+", "+derecho+"\n";
     }
     
     public String InstruccionMultiplicacion(String izquierdo, String derecho, String resultado) {
-        return "mul Rdestino, Rfuente1, Rfuente2+\n";
+        return "mul "+resultado+", "+izquierdo+", "+derecho+"\n";
     }
     
     public String InstruccionDivision(String izquierdo, String derecho, String resultado) {
-        return "div Rdestino, Rfuente1, Rfuente2+\n";
+        return "div "+resultado+", "+izquierdo+", "+derecho+"\n";
     }
     
     public String InstruccionGOTO(String etiqueta) {

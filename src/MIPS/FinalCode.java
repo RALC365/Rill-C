@@ -27,6 +27,7 @@ public class FinalCode {
     private final String registroZero = "$zero";
     private final String registroFP = "$fp";
     private int conteoMensaje = 0;
+    private int base = 0;
     
     public FinalCode(ArrayList<Cuadruplos> tablaCuadruplos, TypesSubTable ambitoTree) {
         this.tablaCuadruplos = tablaCuadruplos;
@@ -55,49 +56,22 @@ public class FinalCode {
                 } break;
                 case ASIGNACION: {//?
                     String registroLibre = getRegistroVacio();
-                    String resultado = cadaCuadruplo.getResultado();
                     codigoMIPS += this.instruccion.InstruccionCargaInmediata(registroLibre, cadaCuadruplo.getParametroA());
                     //codigoMIPS += this.instruccion.InstruccionSuma(registroZero, cadaCuadruplo.getParametroA(), registroLibre);
                     codigoMIPS += this.instruccion.InstruccionGuardarPalabra(registroLibre, 0, registroFP);
-                    LiberarRegistro("", resultado);
+                    LiberarRegistro("", registroLibre);
                 } break;
                 case SUMA: {
-                    String registroLibre = "$t"+getRegistroVacio();
-                    boolean banderaDeracha = false;
-                    boolean banderaIzquierda = false;
-                    registrosTemporales.put(cadaCuadruplo.getResultado(), registroLibre);
-                    String izquierdo = cadaCuadruplo.getParametroA();
-                    String izquierdoPrevio = izquierdo;
-                    String derecho = cadaCuadruplo.getParametroB();
-                    String derechoPrevio = derecho;
-                    if (encontrarRegistro(izquierdo) == 2) {
-                        banderaIzquierda = true;
-                        izquierdo = registrosTemporales.get(izquierdo);
-                    } else {
-                        //3
-                    }
-                    if (encontrarRegistro(derecho) == 2) {
-                        banderaDeracha = true;
-                        derecho = registrosTemporales.get(derecho);
-                    } else {
-                        //3
-                    }
-                    codigoMIPS += this.instruccion.InstruccionSuma(derecho, izquierdo, registroLibre);
-                    if (banderaIzquierda) {
-                        LiberarRegistro(izquierdoPrevio, izquierdo);
-                    }
-                    if (banderaDeracha) {
-                        LiberarRegistro(derechoPrevio, derecho);
-                    }
+                    codigoMIPS += CargaAritmetica(cadaCuadruplo, 1);
                 } break;
                 case RESTA: {
-                    codigoMIPS += this.instruccion.InstruccionResta(cadaCuadruplo.getParametroA(), cadaCuadruplo.getParametroB(), cadaCuadruplo.getResultado());
+                    codigoMIPS += CargaAritmetica(cadaCuadruplo, 2);
                 } break;
                 case MULTIPLICACION: {
-                    codigoMIPS += this.instruccion.InstruccionMultiplicacion(cadaCuadruplo.getParametroA(), cadaCuadruplo.getParametroB(), cadaCuadruplo.getResultado());
+                    codigoMIPS += CargaAritmetica(cadaCuadruplo, 3);
                 } break;
                 case DIVISION: {
-                    codigoMIPS += this.instruccion.InstruccionDivision(cadaCuadruplo.getParametroA(), cadaCuadruplo.getParametroB(), cadaCuadruplo.getResultado());
+                    codigoMIPS += CargaAritmetica(cadaCuadruplo, 4);
                 } break;
                 case NEGACION: {
                     
@@ -177,6 +151,71 @@ public class FinalCode {
                 }
             }
         }
+    }
+    
+    private int calculoOffset(int offset, int tamanio) {
+        return -(base+offset+tamanio);
+    }
+    
+    private String CargaAritmetica(Cuadruplos cadaCuadruplo, int tipo) {
+        String salida = "";
+        String registroLibre = getRegistroVacio();
+        boolean banderaDeracha = false;
+        boolean banderaIzquierda = false;
+        registrosTemporales.put(cadaCuadruplo.getResultado(), registroLibre);
+        String izquierdo = cadaCuadruplo.getParametroA();
+        String izquierdoPrevio = izquierdo;
+        String derecho = cadaCuadruplo.getParametroB();
+        String derechoPrevio = derecho;
+        int categoriaRegistro = encontrarRegistro(izquierdo);
+        if (categoriaRegistro == 2) {
+            banderaIzquierda = true;
+            izquierdo = registrosTemporales.get(izquierdo);
+        } else {
+            if (categoriaRegistro == 3) {
+                String siguienteLibre = getRegistroVacio();
+                registrosTemporales.put(izquierdo, siguienteLibre);
+                salida += this.instruccion.InstruccionMontaje(siguienteLibre, 0, registroFP);
+                izquierdo = siguienteLibre;
+            }
+        }
+        categoriaRegistro = encontrarRegistro(derecho);
+        if (categoriaRegistro == 2) {
+            banderaDeracha = true;
+            derecho = registrosTemporales.get(derecho);
+        } else {
+            if (categoriaRegistro == 3) {
+                String siguienteLibre = getRegistroVacio();
+                registrosTemporales.put(derecho, siguienteLibre);
+                salida += this.instruccion.InstruccionMontaje(siguienteLibre, 0, registroFP);
+                derecho = siguienteLibre;
+            }
+        }
+        switch(tipo) {
+            case 1:
+                salida += this.instruccion.InstruccionSuma(derecho, izquierdo, registroLibre);
+                break;
+            case 2:
+                salida += this.instruccion.InstruccionResta(derecho, izquierdo, registroLibre);
+                break;
+            case 3:
+                salida += this.instruccion.InstruccionMultiplicacion(derecho, izquierdo, registroLibre);
+                break;
+            case 4:
+                salida += this.instruccion.InstruccionDivision(derecho, izquierdo, registroLibre);
+                break;
+//            case 5:
+//                salida += this.instruccion.InstruccionSuma(derecho, izquierdo, registroLibre);
+//                break;
+        }
+        if (banderaIzquierda) {
+            LiberarRegistro(izquierdoPrevio, izquierdo);
+        }
+        if (banderaDeracha) {
+            LiberarRegistro(derechoPrevio, derecho);
+        }
+        
+        return salida;
     }
     
 }

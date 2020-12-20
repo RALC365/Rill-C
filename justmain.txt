@@ -3,7 +3,7 @@
 	a: 5.,
 	b: a+3.,
 	c: a/b.,
-	d: c*c.,
+	d: a+3*(b-2)/(c*c).,
 	(pp: "Gran Finale":).,
 	(pp: "d: " - d:).,
 :)
