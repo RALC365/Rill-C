@@ -17,7 +17,7 @@ import java.util.Map;
  * @author Julio Marin
  */
 public class FinalCode {
-    
+
     private ArrayList<Cuadruplos> tablaCuadruplos;
     private TypesSubTable ambitoTree;
     private Instrucciones instruccion;
@@ -28,7 +28,7 @@ public class FinalCode {
     private final String registroFP = "$fp";
     private int conteoMensaje = 0;
     private int base = 0;
-    
+
     public FinalCode(ArrayList<Cuadruplos> tablaCuadruplos, TypesSubTable ambitoTree) {
         this.tablaCuadruplos = tablaCuadruplos;
         this.ambitoTree = ambitoTree;
@@ -43,87 +43,105 @@ public class FinalCode {
         argumentos.put("$a1", "");
         argumentos.put("$a2", "");
         argumentos.put("$a3", "");
-        
+
     }
-    
+
     public void GenerarCodigoFinal() {
-        String cargaGlobal = ".text\n";
-        String codigoMIPS = ".globl main\n";
+        String cargaGlobal = "      .data\n";
+        String codigoMIPS = "       .text\n"
+                + "     .globl main\n";
         for (Cuadruplos cadaCuadruplo : this.tablaCuadruplos) {
             switch (cadaCuadruplo.getOperacion()) {
                 case ETIQUETAMAIN: {
                     codigoMIPS += this.instruccion.InstruccionMain();
-                } break;
+                }
+                break;
                 case ASIGNACION: {//?
                     String registroLibre = getRegistroVacio();
                     codigoMIPS += this.instruccion.InstruccionCargaInmediata(registroLibre, cadaCuadruplo.getParametroA());
                     //codigoMIPS += this.instruccion.InstruccionSuma(registroZero, cadaCuadruplo.getParametroA(), registroLibre);
                     codigoMIPS += this.instruccion.InstruccionGuardarPalabra(registroLibre, calculoOffset(cadaCuadruplo.getOffset(), cadaCuadruplo.getType()), registroFP);
                     LiberarRegistro("", registroLibre);
-                } break;
+                }
+                break;
                 case SUMA: {
                     codigoMIPS += CargaAritmetica(cadaCuadruplo, 1);
-                } break;
+                }
+                break;
                 case RESTA: {
                     codigoMIPS += CargaAritmetica(cadaCuadruplo, 2);
-                } break;
+                }
+                break;
                 case MULTIPLICACION: {
                     codigoMIPS += CargaAritmetica(cadaCuadruplo, 3);
-                } break;
+                }
+                break;
                 case DIVISION: {
                     codigoMIPS += CargaAritmetica(cadaCuadruplo, 4);
-                } break;
+                }
+                break;
                 case NEGACION: {
-                    
-                } break;
-                case GOTO: {
+
+                }
+                break;
+                /*case GOTO: {
                     codigoMIPS += this.instruccion.InstruccionGOTO(cadaCuadruplo.getParametroA());
-                } break;
+                }
+                break;*/
                 case ASIGNARREGLO: {
-                    
-                } break;
+
+                }
+                break;
                 case ETIQUETA: {
-                    
-                } break;
+
+                }
+                break;
                 case IFIGUAL: {
-                    
-                } break;
+
+                }
+                break;
                 case IFMAYOR: {
-                    
-                } break;
+
+                }
+                break;
                 case IFMENOR: {
-                    
-                } break;
+
+                }
+                break;
                 case IFMAYORIGUAL: {
-                    
-                } break;
+
+                }
+                break;
                 case IFMENORIGUAL: {
-                    
-                } break;
+
+                }
+                break;
                 case IFDISTINTO: {
-                    
-                } break;
+
+                }
+                break;
                 case PRINT: {
-                    String mensaje = "_msg"+(conteoMensaje++);
-                    cargaGlobal += mensaje+": .asciiz "+""+cadaCuadruplo.getResultado()+""+"\n";
+                    String mensaje = "_msg" + (conteoMensaje++);
+                    cargaGlobal += mensaje + ": .asciiz " + "\"" + cadaCuadruplo.getResultado() + "\"" + "\n";
                     codigoMIPS += this.instruccion.InstruccionPrint(mensaje);
-                } break;
+                }
+                break;
             }
         }
-        codigoMIPS += "li $v0,10\n";
-        codigoMIPS += "syscall\n";
-        System.out.println(cargaGlobal+codigoMIPS);
+        codigoMIPS += "    li $v0,10\n";
+        codigoMIPS += "    syscall\n";
+        System.out.println(cargaGlobal + codigoMIPS);
     }
-    
+
     private String getRegistroVacio() {
         for (int i = 0; i < 10; i++) {
             if (usoRegistrosTemporales[i].isEmpty()) {
-                return (usoRegistrosTemporales[i] = "$t"+i);
+                return (usoRegistrosTemporales[i] = "$t" + i);
             }
         }
         return "";
     }
-    
+
     private void LiberarRegistro(String llave, String valor) {
         for (int i = 0; i < 10; i++) {
             if (usoRegistrosTemporales[i].equals(valor)) {
@@ -135,9 +153,9 @@ public class FinalCode {
             }
         }
     }
-    
+
     private int encontrarRegistro(String entrada) {
-        if ((entrada == null)||(entrada.isEmpty())) {
+        if ((entrada == null) || (entrada.isEmpty())) {
             return 0;
         } else {
             try {
@@ -152,11 +170,11 @@ public class FinalCode {
             }
         }
     }
-    
+
     private int calculoOffset(int offset, int tamanio) {
-        return -(base+offset+tamanio);
+        return -(base + offset + tamanio);
     }
-    
+
     private String CargaAritmetica(Cuadruplos cadaCuadruplo, int tipo) {
         String salida = "";
         String registroLibre = getRegistroVacio();
@@ -191,7 +209,7 @@ public class FinalCode {
                 derecho = siguienteLibre;
             }
         }
-        switch(tipo) {
+        switch (tipo) {
             case 1:
                 salida += this.instruccion.InstruccionSuma(derecho, izquierdo, registroLibre);
                 break;
@@ -214,8 +232,8 @@ public class FinalCode {
         if (banderaDeracha) {
             LiberarRegistro(derechoPrevio, derecho);
         }
-        
+
         return salida;
     }
-    
+
 }
