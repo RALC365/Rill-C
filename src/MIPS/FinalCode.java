@@ -53,15 +53,42 @@ public class FinalCode {
                 case ETIQUETAMAIN: {
                     codigoMIPS += this.instruccion.InstruccionMain();
                 } break;
-                case ASIGNACION: {
+                case ASIGNACION: {//?
                     String registroLibre = getRegistroVacio();
-                    registrosTemporales.put(registroLibre, cadaCuadruplo.getResultado());
+                    String resultado = cadaCuadruplo.getResultado();
                     codigoMIPS += this.instruccion.InstruccionCargaInmediata(registroLibre, cadaCuadruplo.getParametroA());
                     //codigoMIPS += this.instruccion.InstruccionSuma(registroZero, cadaCuadruplo.getParametroA(), registroLibre);
                     codigoMIPS += this.instruccion.InstruccionGuardarPalabra(registroLibre, 0, registroFP);
+                    LiberarRegistro("", resultado);
                 } break;
                 case SUMA: {
-                    codigoMIPS += this.instruccion.InstruccionSuma(cadaCuadruplo.getParametroA(), cadaCuadruplo.getParametroB(), cadaCuadruplo.getResultado());
+                    String registroLibre = "$t"+getRegistroVacio();
+                    boolean banderaDeracha = false;
+                    boolean banderaIzquierda = false;
+                    registrosTemporales.put(cadaCuadruplo.getResultado(), registroLibre);
+                    String izquierdo = cadaCuadruplo.getParametroA();
+                    String izquierdoPrevio = izquierdo;
+                    String derecho = cadaCuadruplo.getParametroB();
+                    String derechoPrevio = derecho;
+                    if (encontrarRegistro(izquierdo) == 2) {
+                        banderaIzquierda = true;
+                        izquierdo = registrosTemporales.get(izquierdo);
+                    } else {
+                        //3
+                    }
+                    if (encontrarRegistro(derecho) == 2) {
+                        banderaDeracha = true;
+                        derecho = registrosTemporales.get(derecho);
+                    } else {
+                        //3
+                    }
+                    codigoMIPS += this.instruccion.InstruccionSuma(derecho, izquierdo, registroLibre);
+                    if (banderaIzquierda) {
+                        LiberarRegistro(izquierdoPrevio, izquierdo);
+                    }
+                    if (banderaDeracha) {
+                        LiberarRegistro(derechoPrevio, derecho);
+                    }
                 } break;
                 case RESTA: {
                     codigoMIPS += this.instruccion.InstruccionResta(cadaCuadruplo.getParametroA(), cadaCuadruplo.getParametroB(), cadaCuadruplo.getResultado());
@@ -117,13 +144,39 @@ public class FinalCode {
     private String getRegistroVacio() {
         for (int i = 0; i < 10; i++) {
             if (usoRegistrosTemporales[i].isEmpty()) {
-                usoRegistrosTemporales[i] = "$t"+i;
-                return usoRegistrosTemporales[i];
+                return (usoRegistrosTemporales[i] = "$t"+i);
             }
         }
         return "";
     }
     
-    private void LiberarRegistro() {}
+    private void LiberarRegistro(String llave, String valor) {
+        for (int i = 0; i < 10; i++) {
+            if (usoRegistrosTemporales[i].equals(valor)) {
+                usoRegistrosTemporales[i] = "";
+                if (registrosTemporales.containsKey(llave)) {
+                    registrosTemporales.remove(llave);
+                }
+                break;
+            }
+        }
+    }
+    
+    private int encontrarRegistro(String entrada) {
+        if ((entrada == null)||(entrada.isEmpty())) {
+            return 0;
+        } else {
+            try {
+                Integer.parseInt(entrada);
+                return 1;
+            } catch (NumberFormatException e) {
+                if (registrosTemporales.containsKey(entrada)) {
+                    return 2;
+                } else {
+                    return 3;
+                }
+            }
+        }
+    }
     
 }
