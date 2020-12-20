@@ -17,8 +17,10 @@ public class TypesTable {
     //private final HashMap<String, TypesSubTable> subtables = new HashMap();
     public ArrayList<String> errors = new ArrayList();
     public TypesSubTable root = new TypesSubTable("Program", "nill", null, null, null, 0);
+    public DefaultTreeModel model;
 
     public TypesTable(DefaultTreeModel model) {
+        this.model = model;
         createSubtables(model);
         errors = root.errors;
     }
@@ -72,7 +74,7 @@ public class TypesTable {
                         Object ch = model.getChild(child, j);
                         String type = "";
                         if (ch.toString().split(" ").length > 2) {
-                            type = (ch.toString().split(" "))[0] + " " +(ch.toString().split(" "))[1];
+                            type = (ch.toString().split(" "))[0] + " " + (ch.toString().split(" "))[1];
                         } else {
                             type = (ch.toString().split(" "))[0];
                         }

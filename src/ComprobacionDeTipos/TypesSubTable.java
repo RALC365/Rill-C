@@ -1072,11 +1072,27 @@ public class TypesSubTable {
         }
     }
 
-    @Override
-    public String toString() {
-        String t = "function: " + functionName + "   ";
+    //Retorna el Tablerow del ID en un bloque dado
+    public TableRow getID(String id, Object o_t_b, TypesSubTable o) {
+        for (String i : o.children.keySet()) {
+            TypesSubTable child = o.children.get(i);
+            System.out.println("entra");
+            int numTST = ((InstructionCode) ((DefaultMutableTreeNode) child.treepart).getUserObject()).getCodeLine();
+            int numO = ((InstructionCode) ((DefaultMutableTreeNode) o_t_b).getUserObject()).getCodeLine();
+            if (numO == numTST) {
+                TableRow id_t_ret = child.checkIDExistence(id);
+                return id_t_ret;
+            } else {
+                getID(id, o_t_b, child);
+            }
+        }
+        return null;
+    }
+
+    public String toString(String identacion) {
+        String t = "-->" + functionName + ":" + functionType + "\n";
         for (TableRow i : ids.values()) {
-            t += i.toString() + "   ";
+            t += "  " + identacion + i.toString() + "\n";
         }
         return t;
     }

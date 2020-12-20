@@ -292,11 +292,11 @@ public class FrmPrincipal extends javax.swing.JFrame {
         }
     }
 
-    private void VerTablasDeTipo(TypesSubTable t) {
-        console_txt.setText(console_txt.getText() + "   " + t + "\n");
+    private void VerTablasDeTipo(String identatcion, TypesSubTable t) {
+        console_txt.setText(console_txt.getText() + "\n" + identatcion + t.toString(identatcion));
         if (!t.children.isEmpty()) {
             t.children.keySet().forEach((i) -> {
-                VerTablasDeTipo(t.children.get(i));
+                VerTablasDeTipo(identatcion + "   ", t.children.get(i));
             });
         }
     }
@@ -588,7 +588,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
             Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
         console_txt.setText("");
-        VerTablasDeTipo(tt.root);
+        VerTablasDeTipo("", tt.root);
     }//GEN-LAST:event_jMenuItem9ActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
