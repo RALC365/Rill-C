@@ -155,6 +155,15 @@ public class TypesSubTable {
                         addIDToSubTable(row);
                     } else {
                         TableRow row = new TableRow(p[1], p[0], offsetActual, pos[j]);
+                        if (p[0].equals("int")) {
+                            offsetActual += 4;
+                        }
+                        if (p[0].equals("bln")) {
+                            offsetActual += 1;
+                        }
+                        if (p[0].equals("chr")) {
+                            offsetActual += 1;
+                        }
                         addIDToSubTable(row);
                     }
                 }

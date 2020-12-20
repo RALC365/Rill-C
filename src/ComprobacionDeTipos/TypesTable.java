@@ -34,30 +34,33 @@ public class TypesTable {
             //Nombre de la función
             String name = child.toString().split(":")[0];
             String typeOfFuction = "";
+            int offset = 0;
             if (child.toString().equals("MAIN")) {
                 //En el main devuelve nll->nll ya que éste no recibe ni devuelve
                 name = "main";
                 typeOfFuction = "nll -> nll";
-            } else if (child.toString().equals("VARIABLES_GLOBALES")){
+                offset = 0;
+            } else if (child.toString().equals("VARIABLES_GLOBALES")) {
                 root = new TypesSubTable("Program", "nill", model, child, null, 0);
                 continue;
             } else {
+                offset=12;
                 //Obtiene el tipo de la función en base a los parámetros
                 typeOfFuction = getParametersType(model, child);
                 typeOfFuction += " -> " + child.toString().split(":")[1];
             }
             //Crea una nueva subtabla y la agrega al Hashmap de las subtablas
             //El key de búsqyeda es "nombreFuncion"
-            TypesSubTable x = new TypesSubTable(name, typeOfFuction, model, child, root, 0);
+            TypesSubTable x = new TypesSubTable(name, typeOfFuction, model, child, root, offset);
             root.children.put(name, x);
         }
         //System.out.println("--------------------------");
         //Verificamos las variables globales
-        if(root.treepart != null){
+        if (root.treepart != null) {
             root.getDeclarations(root.treepart);
             root.errors.addAll(root.errors);
         }
-        
+
         //Verificamos las declaraciones de los funciones del programa
         for (String i : root.children.keySet()) {
             TypesSubTable child = root.children.get(i);
@@ -103,5 +106,5 @@ public class TypesTable {
     public TypesSubTable getRoot() {
         return root;
     }
-    
+
 }
