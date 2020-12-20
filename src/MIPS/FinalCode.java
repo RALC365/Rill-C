@@ -58,7 +58,7 @@ public class FinalCode {
                     String registroLibre = getRegistroVacio();
                     codigoMIPS += this.instruccion.InstruccionCargaInmediata(registroLibre, cadaCuadruplo.getParametroA());
                     //codigoMIPS += this.instruccion.InstruccionSuma(registroZero, cadaCuadruplo.getParametroA(), registroLibre);
-                    codigoMIPS += this.instruccion.InstruccionGuardarPalabra(registroLibre, 0, registroFP);
+                    codigoMIPS += this.instruccion.InstruccionGuardarPalabra(registroLibre, calculoOffset(cadaCuadruplo.getOffset(), cadaCuadruplo.getType()), registroFP);
                     LiberarRegistro("", registroLibre);
                 } break;
                 case SUMA: {
@@ -175,7 +175,7 @@ public class FinalCode {
             if (categoriaRegistro == 3) {
                 String siguienteLibre = getRegistroVacio();
                 registrosTemporales.put(izquierdo, siguienteLibre);
-                salida += this.instruccion.InstruccionMontaje(siguienteLibre, 0, registroFP);
+                salida += this.instruccion.InstruccionMontaje(siguienteLibre, calculoOffset(cadaCuadruplo.getOffset(), cadaCuadruplo.getType()), registroFP);
                 izquierdo = siguienteLibre;
             }
         }
@@ -187,7 +187,7 @@ public class FinalCode {
             if (categoriaRegistro == 3) {
                 String siguienteLibre = getRegistroVacio();
                 registrosTemporales.put(derecho, siguienteLibre);
-                salida += this.instruccion.InstruccionMontaje(siguienteLibre, 0, registroFP);
+                salida += this.instruccion.InstruccionMontaje(siguienteLibre, calculoOffset(cadaCuadruplo.getOffset(), cadaCuadruplo.getType()), registroFP);
                 derecho = siguienteLibre;
             }
         }

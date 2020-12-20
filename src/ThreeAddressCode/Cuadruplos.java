@@ -17,7 +17,7 @@ public class Cuadruplos {
     private String parametroB;
     private String resultado;
     private int offset;
-    private String type;
+    private int type;
 
     public Cuadruplos(Operacion operacion, String parametroA, String parametroB, String resultado) {
         this.operacion = operacion;
@@ -34,11 +34,11 @@ public class Cuadruplos {
         this.offset = offset;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 
