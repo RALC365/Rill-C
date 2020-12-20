@@ -28,7 +28,9 @@ public enum Operacion {
     PRINT,
     INPUT,
     PARAM,
-    CALL, 
+    CALL,
+    ETIQUETAMAIN,
     FINFUNCION,
-    ARREGLOASIGN
+    ARREGLOASIGN,
+    DECLARACION
 }

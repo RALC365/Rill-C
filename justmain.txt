@@ -1,0 +1,12 @@
+()(main:
+	int a,b,c,d.,
+	a: 5.,
+	b: a+3.,
+	c: (5-a*b)*a+b/(a+3).,
+	d: c/2.,
+	(a <= 20 and b > c or a > b)(if:
+		(pp: "Salsa":).,
+	(els):
+		(pp: "China: " - d:).,
+	:)
+:)
