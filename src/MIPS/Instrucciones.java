@@ -67,4 +67,19 @@ public class Instrucciones {
         return "bge Rfuente1, Rfuente2, etiqueta";
     }
     
+    public String InstruccionPrint(String mensajeGlobal) {
+        String generarPrint = "li $v0,4\n";
+        generarPrint += "la $a0,"+mensajeGlobal+"\n";
+        generarPrint += "syscall\n";
+        return generarPrint;
+    }
+    
+    public String InstruccionInicioFuncion(int offset) {
+        //sw $fp, -4($sp)
+        //sw $ra, -8($sp)
+        //move $fp,$sp
+        
+        return "";
+    }
+    
 }

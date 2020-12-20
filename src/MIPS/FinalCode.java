@@ -22,6 +22,7 @@ public class FinalCode {
     private TypesSubTable ambitoTree;
     private Instrucciones instruccion;
     private HashMap<String, String> registrosTemporales;
+    private HashMap<String, String> argumentos;
     private final String registroZero = "$zero";
     
     public FinalCode(ArrayList<Cuadruplos> tablaCuadruplos, TypesSubTable ambitoTree) {
@@ -29,6 +30,7 @@ public class FinalCode {
         this.ambitoTree = ambitoTree;
         this.instruccion = new Instrucciones();
         registrosTemporales = new HashMap<String, String>();
+        argumentos = new HashMap<String, String>();
         registrosTemporales.put("$t0", "");
         registrosTemporales.put("$t1", "");
         registrosTemporales.put("$t2", "");
@@ -39,10 +41,15 @@ public class FinalCode {
         registrosTemporales.put("$t7", "");
         registrosTemporales.put("$t8", "");
         registrosTemporales.put("$t9", "");
+        argumentos.put("$a0", "");
+        argumentos.put("$a1", "");
+        argumentos.put("$a2", "");
+        argumentos.put("$a3", "");
     }
     
     public void GenerarCodigoFinal() {
-        String codigoMIPS = "";
+        String codigoMIPS = ".text\n";
+        codigoMIPS += ".globl main\n";
         for (Cuadruplos cadaCuadruplo : this.tablaCuadruplos) {
             switch (cadaCuadruplo.getOperacion()) {
                 case ETIQUETAMAIN: {
@@ -95,10 +102,13 @@ public class FinalCode {
                 case IFDISTINTO: {
                     
                 }
+                case PRINT: {
+                    codigoMIPS += this.instruccion.InstruccionPrint("");
+                }
             }
         }
-        
-        
+        codigoMIPS += "li $v0,10\n";
+        codigoMIPS += "syscall\n";
     }
     
     private String getRegistroVacio() {
