@@ -220,29 +220,29 @@ public class FrmPrincipal extends javax.swing.JFrame {
             //Cup and Lexer
             //String ST = txtResultado.getText();
             String ST = txtCodigo.getText();
-//            s = new Sintax(new CUP.LexerCup(new StringReader(ST)));
-//            try {
-//                //jtSintactico.setModel(s.createTreeSintax("SintaxTree"));
-//                s.createTreeSintax("Program");
-//                s.parse();
-//                if (s.getERRORES().equalsIgnoreCase("")) {
-//                    /*txtAnalizarSin.setText("Analisis realizado correctamente");
-//                txtAnalizarSin.setForeground(new Color(25, 111, 61));*/
-//                    console_txt.setForeground(Color.green);
-//                    console_txt.setText("Se completó el análisis Sintáctico sin errores");
-//                } else {
-//                    console_txt.setForeground(Color.red);
-//                    console_txt.setText("Cantidad de Errores: " + s.getcERRORES() + "\n" + s.getERRORES());
-//                    bandera = false;
-//                }
-//            } catch (Exception ex) {
-//                Symbol sym = s.getS();
-//                console_txt.setForeground(Color.red);
-//                console_txt.setText("Error de sintaxis. Linea: " + (sym.right + 1) + " Columna: " + (sym.left + 1) + ", Texto: \"" + sym.value + "\"");
-//                bandera = false;
-//            }
-//            //Setearear errores
-//            s.setERRORES("");
+            s = new Sintax(new CUP.LexerCup(new StringReader(ST)));
+            try {
+                //jtSintactico.setModel(s.createTreeSintax("SintaxTree"));
+                s.createTreeSintax("Program");
+                s.parse();
+                if (s.getERRORES().equalsIgnoreCase("")) {
+                    /*txtAnalizarSin.setText("Analisis realizado correctamente");
+                txtAnalizarSin.setForeground(new Color(25, 111, 61));*/
+                    console_txt.setForeground(Color.green);
+                    console_txt.setText("Se completó el análisis Sintáctico sin errores");
+                } else {
+                    console_txt.setForeground(Color.red);
+                    console_txt.setText("Cantidad de Errores: " + s.getcERRORES() + "\n" + s.getERRORES());
+                    bandera = false;
+                }
+            } catch (Exception ex) {
+                Symbol sym = s.getS();
+                console_txt.setForeground(Color.red);
+                console_txt.setText("Error de sintaxis. Linea: " + (sym.right + 1) + " Columna: " + (sym.left + 1) + ", Texto: \"" + sym.value + "\"");
+                bandera = false;
+            }
+            //Setearear errores
+            s.setERRORES("");
 
             ASTree = new ASintaxT(new CUP.LexerCup(new StringReader(ST)));
 
