@@ -29,7 +29,7 @@ public class ThreeAddressTable {
         this.conteoEtiquetas = 0;
         this.root = raiz;
         iterateTree(model.getRoot(), null, 0, "");
-        imprimirCuadruplos();
+        //imprimirCuadruplos();
     }
 
     //flowAllower: 0 default, 1 if, 2 while

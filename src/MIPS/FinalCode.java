@@ -23,7 +23,10 @@ public class FinalCode {
     private Instrucciones instruccion;
     private HashMap<String, String> registrosTemporales;
     private HashMap<String, String> argumentos;
+    private String[] usoRegistrosTemporales;
     private final String registroZero = "$zero";
+    private final String registroFP = "$fp";
+    private int conteoMensaje = 0;
     
     public FinalCode(ArrayList<Cuadruplos> tablaCuadruplos, TypesSubTable ambitoTree) {
         this.tablaCuadruplos = tablaCuadruplos;
@@ -31,90 +34,91 @@ public class FinalCode {
         this.instruccion = new Instrucciones();
         registrosTemporales = new HashMap<String, String>();
         argumentos = new HashMap<String, String>();
-        registrosTemporales.put("$t0", "");
-        registrosTemporales.put("$t1", "");
-        registrosTemporales.put("$t2", "");
-        registrosTemporales.put("$t3", "");
-        registrosTemporales.put("$t4", "");
-        registrosTemporales.put("$t5", "");
-        registrosTemporales.put("$t6", "");
-        registrosTemporales.put("$t7", "");
-        registrosTemporales.put("$t8", "");
-        registrosTemporales.put("$t9", "");
+        usoRegistrosTemporales = new String[10];
+        for (int i = 0; i < 10; i++) {
+            usoRegistrosTemporales[i] = "";
+        }
         argumentos.put("$a0", "");
         argumentos.put("$a1", "");
         argumentos.put("$a2", "");
         argumentos.put("$a3", "");
+        
     }
     
     public void GenerarCodigoFinal() {
-        String codigoMIPS = ".text\n";
-        codigoMIPS += ".globl main\n";
+        String cargaGlobal = ".text\n";
+        String codigoMIPS = ".globl main\n";
         for (Cuadruplos cadaCuadruplo : this.tablaCuadruplos) {
             switch (cadaCuadruplo.getOperacion()) {
                 case ETIQUETAMAIN: {
                     codigoMIPS += this.instruccion.InstruccionMain();
-                }
+                } break;
                 case ASIGNACION: {
                     String registroLibre = getRegistroVacio();
-                    codigoMIPS += this.instruccion.InstruccionSuma(registroZero, cadaCuadruplo.getParametroA(), registroLibre);
-                    codigoMIPS += this.instruccion.InstruccionMain();
-                }
+                    registrosTemporales.put(registroLibre, cadaCuadruplo.getResultado());
+                    codigoMIPS += this.instruccion.InstruccionCargaInmediata(registroLibre, cadaCuadruplo.getParametroA());
+                    //codigoMIPS += this.instruccion.InstruccionSuma(registroZero, cadaCuadruplo.getParametroA(), registroLibre);
+                    codigoMIPS += this.instruccion.InstruccionGuardarPalabra(registroLibre, 0, registroFP);
+                } break;
                 case SUMA: {
                     codigoMIPS += this.instruccion.InstruccionSuma(cadaCuadruplo.getParametroA(), cadaCuadruplo.getParametroB(), cadaCuadruplo.getResultado());
-                }
+                } break;
                 case RESTA: {
                     codigoMIPS += this.instruccion.InstruccionResta(cadaCuadruplo.getParametroA(), cadaCuadruplo.getParametroB(), cadaCuadruplo.getResultado());
-                }
+                } break;
                 case MULTIPLICACION: {
                     codigoMIPS += this.instruccion.InstruccionMultiplicacion(cadaCuadruplo.getParametroA(), cadaCuadruplo.getParametroB(), cadaCuadruplo.getResultado());
-                }
+                } break;
                 case DIVISION: {
                     codigoMIPS += this.instruccion.InstruccionDivision(cadaCuadruplo.getParametroA(), cadaCuadruplo.getParametroB(), cadaCuadruplo.getResultado());
-                }
+                } break;
                 case NEGACION: {
                     
-                }
+                } break;
                 case GOTO: {
                     codigoMIPS += this.instruccion.InstruccionGOTO(cadaCuadruplo.getParametroA());
-                }
+                } break;
                 case ASIGNARREGLO: {
                     
-                }
+                } break;
                 case ETIQUETA: {
                     
-                }
+                } break;
                 case IFIGUAL: {
                     
-                }
+                } break;
                 case IFMAYOR: {
                     
-                }
+                } break;
                 case IFMENOR: {
                     
-                }
+                } break;
                 case IFMAYORIGUAL: {
                     
-                }
+                } break;
                 case IFMENORIGUAL: {
                     
-                }
+                } break;
                 case IFDISTINTO: {
                     
-                }
+                } break;
                 case PRINT: {
-                    codigoMIPS += this.instruccion.InstruccionPrint("");
-                }
+                    String mensaje = "_msg"+(conteoMensaje++);
+                    cargaGlobal += mensaje+": .asciiz "+""+cadaCuadruplo.getResultado()+""+"\n";
+                    codigoMIPS += this.instruccion.InstruccionPrint(mensaje);
+                } break;
             }
         }
         codigoMIPS += "li $v0,10\n";
         codigoMIPS += "syscall\n";
+        System.out.println(cargaGlobal+codigoMIPS);
     }
     
     private String getRegistroVacio() {
-        for(Map.Entry<String, String> cadaRegistro: this.registrosTemporales.entrySet()) {
-            if (cadaRegistro.getValue().isEmpty()) {
-                return cadaRegistro.getKey();
+        for (int i = 0; i < 10; i++) {
+            if (usoRegistrosTemporales[i].isEmpty()) {
+                usoRegistrosTemporales[i] = "$t"+i;
+                return usoRegistrosTemporales[i];
             }
         }
         return "";

@@ -11,6 +11,7 @@ import ComprobacionDeTipos.CustomErrorException;
 import ComprobacionDeTipos.TypesSubTable;
 import ComprobacionDeTipos.TypesTable;
 import LexerS.Lexer;
+import MIPS.FinalCode;
 import ThreeAddressCode.SwingTable;
 import ThreeAddressCode.ThreeAddressTable;
 import java.awt.Color;
@@ -39,6 +40,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     NumeroLinea numeroLinea;
     TypesTable tt;
     ThreeAddressTable tablaCuadruplos;
+    FinalCode codigoFinal;
 
     public FrmPrincipal() {
         initComponents();
@@ -576,6 +578,8 @@ public class FrmPrincipal extends javax.swing.JFrame {
         } catch (CustomErrorException ex) {
             Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
+        this.codigoFinal = new FinalCode(tablaCuadruplos.getTablaCuadruplos(), tt.getRoot());
+        this.codigoFinal.GenerarCodigoFinal();
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
