@@ -280,16 +280,13 @@ public class FrmPrincipal extends javax.swing.JFrame {
         }
     }
 
+    private void MontarCuadruplos(TypesSubTable raiz) throws CustomErrorException {
+        tablaCuadruplos = new ThreeAddressTable(ASTree.getTreeSintaxModel(), raiz);
+    }
+    
     private void DesplegarCuadruplos() {
-        try {
-            tablaCuadruplos = new ThreeAddressTable(ASTree.getTreeSintaxModel());
-            SwingTable cuadruplosGraficos = new SwingTable(tablaCuadruplos.getTablaCuadruplos());
-            cuadruplosGraficos.showInDialog();
-            //console_txt.setForeground(Color.green);
-        } catch (CustomErrorException e) {
-            //console_txt.setText(e.getMessage());
-            //console_txt.setForeground(Color.red);
-        }
+        SwingTable cuadruplosGraficos = new SwingTable(tablaCuadruplos.getTablaCuadruplos());
+        cuadruplosGraficos.showInDialog();
     }
 
     private void VerTablasDeTipo(String identatcion, TypesSubTable t) {
@@ -558,6 +555,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem11ActionPerformed
 
     private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
+        //aqui
         bandera = true;
         jdConsole.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         jdConsole.setLocationRelativeTo(this);
@@ -570,6 +568,11 @@ public class FrmPrincipal extends javax.swing.JFrame {
         }
         try {
             ComprobacionTipos();
+        } catch (CustomErrorException ex) {
+            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            MontarCuadruplos(tt.getRoot());
         } catch (CustomErrorException ex) {
             Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -588,7 +591,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
             Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
         console_txt.setText("");
-        VerTablasDeTipo("", tt.root);
+        VerTablasDeTipo("", tt.getRoot());
     }//GEN-LAST:event_jMenuItem9ActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed

@@ -8,6 +8,7 @@ package ThreeAddressCode;
 import ComprobacionDeTipos.CustomErrorException;
 import java.util.ArrayList;
 import javax.swing.tree.DefaultTreeModel;
+import ComprobacionDeTipos.TypesSubTable;
 
 /**
  *
@@ -20,11 +21,13 @@ public class ThreeAddressTable {
     private final DefaultTreeModel model;
     private int conteoTemporales;
     private int conteoEtiquetas;
+    private TypesSubTable root;
 
-    public ThreeAddressTable(DefaultTreeModel model) throws CustomErrorException {
+    public ThreeAddressTable(DefaultTreeModel model, TypesSubTable raiz) throws CustomErrorException {
         this.model = model;
         this.conteoTemporales = 0;
         this.conteoEtiquetas = 0;
+        this.root = raiz;
         iterateTree(model.getRoot(), null, 0, "");
         imprimirCuadruplos();
     }
@@ -70,12 +73,13 @@ public class ThreeAddressTable {
             }
 
             if (child.toString().equals("WHILE")) {
-
+                //this.root.getID(, child, root);
+                
                 String[] nuevasEtiquetas = new String[3];
                 nuevasEtiquetas[2] = "tag" + (this.conteoEtiquetas++);
                 nuevasEtiquetas[0] = "tag" + (this.conteoEtiquetas++);
                 nuevasEtiquetas[1] = "tag" + (this.conteoEtiquetas++);
-
+                
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[2], "", ""));
 
                 Object expresionChild = model.getChild(child, 0);

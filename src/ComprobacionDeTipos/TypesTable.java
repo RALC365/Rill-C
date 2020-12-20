@@ -16,7 +16,7 @@ public class TypesTable {
 
     //private final HashMap<String, TypesSubTable> subtables = new HashMap();
     public ArrayList<String> errors = new ArrayList();
-    public TypesSubTable root = new TypesSubTable("Program", "nill", null, null, null, 0);
+    private TypesSubTable root = new TypesSubTable("Program", "nill", null, null, null, 0);
     public DefaultTreeModel model;
 
     public TypesTable(DefaultTreeModel model) {
@@ -89,4 +89,9 @@ public class TypesTable {
         }
         return p;
     }
+
+    public TypesSubTable getRoot() {
+        return root;
+    }
+    
 }
