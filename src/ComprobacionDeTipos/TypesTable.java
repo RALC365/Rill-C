@@ -16,7 +16,7 @@ public class TypesTable {
 
     //private final HashMap<String, TypesSubTable> subtables = new HashMap();
     public ArrayList<String> errors = new ArrayList();
-    private TypesSubTable root = new TypesSubTable("Program", "nill", null, null, null, 0);
+    public TypesSubTable root = new TypesSubTable("Program", "nill", null, null, null, 0);
     public DefaultTreeModel model;
 
     public TypesTable(DefaultTreeModel model) {
@@ -28,6 +28,7 @@ public class TypesTable {
     //Crea las subTablaas de Tipos en Base a las funciones dentro del programa
     //Un tabla por Función, de esta manera se facilita la definición del ámbito
     private void createSubtables(DefaultTreeModel model) {
+        root = new TypesSubTable("Program", "nill", model, model.getRoot(), null, 0);
         int cc = model.getChildCount(model.getRoot());
         for (int i = 0; i < cc; i++) {
             Object child = model.getChild(model.getRoot(), i);

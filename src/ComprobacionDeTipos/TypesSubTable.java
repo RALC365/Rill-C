@@ -143,8 +143,7 @@ public class TypesSubTable {
 
             //PARAMETERS
             if (o.toString().equals("PARAMETERS")) {
-                String[] pos = {"$a0", "$a1", "$a2", "$a3", "$a4",
-                    "$s0", "$s1", "$s2", "$s3", "$s4", "$s5", "$s6", "$s7", "$s8", "$s9",};
+                String[] pos = {"$s0", "$s1", "$s2", "$s3", "$s4", "$s5", "$s6", "$s7", "$s8", "$s9",};
                 for (int j = 0; j < model.getChildCount(o); j++) {
                     String[] p = model.getChild(o, j).toString().split(" ");
                     if (p[0].contains("mtx")) {
@@ -1085,14 +1084,26 @@ public class TypesSubTable {
 
     //Retorna el Tablerow del ID en un bloque dado
     public TableRow getID(String id, Object o_t_b, TypesSubTable o) {
+        System.out.println("BUSCANDO: " + id);
         for (String i : o.children.keySet()) {
             TypesSubTable child = o.children.get(i);
-            System.out.println("entra");
-            int numTST = ((InstructionCode) ((DefaultMutableTreeNode) child.treepart).getUserObject()).getCodeLine();
-            int numO = ((InstructionCode) ((DefaultMutableTreeNode) o_t_b).getUserObject()).getCodeLine();
-            if (numO == numTST) {
+            boolean iguales = false;
+            try {
+                iguales = child.treepart.equals(o_t_b);
+            } catch (Exception e) {
+            }
+            if (iguales) {
+                System.out.println(child.treepart.toString() + "----" + o_t_b.toString());
                 TableRow id_t_ret = child.checkIDExistence(id);
-                return id_t_ret;
+                if (id_t_ret != null) {
+                    System.out.println("LA ECNONTRÓ");
+                    System.out.println("_________________________________");
+                    return id_t_ret;
+                } else {
+                    System.out.println("NELES");
+                    System.out.println("_________________________________");
+                    return null;
+                }
             } else {
                 getID(id, o_t_b, child);
             }

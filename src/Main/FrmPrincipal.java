@@ -283,6 +283,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }
 
     private void MontarCuadruplos(TypesSubTable raiz) throws CustomErrorException {
+        System.out.println(">>>>>"+tt.root.treepart.toString());
         tablaCuadruplos = new ThreeAddressTable(ASTree.getTreeSintaxModel(), raiz);
     }
     
@@ -574,7 +575,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
             Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            MontarCuadruplos(tt.getRoot());
+            MontarCuadruplos(tt.root);
         } catch (CustomErrorException ex) {
             Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
