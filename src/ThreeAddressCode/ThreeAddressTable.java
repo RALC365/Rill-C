@@ -32,6 +32,10 @@ public class ThreeAddressTable {
         iterateTree(model.getRoot(), null, 0, "", model.getRoot());
         imprimirCuadruplos();
     }
+    
+    public ArrayList<Cuadruplos> getTablaCuadruplos() {
+        return tablaCuadruplos;
+    }
 
     //flowAllower: 0 default, 1 if, 2 while
     private String iterateTree(Object eachNode, String[] siguienteEtiqueta, int flowAllower, String switchVar, Object parentBlock) throws CustomErrorException {
@@ -604,10 +608,6 @@ public class ThreeAddressTable {
             this.tablaCuadruplos.add(tempCuadruplo);
             return temporalRetorno;
         }
-    }
-
-    public ArrayList<Cuadruplos> getTablaCuadruplos() {
-        return tablaCuadruplos;
     }
 
     private void imprimirCuadruplos() {

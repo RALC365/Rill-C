@@ -198,15 +198,22 @@ public class FinalCode {
             }
         }
         categoriaRegistro = encontrarRegistro(derecho);
-        if (categoriaRegistro == 2) {
-            banderaDeracha = true;
-            derecho = registrosTemporales.get(derecho);
+        if (categoriaRegistro == 1) {
+            String siguienteLibre = getRegistroVacio();
+            registrosTemporales.put(derecho, siguienteLibre);
+            salida += this.instruccion.InstruccionCargaInmediata(siguienteLibre, cadaCuadruplo.getParametroB());
+            derecho = siguienteLibre;
         } else {
-            if (categoriaRegistro == 3) {
-                String siguienteLibre = getRegistroVacio();
-                registrosTemporales.put(derecho, siguienteLibre);
-                salida += this.instruccion.InstruccionMontaje(siguienteLibre, cadaCuadruplo.getUbicacionB());
-                derecho = siguienteLibre;
+            if (categoriaRegistro == 2) {
+                banderaDeracha = true;
+                derecho = registrosTemporales.get(derecho);
+            } else {
+                if (categoriaRegistro == 3) {
+                    String siguienteLibre = getRegistroVacio();
+                    registrosTemporales.put(derecho, siguienteLibre);
+                    salida += this.instruccion.InstruccionMontaje(siguienteLibre, cadaCuadruplo.getUbicacionB());
+                    derecho = siguienteLibre;
+                }
             }
         }
         switch (tipo) {
