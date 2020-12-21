@@ -19,6 +19,7 @@ public enum Operacion {
     GOTO,
     ASIGNARREGLO,
     ETIQUETA,
+    ETIQUETAFUN,
     IFIGUAL,
     IFMAYOR,
     IFMENOR,
