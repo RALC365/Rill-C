@@ -28,9 +28,17 @@ public class Instrucciones {
     public String InstruccionGuardarPalabra(String registro, int offset, String registroFuente) {
         return "    sw " + registro + ", " + offset + "(" + registroFuente + ")\n";
     }
+    
+    public String InstruccionGuardarPalabra(String registro, String registroFuente) {
+        return "    sw " + registro + ", " + registroFuente + "\n";
+    }
 
     public String InstruccionMontaje(String registro, int offset, String registroFuente) {
         return "    lw " + registro + ", " + offset + "(" + registroFuente + ")\n";
+    }
+    
+    public String InstruccionMontaje(String registro, String registroFuente) {
+        return "    lw " + registro + ", " + registroFuente + "\n";
     }
 
     public String InstruccionSuma(String izquierdo, String derecho, String resultado) {

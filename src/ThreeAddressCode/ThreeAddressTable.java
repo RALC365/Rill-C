@@ -6,6 +6,7 @@
 package ThreeAddressCode;
 
 import ComprobacionDeTipos.CustomErrorException;
+import ComprobacionDeTipos.TableRow;
 import java.util.ArrayList;
 import javax.swing.tree.DefaultTreeModel;
 import ComprobacionDeTipos.TypesSubTable;
@@ -29,7 +30,7 @@ public class ThreeAddressTable {
         this.conteoEtiquetas = 0;
         this.root = raiz;
         iterateTree(model.getRoot(), null, 0, "", model.getRoot());
-        //imprimirCuadruplos();
+        imprimirCuadruplos();
     }
 
     //flowAllower: 0 default, 1 if, 2 while
@@ -73,7 +74,6 @@ public class ThreeAddressTable {
             }
 
             if (child.toString().equals("WHILE")) {
-                //this.root.getID(, child, root);
                 
                 String[] nuevasEtiquetas = new String[3];
                 nuevasEtiquetas[2] = "tag" + (this.conteoEtiquetas++);
@@ -150,6 +150,7 @@ public class ThreeAddressTable {
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, siguienteEtiqueta[0], "", ""));
                 Object sentenceChild = model.getChild(child, 1);
 
+                
                 iterateTree(sentenceChild, siguienteEtiqueta, 0, "", child);
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[2], "", ""));
             }
@@ -160,11 +161,11 @@ public class ThreeAddressTable {
             }
 
             if (child.toString().equals("ASSIGN")) {
-                AsignationBuild(child);
+                AsignationBuild(child, parentBlock);
             }
 
             if (child.toString().equals("DECLR")) {
-                AsignationBuild(child);
+                AsignationBuild(child, parentBlock);
             }
 
             if (child.toString().equals("DECLR ARRAY")) {
@@ -314,22 +315,21 @@ public class ThreeAddressTable {
         }
     }
 
-    private String ArithmeticTree(Object childNode) throws CustomErrorException {
-
+    private String ArithmeticTree(Object childNode, Object currentBlock) throws CustomErrorException {
         if (childNode.toString().equals("+")) {
-            return ArithmeticBuild(childNode, Operacion.SUMA);
+            return ArithmeticBuild(childNode, Operacion.SUMA, currentBlock);
         } else if (childNode.toString().equals("-")) {
             if ((model.getChildCount(childNode) == 1)) {
                 String temporalRetorno = "t" + (this.conteoTemporales++);
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.NEGACION, model.getChild(childNode, 0).toString(), "", temporalRetorno));
                 return temporalRetorno;
             } else {
-                return ArithmeticBuild(childNode, Operacion.RESTA);
+                return ArithmeticBuild(childNode, Operacion.RESTA, currentBlock);
             }
         } else if (childNode.toString().equals("*")) {
-            return ArithmeticBuild(childNode, Operacion.MULTIPLICACION);
+            return ArithmeticBuild(childNode, Operacion.MULTIPLICACION, currentBlock);
         } else if (childNode.toString().equals("/")) {
-            return ArithmeticBuild(childNode, Operacion.DIVISION);
+            return ArithmeticBuild(childNode, Operacion.DIVISION, currentBlock);
         }
         if (childNode.toString().contains(":fun")) {
             String t_ret = callFunction(childNode);
@@ -359,7 +359,7 @@ public class ThreeAddressTable {
 
     }
 
-    private void AsignationBuild(Object currentNode) throws CustomErrorException {
+    private void AsignationBuild(Object currentNode, Object currentBlock) throws CustomErrorException {
         Object leftChild = model.getChild(currentNode, 0);
         Object rightChild = model.getChild(currentNode, 1);
         if (currentNode.toString().equals("DECLR")) {
@@ -369,17 +369,24 @@ public class ThreeAddressTable {
             leftChild = model.getChild(currentNode, 0);
             rightChild = model.getChild(currentNode, 1);
         }
+        TableRow tempTable = this.root.getID(leftChild.toString(), currentBlock, root);
         if ((model.getChildCount(leftChild) == 0) && (model.getChildCount(rightChild) == 0)) {
             if (rightChild.toString().contains(":fun")) {
                 String t_ret = callFunction(rightChild);
-                this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNACION, t_ret, "", leftChild.toString()));
+                Cuadruplos tempCuadruplo = new Cuadruplos(Operacion.ASIGNACION, t_ret, "", leftChild.toString());
+                tempCuadruplo.setInfoRes(tempTable.offset, tempTable.type, tempTable.ubicacion);
+                this.tablaCuadruplos.add(tempCuadruplo);
             } else {
-                this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNACION, rightChild.toString(), "", leftChild.toString()));
+                Cuadruplos tempCuadruplo = new Cuadruplos(Operacion.ASIGNACION, rightChild.toString(), "", leftChild.toString());
+                tempCuadruplo.setInfoRes(tempTable.offset, tempTable.type, tempTable.ubicacion);
+                this.tablaCuadruplos.add(tempCuadruplo);
             }
         } else {
             if (rightChild.toString().contains(":fun")) {
                 String t_ret = callFunction(rightChild);
-                this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNACION, t_ret, "", leftChild.toString()));
+                Cuadruplos tempCuadruplo = new Cuadruplos(Operacion.ASIGNACION, t_ret, "", leftChild.toString());
+                tempCuadruplo.setInfoRes(tempTable.offset, tempTable.type, tempTable.ubicacion);
+                this.tablaCuadruplos.add(tempCuadruplo);
             } else if (rightChild.toString().contains("AND") || rightChild.toString().contains("OR")
                     || rightChild.toString().contains("<") || rightChild.toString().contains(">")
                     || rightChild.toString().contains("=") || rightChild.toString().contains("!=")) {
@@ -406,7 +413,7 @@ public class ThreeAddressTable {
             } else if (rightChild.toString().contains("*") || rightChild.toString().contains("+")
                     || rightChild.toString().contains("/") || rightChild.toString().contains("%")
                     || rightChild.toString().contains("-")) {
-                String temporalRetorno = ArithmeticTree(rightChild);
+                String temporalRetorno = ArithmeticTree(rightChild, currentBlock);
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNACION, temporalRetorno, "", leftChild.toString()));
             } else {
                 String temporali = "t" + (this.conteoTemporales++);
@@ -425,10 +432,8 @@ public class ThreeAddressTable {
     }
 
     private void AsignationArray(String tipo, String identificador, Object currentNode) throws CustomErrorException {
-
         int cc = model.getChildCount(currentNode);
         int tamanio = 0;
-
         switch (tipo) {
             case "chr":
                 tamanio = 2;
@@ -440,7 +445,6 @@ public class ThreeAddressTable {
                 tamanio = 1;
                 break;
         }
-
         for (int i = 0; i < cc; i++) {
             Object child = model.getChild(currentNode, i);
             if (model.getChildCount(child)!=0) {
@@ -463,26 +467,48 @@ public class ThreeAddressTable {
         }
     }
 
-    private String ArithmeticBuild(Object currentNode, Operacion operacionEnum) throws CustomErrorException {
+    private String ArithmeticBuild(Object currentNode, Operacion operacionEnum, Object currentBlock) throws CustomErrorException {
         Object leftChild = model.getChild(currentNode, 0);
         Object rightChild = model.getChild(currentNode, 1);
         String temporalRetorno;
 
         if ((model.getChildCount(leftChild) == 0) && (model.getChildCount(rightChild) == 0)) {
             temporalRetorno = "t" + (this.conteoTemporales++);
-            this.tablaCuadruplos.add(new Cuadruplos(operacionEnum, leftChild.toString(), rightChild.toString(), temporalRetorno));
+            TableRow tempLeftTable = this.root.getID(leftChild.toString(), currentBlock, root);
+            TableRow tempRightTable = this.root.getID(rightChild.toString(), currentBlock, root);
+            Cuadruplos tempCuadruplo = new Cuadruplos(operacionEnum, leftChild.toString(), rightChild.toString(), temporalRetorno);
+            if (tempLeftTable != null) {                
+                tempCuadruplo.setInfoA(tempLeftTable.offset, tempLeftTable.type, tempLeftTable.ubicacion);
+            }
+            if (tempRightTable != null) {
+                tempCuadruplo.setInfoB(tempRightTable.offset, tempRightTable.type, tempRightTable.ubicacion);
+            }
+            this.tablaCuadruplos.add(tempCuadruplo);
             return temporalRetorno;
         } else {
             String temporalIzquierdo = leftChild.toString();
             String temporalDerecho = rightChild.toString();
+            TableRow tempLeftTable = null;
+            TableRow tempRightTable = null;
             if (model.getChildCount(leftChild) > 0) {
-                temporalIzquierdo = ArithmeticTree(leftChild);
+                temporalIzquierdo = ArithmeticTree(leftChild, currentBlock);
+            } else {
+                tempLeftTable = this.root.getID(leftChild.toString(), currentBlock, root);
             }
             if (model.getChildCount(rightChild) > 0) {
-                temporalDerecho = ArithmeticTree(rightChild);
+                temporalDerecho = ArithmeticTree(rightChild, currentBlock);
+            } else {
+                tempRightTable = this.root.getID(rightChild.toString(), currentBlock, root);
             }
             temporalRetorno = "t" + (this.conteoTemporales++);
-            this.tablaCuadruplos.add(new Cuadruplos(operacionEnum, temporalIzquierdo, temporalDerecho, temporalRetorno));
+            Cuadruplos tempCuadruplo = new Cuadruplos(operacionEnum, temporalIzquierdo, temporalDerecho, temporalRetorno);
+            if (tempLeftTable != null) {                
+                tempCuadruplo.setInfoA(tempLeftTable.offset, tempLeftTable.type, tempLeftTable.ubicacion);
+            }
+            if (tempRightTable != null) {
+                tempCuadruplo.setInfoB(tempRightTable.offset, tempRightTable.type, tempRightTable.ubicacion);
+            }
+            this.tablaCuadruplos.add(tempCuadruplo);
             return temporalRetorno;
         }
     }
@@ -496,6 +522,7 @@ public class ThreeAddressTable {
         for (Cuadruplos cadaCuadruplo : this.tablaCuadruplos) {
             System.out.println((count++) + ": " + cadaCuadruplo.toString());
         }
+        System.out.println("================================Fin Cuadruplos===============================");
     }
 
     private String callFunction(Object o) {

@@ -16,32 +16,86 @@ public class Cuadruplos {
     private String parametroA;
     private String parametroB;
     private String resultado;
-    private int offset;
-    private int type;
+    private int offsetA;
+    private String typeA;
+    private String ubicacionA;
+    private int offsetB;
+    private String typeB;
+    private String ubicacionB;
+    private int offsetRes;
+    private String typeRes;
+    private String ubicacionRes;
 
     public Cuadruplos(Operacion operacion, String parametroA, String parametroB, String resultado) {
         this.operacion = operacion;
         this.parametroA = parametroA;
         this.parametroB = parametroB;
         this.resultado = resultado;
+        this.offsetA = -1;
+        this.typeA = "";
+        this.ubicacionA = "";
+        this.offsetB = -1;
+        this.typeB = "";
+        this.ubicacionB = "";
+        this.offsetRes = -1;
+        this.typeRes = "";
+        this.ubicacionRes = "";
     }
 
-    public int getOffset() {
-        return offset;
+    public void setInfoA(int offsetA, String typeA, String ubicacionA) {
+        this.offsetA = offsetA;
+        this.typeA = typeA;
+        this.ubicacionA = ubicacionA;
+    }
+    
+    public void setInfoB(int offsetB, String typeB, String ubicacionB) {
+        this.offsetB = offsetB;
+        this.typeB = typeB;
+        this.ubicacionB = ubicacionB;
+    }
+    
+    public void setInfoRes(int offsetRes, String typeRes, String ubicacionRes) {
+        this.offsetRes = offsetRes;
+        this.typeRes = typeRes;
+        this.ubicacionRes = ubicacionRes;
     }
 
-    public void setOffset(int offset) {
-        this.offset = offset;
+    public int getOffsetA() {
+        return offsetA;
     }
 
-    public int getType() {
-        return type;
+    public String getTypeA() {
+        return typeA;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public String getUbicacionA() {
+        return ubicacionA;
     }
 
+    public int getOffsetB() {
+        return offsetB;
+    }
+
+    public String getTypeB() {
+        return typeB;
+    }
+
+    public String getUbicacionB() {
+        return ubicacionB;
+    }
+
+    public int getOffsetRes() {
+        return offsetRes;
+    }
+
+    public String getTypeRes() {
+        return typeRes;
+    }
+
+    public String getUbicacionRes() {
+        return ubicacionRes;
+    }
+    
     public Operacion getOperacion() {
         return operacion;
     }
@@ -60,7 +114,7 @@ public class Cuadruplos {
 
     @Override
     public String toString() {
-        return "("+this.operacion+", "+this.parametroA+", "+this.parametroB+", "+this.resultado+")";
+        return "(Op: "+this.operacion+", ParA: ["+this.parametroA+", "+this.typeA+", "+this.offsetA+", "+this.ubicacionA+"], ParB: ["+this.parametroB+", "+this.typeB+", "+this.offsetB+", "+this.ubicacionB+"], Res: ["+this.resultado+", "+this.typeRes+", "+this.offsetRes+", "+this.ubicacionRes+"])";
     }
         
 }

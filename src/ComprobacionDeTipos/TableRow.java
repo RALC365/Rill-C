@@ -9,11 +9,11 @@ package ComprobacionDeTipos;
  *
  * @author Will
  */
-class TableRow {
+public class TableRow {
 
     public final String id;
     public final String type;
-    private final int offset;
+    public final int offset;
     public String ubicacion;
 
     public TableRow(String id, String type, int offset, String ubicacion) {
