@@ -52,7 +52,7 @@ public class ThreeAddressTable {
                 iterateTree(child, siguienteEtiqueta, 0, "", child);
                 if (!(child.toString().equals("MAIN"))) {
                     this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, "salida_"+child.toString(), "", ""));
-                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETAFUN, "salida_"+child.toString(), "", ""));
+                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.FINFUNCION, "salida_"+child.toString(), "", ""));
                 }
             }
 
@@ -145,7 +145,7 @@ public class ThreeAddressTable {
                 }
 
                 Object expresionChild = model.getChild(child, 0);
-                SubExpresionsTree(expresionChild, siguienteEtiqueta, switchVar);
+                SubExpresionsTree(expresionChild, siguienteEtiqueta, switchVar, child);
 
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, siguienteEtiqueta[0], "", ""));
                 Object sentenceChild = model.getChild(child, 1);
@@ -208,35 +208,65 @@ public class ThreeAddressTable {
 
     }
 
-    private void SubExpresionsTree(Object childNode, String[] siguienteEtiqueta, String switchVariable) throws CustomErrorException {
+    private void SubExpresionsTree(Object childNode, String[] siguienteEtiqueta, String switchVariable, Object currentBlock) throws CustomErrorException {//aqui
         if (childNode.toString().equals("=")) {
             Object hijoIzquierdo = model.getChild(childNode, 0);
-            this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFIGUAL, switchVariable, hijoIzquierdo.toString(), siguienteEtiqueta[0]));
+            TableRow tempTable = this.root.getID(switchVariable, currentBlock, root);
+            Cuadruplos tempCuadruplo = new Cuadruplos(Operacion.IFIGUAL, switchVariable, hijoIzquierdo.toString(), siguienteEtiqueta[0]);
+            if (tempTable != null) {
+                tempCuadruplo.setInfoA(tempTable.offset, tempTable.type, tempTable.ubicacion);
+            }
+            this.tablaCuadruplos.add(tempCuadruplo);
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
         }
         if (childNode.toString().equals(">")) {
             Object hijoIzquierdo = model.getChild(childNode, 0);
-            this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFMAYOR, switchVariable, hijoIzquierdo.toString(), siguienteEtiqueta[0]));
+            TableRow tempTable = this.root.getID(switchVariable, currentBlock, root);
+            Cuadruplos tempCuadruplo = new Cuadruplos(Operacion.IFMAYOR, switchVariable, hijoIzquierdo.toString(), siguienteEtiqueta[0]);
+            if (tempTable != null) {
+                tempCuadruplo.setInfoA(tempTable.offset, tempTable.type, tempTable.ubicacion);
+            }
+            this.tablaCuadruplos.add(tempCuadruplo);
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
         }
         if (childNode.toString().equals("<")) {
             Object hijoIzquierdo = model.getChild(childNode, 0);
-            this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFMENOR, switchVariable, hijoIzquierdo.toString(), siguienteEtiqueta[0]));
+            TableRow tempTable = this.root.getID(switchVariable, currentBlock, root);
+            Cuadruplos tempCuadruplo = new Cuadruplos(Operacion.IFMENOR, switchVariable, hijoIzquierdo.toString(), siguienteEtiqueta[0]);
+            if (tempTable != null) {
+                tempCuadruplo.setInfoA(tempTable.offset, tempTable.type, tempTable.ubicacion);
+            }
+            this.tablaCuadruplos.add(tempCuadruplo);
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
         }
         if (childNode.toString().equals("<=")) {
             Object hijoIzquierdo = model.getChild(childNode, 0);
-            this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFMENORIGUAL, switchVariable, hijoIzquierdo.toString(), siguienteEtiqueta[0]));
+            TableRow tempTable = this.root.getID(switchVariable, currentBlock, root);
+            Cuadruplos tempCuadruplo = new Cuadruplos(Operacion.IFMENORIGUAL, switchVariable, hijoIzquierdo.toString(), siguienteEtiqueta[0]);
+            if (tempTable != null) {
+                tempCuadruplo.setInfoA(tempTable.offset, tempTable.type, tempTable.ubicacion);
+            }
+            this.tablaCuadruplos.add(tempCuadruplo);
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
         }
         if (childNode.toString().equals("=>")) {
             Object hijoIzquierdo = model.getChild(childNode, 0);
-            this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFMAYORIGUAL, switchVariable, hijoIzquierdo.toString(), siguienteEtiqueta[0]));
+            TableRow tempTable = this.root.getID(switchVariable, currentBlock, root);
+            Cuadruplos tempCuadruplo = new Cuadruplos(Operacion.IFMAYORIGUAL, switchVariable, hijoIzquierdo.toString(), siguienteEtiqueta[0]);
+            if (tempTable != null) {
+                tempCuadruplo.setInfoA(tempTable.offset, tempTable.type, tempTable.ubicacion);
+            }
+            this.tablaCuadruplos.add(tempCuadruplo);
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
         }
         if (childNode.toString().equals("!=")) {
             Object hijoIzquierdo = model.getChild(childNode, 0);
-            this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFDISTINTO, switchVariable, hijoIzquierdo.toString(), siguienteEtiqueta[0]));
+            TableRow tempTable = this.root.getID(switchVariable, currentBlock, root);
+            Cuadruplos tempCuadruplo = new Cuadruplos(Operacion.IFDISTINTO, switchVariable, hijoIzquierdo.toString(), siguienteEtiqueta[0]);
+            if (tempTable != null) {
+                tempCuadruplo.setInfoA(tempTable.offset, tempTable.type, tempTable.ubicacion);
+            }
+            this.tablaCuadruplos.add(tempCuadruplo);
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
         }
         if (childNode.toString().equals("...")) {
@@ -245,11 +275,20 @@ public class ThreeAddressTable {
             String[] nuevasEtiquetas = new String[3];
             nuevasEtiquetas[0] = "tag" + (this.conteoEtiquetas++);
             //Parte switchVariable >= hijoIzquierdo
-            this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFMAYORIGUAL, switchVariable, hijoIzquierdo.toString(), nuevasEtiquetas[0]));
+            TableRow tempTable = this.root.getID(switchVariable, currentBlock, root);
+            Cuadruplos tempCuadruplo = new Cuadruplos(Operacion.IFMAYORIGUAL, switchVariable, hijoIzquierdo.toString(), siguienteEtiqueta[0]);
+            if (tempTable != null) {
+                tempCuadruplo.setInfoA(tempTable.offset, tempTable.type, tempTable.ubicacion);
+            }
+            this.tablaCuadruplos.add(tempCuadruplo);
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
             //Parte switchVariable >= hijoIzquierdo
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[0], "", ""));
-            this.tablaCuadruplos.add(new Cuadruplos(Operacion.IFMENORIGUAL, switchVariable, hijoDerecho.toString(), siguienteEtiqueta[0]));
+            tempCuadruplo = new Cuadruplos(Operacion.IFMENORIGUAL, switchVariable, hijoDerecho.toString(), siguienteEtiqueta[0]);
+            if (tempTable != null) {
+                tempCuadruplo.setInfoA(tempTable.offset, tempTable.type, tempTable.ubicacion);
+            }
+            this.tablaCuadruplos.add(tempCuadruplo);
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[1], "", ""));
         }
     }
@@ -277,7 +316,7 @@ public class ThreeAddressTable {
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevaEtiqueta[1], "", ""));
             ExpresionsTree(hijoDerecho, siguienteEtiqueta, currentBlock);
         }
-        if (childNode.toString().equals("=")) {//aqui
+        if (childNode.toString().equals("=")) {
             Object hijoDerecho = model.getChild(childNode, 0);
             Object hijoIzquierdo = model.getChild(childNode, 1);
             TableRow tempLeftTable = this.root.getID(hijoIzquierdo.toString(), currentBlock, root);
