@@ -48,6 +48,7 @@ public enum Tokens {
   INCREMENT,
   CON_AND,
   CON_OR,
+  CON_NOT,
 /* data types */
   INTENGER,
   BOOLEAN,
