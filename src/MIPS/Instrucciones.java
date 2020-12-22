@@ -94,6 +94,8 @@ public class Instrucciones {
             registro = reg;
         } else {
             TableRow id = root.getID(D, B, root);
+            System.out.println("----------la id-------------");
+            System.out.println(id);
             //En caso de ser variable
             if (id != null) {
                 String r_v = buscarEnRegistros(D);
@@ -287,11 +289,11 @@ public String Salto(String dest){
     }
     public String SaltoCondicional(Operacion O, String D, String I, String R, Object B){
         String ret = "";
-        //Evaluamos si es un registro o un número
-        String [] registroD = getRegistroAritmetico(D, B);
+        //Evaluamos si es un registro, número, boolean o char
+        String [] registroD = getRegistroSaltoCondicional(D, B);
         ret += registroD[0];
         D = registroD[1];
-        String[] registroI = getRegistroAritmetico(I, B);
+        String[] registroI = getRegistroSaltoCondicional(I, B);
         ret += registroI[0];
         I = registroI[1];
         switch (O){
@@ -320,9 +322,66 @@ public String Salto(String dest){
             }
             break;
         }
+        liberarRegistro(D);
+        liberarRegistro(I);
         return ret;
     }
     
+    private String[] getRegistroSaltoCondicional(String D, Object B){
+        String inst = "";
+        String registro = "";
+        String typeD = GetType(D);
+        switch (typeD) {
+            case "int":{
+                String reg = getRegistroLibre();
+                inst += "    li " + reg + ", " + D + "\n";
+                guardarEnRegistros(reg, D);
+                registro = reg;
+            }
+                break;
+            case "bln":{
+                String reg = getRegistroLibre();
+                //false = 0; true = 1. Así comparamos recios
+                D = (D.equals("false")) ? (0+"") : (""+1);
+                inst += "    li " + reg + ", " + D + "\n";
+                guardarEnRegistros(reg, D);
+                registro = reg;
+            }
+                break;
+            case "chr":{
+                String reg = getRegistroLibre();
+                //Comvertimos el char a número para comparar, luego a String
+                D = ""+(int) (D.charAt(1));
+                inst += "    li " + reg + ", " + D + "\n";
+                guardarEnRegistros(reg, D);
+                registro = reg;
+            }
+                break;
+            default:{
+                TableRow id = root.getID(D, B, root);
+                //En caso de ser variable
+                if (id != null) {
+                    String r_v = buscarEnRegistros(D);
+                    //Buscar si el ID no está cargado 
+                    if (r_v.equals("")) {
+                        String r_l = getRegistroLibre();
+                        inst += "    lw " + r_l + ", " + id.ubicacion + "\n";
+                        guardarEnRegistros(r_l, id.id);
+                        registro = r_l;
+                    } else {
+                        registro = r_v;
+                    }
+                } //en caso de ser temoporal ya debería estar en descriptor
+                else {
+                    String reg = buscarEnRegistros(D);
+                    registro = reg;
+                }
+            }
+                
+        }
+        String ret[] = {inst, registro};
+        return ret;
+    }
     
     
 }
