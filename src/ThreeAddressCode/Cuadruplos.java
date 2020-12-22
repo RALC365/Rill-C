@@ -12,6 +12,7 @@ import ComprobacionDeTipos.TypesSubTable;
  * @author Julio Marin
  */
 public class Cuadruplos {
+
     private Operacion operacion;
     private String parametroA;
     private String parametroB;
@@ -96,7 +97,6 @@ public class Cuadruplos {
 //    public String getUbicacionRes() {
 //        return ubicacionRes;
 //    }
-
     public Object getBloque() {
         return bloque;
     }
@@ -104,7 +104,7 @@ public class Cuadruplos {
     public void setBloque(Object bloque) {
         this.bloque = bloque;
     }
-    
+
     public Operacion getOperacion() {
         return operacion;
     }
@@ -123,7 +123,10 @@ public class Cuadruplos {
 
     @Override
     public String toString() {
-        return "(Op: "+this.operacion+", ParA: "+this.parametroA+", ParB: "+this.parametroB+", Res: "+this.resultado+")";
+        if (bloque != null) {
+            return "(Op: " + this.operacion + ", ParA: " + this.parametroA + ", ParB: " + this.parametroB + ", Res: " + this.resultado + ")" + ", Ambito: " + this.bloque.toString();
+        }
+        return "(Op: " + this.operacion + ", ParA: " + this.parametroA + ", ParB: " + this.parametroB + ", Res: " + this.resultado + ")" + ", Ambito: NULL";
     }
-        
+
 }

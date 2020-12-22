@@ -29,10 +29,10 @@ public class ThreeAddressTable {
         this.conteoTemporales = 0;
         this.conteoEtiquetas = 0;
         this.root = raiz;
-        iterateTree(model.getRoot(), null, 0, "", model.getRoot());
+        iterateTree(root.treepart, null, 0, "", root.treepart);
         imprimirCuadruplos();
     }
-    
+
     public ArrayList<Cuadruplos> getTablaCuadruplos() {
         return tablaCuadruplos;
     }
@@ -55,8 +55,8 @@ public class ThreeAddressTable {
                 }
                 iterateTree(child, siguienteEtiqueta, 0, "", child);
                 if (!(child.toString().equals("MAIN"))) {
-                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, "salida_"+child.toString().split(":")[0], "", ""));
-                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.FINFUNCION, "salida_"+child.toString().split(":")[0], "", ""));
+                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, "salida_" + child.toString().split(":")[0], "", ""));
+                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.FINFUNCION, "salida_" + child.toString().split(":")[0], "", ""));
                 }
             }
 
@@ -78,12 +78,12 @@ public class ThreeAddressTable {
             }
 
             if (child.toString().equals("WHILE")) {
-                
+
                 String[] nuevasEtiquetas = new String[3];
                 nuevasEtiquetas[2] = "tag" + (this.conteoEtiquetas++);
                 nuevasEtiquetas[0] = "tag" + (this.conteoEtiquetas++);
                 nuevasEtiquetas[1] = "tag" + (this.conteoEtiquetas++);
-                
+
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[2], "", ""));
 
                 Object expresionChild = model.getChild(child, 0);
@@ -154,7 +154,6 @@ public class ThreeAddressTable {
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, siguienteEtiqueta[0], "", ""));
                 Object sentenceChild = model.getChild(child, 1);
 
-                
                 iterateTree(sentenceChild, siguienteEtiqueta, 0, "", child);
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[2], "", ""));
             }
@@ -186,9 +185,13 @@ public class ThreeAddressTable {
                     String print_child = model.getChild(child, j).toString();
                     if (!print_child.equals("")) {
                         if (print_child.equals("ln")) {
-                            this.tablaCuadruplos.add(new Cuadruplos(Operacion.PRINT, "", "", "\\n"));
+                            Cuadruplos temp = new Cuadruplos(Operacion.PRINT, "", "", "\\n");
+                            temp.setBloque(parentBlock);
+                            this.tablaCuadruplos.add(temp);
                         } else {
-                            this.tablaCuadruplos.add(new Cuadruplos(Operacion.PRINT, "", "", print_child));
+                            Cuadruplos temp = new Cuadruplos(Operacion.PRINT, "", "", print_child);
+                            temp.setBloque(parentBlock);
+                            this.tablaCuadruplos.add(temp);
                         }
                     }
                 }
@@ -528,7 +531,9 @@ public class ThreeAddressTable {
                     || rightChild.toString().contains("/") || rightChild.toString().contains("%")
                     || rightChild.toString().contains("-")) {
                 String temporalRetorno = ArithmeticTree(rightChild, currentBlock);
-                this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNACION, temporalRetorno, "", leftChild.toString()));
+                Cuadruplos tempCuadruplo = new Cuadruplos(Operacion.ASIGNACION, temporalRetorno, "", leftChild.toString());
+                tempCuadruplo.setBloque(currentBlock);
+                this.tablaCuadruplos.add(tempCuadruplo);
             } else {
                 String temporali = "t" + (this.conteoTemporales++);
                 String temporali_j = "t" + (this.conteoTemporales++);
@@ -561,7 +566,7 @@ public class ThreeAddressTable {
         }
         for (int i = 0; i < cc; i++) {
             Object child = model.getChild(currentNode, i);
-            if (model.getChildCount(child)!=0) {
+            if (model.getChildCount(child) != 0) {
                 AsignationArray(identificador, currentNode, tamanio);
             } else {
                 String temporalIndice = "t" + (this.conteoTemporales++);
@@ -607,13 +612,13 @@ public class ThreeAddressTable {
 //            TableRow tempRightTable = null;
             if (model.getChildCount(leftChild) > 0) {
                 temporalIzquierdo = ArithmeticTree(leftChild, currentBlock);
-            } 
+            }
 //            else {
 //                tempLeftTable = this.root.getID(leftChild.toString(), currentBlock, root);
 //            }
             if (model.getChildCount(rightChild) > 0) {
                 temporalDerecho = ArithmeticTree(rightChild, currentBlock);
-            } 
+            }
 //            else {
 //                tempRightTable = this.root.getID(rightChild.toString(), currentBlock, root);
 //            }

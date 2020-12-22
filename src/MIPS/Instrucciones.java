@@ -7,8 +7,10 @@ package MIPS;
 
 import ComprobacionDeTipos.TableRow;
 import ComprobacionDeTipos.TypesSubTable;
+import ThreeAddressCode.Operacion;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  *
@@ -16,18 +18,26 @@ import java.util.Arrays;
  */
 public class Instrucciones {
 
-    private ArrayList<String> registros = new ArrayList<>(Arrays.asList("$zero", "$at",
-            "$v0", "$v1", "$a0", "$a1", "$a2", "$a3", "$t0", "$t1", "$t2", "$t3",
-            "$t4", "$t5", "$t6", "$t7", "$s0", "$s1", "$s2", "$s3", "$s4", "$s5", "$s6",
-            "$s7", "$t8", "$t9", "$k0", "$k1", "$gp", "$sp", "$fp", "$ra"));
-
+    public ArrayList<String> temporales = new ArrayList<>(Arrays.asList("$t0", "$t1", "$t2", "$t3",
+            "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"));
+    public ArrayList<String> argumentos = new ArrayList<>(Arrays.asList(
+            "$v0", "$v1", "$a0", "$a1", "$a2", "$a3", "$s0", "$s1", "$s2", "$s3", "$s4", "$s5", "$s6",
+            "$s7", "$t8", "$t9"));
     private TypesSubTable root = null;
+    private HashMap<String, String> DescriptorRegistros = new HashMap();
 
     public Instrucciones(TypesSubTable root) {
         this.root = root;
+        for (String registro : temporales) {
+            DescriptorRegistros.put(registro, "");
+        }
+        for (String argumento : argumentos) {
+            DescriptorRegistros.put(argumento, "");
+        }
     }
 
-    private String isValueORegister(String id) {
+    /*-----------------------------------------------Funciones Importantes-----------------------------------------------*/
+    private String GetType(String id) {
         try {
             Integer.parseInt(id);
             return "int";
@@ -38,97 +48,175 @@ public class Instrucciones {
                 return "bln";
             } else if (id.contains("'")) {
                 return "chr";
-            } else if (registros.contains(id)) {
-                return "registro";
             } else {
-                return "";
+                return "ID";
             }
         }
     }
 
+    private String getRegistroLibre() {
+        for (String R : DescriptorRegistros.keySet()) {
+            if (R.contains("t")) {
+                if (DescriptorRegistros.get(R).equals("")) {
+                    return R;
+                }
+            }
+        }
+        return "";
+    }
+
+    private void liberarRegistro(String R) {
+        DescriptorRegistros.remove(R);
+        DescriptorRegistros.put(R, "");
+    }
+
+    private String buscarEnRegistros(String id) {
+        for (String R : DescriptorRegistros.keySet()) {
+            if (DescriptorRegistros.get(R).equals(id)) {
+                return R;
+            }
+        }
+        return "";
+    }
+
+    private void guardarEnRegistros(String R, String id) {
+        DescriptorRegistros.remove(R);
+        DescriptorRegistros.put(R, id);
+    }
+
+    private String[] getRegistroAritmetico(String D, Object B) {
+        String inst = "";
+        String registro = "";
+        if (GetType(D).equals("int")) {
+            String reg = getRegistroLibre();
+            inst += "    li " + reg + ", " + D + "\n";
+            guardarEnRegistros(reg, D);
+            registro = reg;
+        } else {
+            TableRow id = root.getID(D, B, root);
+            //En caso de ser variable
+            if (id != null) {
+                String r_v = buscarEnRegistros(D);
+                //Buscar si el ID no está cargado 
+                if (r_v.equals("")) {
+                    String r_l = getRegistroLibre();
+                    inst += "    lw " + r_l + ", " + id.ubicacion + "\n";
+                    guardarEnRegistros(r_l, id.id);
+                    registro = r_l;
+                } else {
+                    registro = r_v;
+                }
+            } //en caso de ser temoporal ya debería estar en descriptor
+            else {
+                String reg = buscarEnRegistros(D);
+                registro = reg;
+            }
+        }
+        String ret[] = {inst, registro};
+        return ret;
+    }
+
+    private String[] CargarVariable(String D, Object B) {
+        String reg = "";
+        String inst = "";
+        reg = buscarEnRegistros(D);
+        if (reg.equals("")) {
+            TableRow id = root.getID(D, B, root);
+            if (id != null) {
+                reg = getRegistroLibre();
+                inst += "    lw " + reg + ", " + id.ubicacion + "\n";
+                guardarEnRegistros(reg, D);
+            }
+        }
+        String[] ret = {inst, reg};
+        return ret;
+    }
+
+    /*-----------------------------------------------Instrucciones del MIPS-----------------------------------------------*/
     public String InstruccionMain() {
         String generarMain = "main: \n";
-        generarMain += "    move $fp, $sp \n";
         return generarMain;
     }
 
-    public String InstruccionEtiqueta(String etiqueta) {
-        return "_" + etiqueta + " \n";
+    //Aquí Confundí la derecha con la Izquiera pero funciona bien y mejor no lo toco XD
+    public String OperacionAritmetica(Operacion O, String D, String I, String R, Object B) {
+        String ret = "";
+        String[] registroD = getRegistroAritmetico(D, B);
+        ret += registroD[0];
+        D = registroD[1];
+        String[] registroI = getRegistroAritmetico(I, B);
+        ret += registroI[0];
+        I = registroI[1];
+        String new_reg = getRegistroLibre();
+        switch (O) {
+            case DIVISION: {
+                ret += "    div " + new_reg + ", " + D + ", " + I + "\n";
+            }
+            break;
+            case MULTIPLICACION: {
+                ret += "    mul " + new_reg + ", " + D + ", " + I + "\n";
+            }
+            break;
+            case SUMA: {
+                ret += "    add " + new_reg + ", " + D + ", " + I + "\n";
+            }
+            break;
+            case RESTA: {
+                ret += "    sub " + new_reg + ", " + D + ", " + I + "\n";
+            }
+            break;
+        }
+
+        guardarEnRegistros(new_reg, R);
+        liberarRegistro(D);
+        liberarRegistro(I);
+        return ret;
     }
 
-    public String InstruccionCargaInmediata(String registro, String valor) {
-        return "    li " + registro + ", " + valor + "\n";
+    public String Asignacion(String I, String R, Object B) {
+        String ret = "";
+        TableRow id = root.getID(R, B, root);
+        if (id != null) {
+            if (GetType(I).equals("int")) {
+                String reg = getRegistroLibre();
+                ret += "    lw " + reg + ", " + id.ubicacion + "\n";
+                ret += "    li " + reg + ", " + I + "\n";
+                ret += "    sw " + reg + ", " + id.ubicacion + "\n";
+            } else {
+                String reg = getRegistroLibre();
+                String r_i = buscarEnRegistros(I);
+                ret += "    lw " + reg + ", " + id.ubicacion + "\n";
+                ret += "    move " + reg + ", " + r_i + "\n";
+                ret += "    sw " + reg + ", " + id.ubicacion + "\n";
+            }
+        }
+        return ret;
     }
 
-    public String InstruccionGuardarPalabra(String registro, int offset, String registroFuente) {
-        return "    sw " + registro + ", " + offset + "(" + registroFuente + ")\n";
-    }
-
-    public String InstruccionGuardarPalabra(String registro, String registroFuente) {
-        return "    sw " + registro + ", " + registroFuente + "\n";
-    }
-
-    public String InstruccionMontaje(String registro, int offset, String registroFuente) {
-        return "    lw " + registro + ", " + offset + "(" + registroFuente + ")\n";
-    }
-
-    public String InstruccionMontaje(String registro, String registroFuente) {
-        return "    lw " + registro + ", " + registroFuente + "\n";
-    }
-
-    public String InstruccionSuma(String izquierdo, String derecho, String resultado) {
-        return "    add " + resultado + ", " + izquierdo + ", " + derecho + "\n";
-    }
-
-    public String InstruccionResta(String izquierdo, String derecho, String resultado) {
-        return "    sub " + resultado + ", " + izquierdo + ", " + derecho + "\n";
-    }
-
-    public String InstruccionMultiplicacion(String izquierdo, String derecho, String resultado) {
-        return "    mul " + resultado + ", " + izquierdo + ", " + derecho + "\n";
-    }
-
-    public String InstruccionDivision(String izquierdo, String derecho, String resultado) {
-        return "    div " + resultado + ", " + izquierdo + ", " + derecho + "\n";
-    }
-
-    public String InstruccionGOTO(String etiqueta) {
-        return "    b " + etiqueta + "\n";
-    }
-
-    public String InstruccionIgual(String izquierdo, String derecho, String etiqueta) {
-        return "    beq Rfuente1, Rfuente2, etiqueta+\n";
-    }
-
-    public String InstruccionDistinto(String izquierdo, String derecho, String etiqueta) {
-        return "    bne Rfuente1, Rfuente2, etiqueta+\n";
-    }
-
-    public String InstruccionMenor(String izquierdo, String derecho, String etiqueta) {
-        return "    blt Rfuente1, Rfuente2, etiqueta+\n";
-    }
-
-    public String InstruccionMenorIgual(String izquierdo, String derecho, String etiqueta) {
-        return "    ble Rfuente1, Rfuente2, etiqueta+\n";
-    }
-
-    public String InstruccionMayor(String izquierdo, String derecho, String etiqueta) {
-        return "    bgt Rfuente1, Rfuente2, etiqueta+\n";
-    }
-
-    public String InstruccionMayorIgual(String izquierdo, String derecho, String etiqueta) {
-        return "    bge Rfuente1, Rfuente2, etiqueta+\n";
-    }
-
-    public String InstruccionPrint(String mensajeGlobal) {
-        String generarPrint = "    li $v0,4\n";
+    public String Print(String mensajeGlobal) {
+        String generarPrint = "\n    #print\n";
+        generarPrint += "    li $v0,4\n";
         generarPrint += "    la $a0," + mensajeGlobal + "\n";
-        generarPrint += "    syscall\n";
+        generarPrint += "    syscall\n\n";
         return generarPrint;
     }
 
-    //PARTE ELABORADA POR WILL
-    public String InstruccionInicioFuncion(String[] params, Object bloqueActual) {
+    public String PrintVariable(String ID, Object B) {
+        TableRow tr = root.getID(ID, B, root);
+        String generarPrint = "\n    #print\n";
+        if (tr != null) {
+            if (tr.type.equals("int")) {
+                generarPrint += "    li $v0,1\n";
+            } else {
+                generarPrint += "    li $v0,4\n";
+            }
+            generarPrint += "    la $a0," + tr.ubicacion + "\n";
+            generarPrint += "    syscall\n\n";
+        }
+        return generarPrint;
+    }
+
+    public String InicioFuncion(String[] params, Object bloqueActual) {
         String ret = "";
         ret += "   sw $fp, -4($sp) \n";
         ret += "   sw $fp, -4($sp) \n";
@@ -136,7 +224,7 @@ public class Instrucciones {
         ret += "\n";
         ret += "   #Guardar los parametros \n";
         for (String param : params) {
-            if (isValueORegister(ret).equals("")) {
+            if (GetType(ret).equals("")) {
                 TableRow id = root.getID(param, bloqueActual, root);
                 ret += "   sw $s0, " + id.ubicacion + " \n";
             } else {
@@ -156,7 +244,7 @@ public class Instrucciones {
         return ret;
     }
 
-    public String InstruccionFinFuncion(String[] Params) {
+    public String FinFuncion(String[] Params) {
         String ret = "";
         ret += "   _salida_fun: \n";
         ret += "   mov $sp, $fp \n";
@@ -170,15 +258,11 @@ public class Instrucciones {
 
     }
 
-    public String InstructionSaltoAFuncion(String etq_salto) {
-        return "    " + etq_salto + "\n";
-    }
-
-    public String InstruccionInputInt(String variable_en_memoria, int offset) {
+    public String InstruccionInputInt(String id, int offset) {
         String ins = "";
         ins += "    li $v0, 5	# read int \n";
         ins += "    syscall		# print it \n";
-        ins += InstruccionGuardarPalabra("$v0", offset, variable_en_memoria);
+        //ins += GuardarPalabra("$v0", offset, variable_en_memoria);
         return ins;
     }
 
@@ -188,11 +272,10 @@ public class Instrucciones {
         ins += "    li $a1, 20 # allot the byte space for string";
         ins += "    move $t0,$a0 #save string to t0";
         ins += "    syscall";
-        ins += InstruccionGuardarPalabra("$t0", offset, variable_en_memoria);
+        //ins += GuardarPalabra("$t0", offset, variable_en_memoria);
         return ins;
     }
 }
-
 
 /*
 |Codigo de Prueba|
