@@ -5,11 +5,46 @@
  */
 package MIPS;
 
+import ComprobacionDeTipos.TableRow;
+import ComprobacionDeTipos.TypesSubTable;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  *
  * @author Julio Marin
  */
 public class Instrucciones {
+
+    private ArrayList<String> registros = new ArrayList<>(Arrays.asList("$zero", "$at",
+            "$v0", "$v1", "$a0", "$a1", "$a2", "$a3", "$t0", "$t1", "$t2", "$t3",
+            "$t4", "$t5", "$t6", "$t7", "$s0", "$s1", "$s2", "$s3", "$s4", "$s5", "$s6",
+            "$s7", "$t8", "$t9", "$k0", "$k1", "$gp", "$sp", "$fp", "$ra"));
+
+    private TypesSubTable root = null;
+
+    public Instrucciones(TypesSubTable root) {
+        this.root = root;
+    }
+
+    private String isValueORegister(String id) {
+        try {
+            Integer.parseInt(id);
+            return "int";
+        } catch (Exception e) {
+            if (id.equals("false")) {
+                return "bln";
+            } else if (id.equals("true")) {
+                return "bln";
+            } else if (id.contains("'")) {
+                return "chr";
+            } else if (registros.contains(id)) {
+                return "registro";
+            } else {
+                return "";
+            }
+        }
+    }
 
     public String InstruccionMain() {
         String generarMain = "main: \n";
@@ -28,7 +63,7 @@ public class Instrucciones {
     public String InstruccionGuardarPalabra(String registro, int offset, String registroFuente) {
         return "    sw " + registro + ", " + offset + "(" + registroFuente + ")\n";
     }
-    
+
     public String InstruccionGuardarPalabra(String registro, String registroFuente) {
         return "    sw " + registro + ", " + registroFuente + "\n";
     }
@@ -36,7 +71,7 @@ public class Instrucciones {
     public String InstruccionMontaje(String registro, int offset, String registroFuente) {
         return "    lw " + registro + ", " + offset + "(" + registroFuente + ")\n";
     }
-    
+
     public String InstruccionMontaje(String registro, String registroFuente) {
         return "    lw " + registro + ", " + registroFuente + "\n";
     }
@@ -93,21 +128,50 @@ public class Instrucciones {
     }
 
     //PARTE ELABORADA POR WILL
-    public String InstruccionInicioFuncion(int offset) {
+    public String InstruccionInicioFuncion(String[] params, Object bloqueActual) {
         String ret = "";
-        ret += "   sw $fp, -4($sp)";
-        ret += "   sw $ra, -8($sp)";
-        ret += "   move $fp,$sp";
+        ret += "   sw $fp, -4($sp) \n";
+        ret += "   sw $fp, -4($sp) \n";
+        ret += "   sw $ra, -8($sp) \n";
+        ret += "\n";
+        ret += "   #Guardar los parametros \n";
+        for (String param : params) {
+            if (isValueORegister(ret).equals("")) {
+                TableRow id = root.getID(param, bloqueActual, root);
+                ret += "   sw $s0, " + id.ubicacion + " \n";
+            } else {
+                ret += "   Todavía no sé esta parte \n";
+            }
+        }
+        ret += "\n";
+        //Como se mandan en A debe tambien moverse los a a s
+        ret += "   #mover los parámetros recibido a las S \n";
+        ret += "   move $s0,$a0 \n";
+        ret += "\n";
+        ret += "   #Mover Apuntadores \n";
+        ret += "   mov $fp, $sp \n";
+        ret += "   sub $sp,$sp, SUMA_OFFETS \n";
+        ret += "\n";
+        ret += "   #Código dentro de la función \n";
         return ret;
     }
 
-    public String InstruccionFinFuncion(int offset) {
+    public String InstruccionFinFuncion(String[] Params) {
         String ret = "";
-        ret += "    move $sp, $fp";
-        ret += "    lw $fp, -4($sp)";
-        ret += "    lw $ra, -8($sp)";
-        ret += "    jr $ra";
+        ret += "   _salida_fun: \n";
+        ret += "   mov $sp, $fp \n";
+        ret += "   lw $fp, -4($sp) \n";
+        ret += "   lw $ra, -8($sp) \n";
+        ret += "\n";
+        ret += "   #Restaurar los parametros \n";
+        ret += "   lw $s0,-12($sp) \n";
+        ret += "   jr $ra \n";
         return ret;
+
+    }
+
+    public String InstructionSaltoAFuncion(String etq_salto) {
+        return "    " + etq_salto + "\n";
     }
 
     public String InstruccionInputInt(String variable_en_memoria, int offset) {

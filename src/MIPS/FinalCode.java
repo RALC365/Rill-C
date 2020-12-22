@@ -32,7 +32,7 @@ public class FinalCode {
     public FinalCode(ArrayList<Cuadruplos> tablaCuadruplos, TypesSubTable ambitoTree) {
         this.tablaCuadruplos = tablaCuadruplos;
         this.ambitoTree = ambitoTree;
-        this.instruccion = new Instrucciones();
+        this.instruccion = new Instrucciones(ambitoTree);
         registrosTemporales = new HashMap<String, String>();
         argumentos = new HashMap<String, String>();
         usoRegistrosTemporales = new String[10];

@@ -49,14 +49,14 @@ public class ThreeAddressTable {
             Object child = model.getChild(eachNode, i);
             if (eachNode.equals(model.getRoot())) {
                 if (child.toString().equals("MAIN")) {
-                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETAMAIN, child.toString(), "", ""));
+                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETAMAIN, child.toString().split(":")[0], "", ""));
                 } else {
-                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETAFUN, child.toString(), "", ""));
+                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETAFUN, child.toString().split(":")[0], "", ""));
                 }
                 iterateTree(child, siguienteEtiqueta, 0, "", child);
                 if (!(child.toString().equals("MAIN"))) {
-                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, "salida_"+child.toString(), "", ""));
-                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.FINFUNCION, "salida_"+child.toString(), "", ""));
+                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, "salida_"+child.toString().split(":")[0], "", ""));
+                    this.tablaCuadruplos.add(new Cuadruplos(Operacion.FINFUNCION, "salida_"+child.toString().split(":")[0], "", ""));
                 }
             }
 
