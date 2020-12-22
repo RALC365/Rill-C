@@ -58,6 +58,7 @@ MOD = "%"
 INCREMENT = "++"|"--"
 CON_AND = "and"
 CON_OR = "or"
+CON_NOT = "not"
 
 /* data types */
 INTENGER = "int"
@@ -158,6 +159,8 @@ NUMBER = 0 | [1-9][0-9]*
                             return new Symbol(sym.CON_AND, yycolumn, yyline, yytext());}
     {CON_OR}                {//System.out.println("<CON_OR," + yytext() + ">");
                             return new Symbol(sym.CON_OR, yycolumn, yyline, yytext());}
+    {CON_NOT}               {//System.out.println("<CON_NOT," + yytext() + ">");
+                            return new Symbol(sym.CON_NOT, yycolumn, yyline, yytext());}
     
     /* data types */
     {INTENGER}              {//System.out.println("<INTENGER," + yytext() + ">");
