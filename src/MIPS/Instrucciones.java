@@ -17,7 +17,7 @@ import java.util.HashMap;
  * @author Julio Marin
  */
 public class Instrucciones {
-
+    
     public ArrayList<String> temporales = new ArrayList<>(Arrays.asList("$t0", "$t1", "$t2", "$t3",
             "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"));
     public ArrayList<String> argumentos = new ArrayList<>(Arrays.asList(
@@ -25,7 +25,7 @@ public class Instrucciones {
             "$s7", "$t8", "$t9"));
     private TypesSubTable root = null;
     private HashMap<String, String> DescriptorRegistros = new HashMap();
-
+    
     public Instrucciones(TypesSubTable root) {
         this.root = root;
         for (String registro : temporales) {
@@ -53,7 +53,7 @@ public class Instrucciones {
             }
         }
     }
-
+    
     private String getRegistroLibre() {
         for (String R : DescriptorRegistros.keySet()) {
             if (R.contains("t")) {
@@ -64,12 +64,12 @@ public class Instrucciones {
         }
         return "";
     }
-
+    
     private void liberarRegistro(String R) {
         DescriptorRegistros.remove(R);
         DescriptorRegistros.put(R, "");
     }
-
+    
     private String buscarEnRegistros(String id) {
         for (String R : DescriptorRegistros.keySet()) {
             if (DescriptorRegistros.get(R).equals(id)) {
@@ -78,12 +78,12 @@ public class Instrucciones {
         }
         return "";
     }
-
+    
     private void guardarEnRegistros(String R, String id) {
         DescriptorRegistros.remove(R);
         DescriptorRegistros.put(R, id);
     }
-
+    
     private String[] getRegistroAritmetico(String D, Object B) {
         String inst = "";
         String registro = "";
@@ -115,7 +115,7 @@ public class Instrucciones {
         String ret[] = {inst, registro};
         return ret;
     }
-
+    
     private String[] CargarVariable(String D, Object B) {
         String reg = "";
         String inst = "";
@@ -166,13 +166,13 @@ public class Instrucciones {
             }
             break;
         }
-
+        
         guardarEnRegistros(new_reg, R);
         liberarRegistro(D);
         liberarRegistro(I);
         return ret;
     }
-
+    
     public String Asignacion(String I, String R, Object B) {
         String ret = "";
         TableRow id = root.getID(R, B, root);
@@ -192,7 +192,7 @@ public class Instrucciones {
         }
         return ret;
     }
-
+    
     public String Print(String mensajeGlobal) {
         String generarPrint = "\n    #print\n";
         generarPrint += "    li $v0,4\n";
@@ -200,22 +200,25 @@ public class Instrucciones {
         generarPrint += "    syscall\n\n";
         return generarPrint;
     }
-
+    
     public String PrintVariable(String ID, Object B) {
+        String reg = getRegistroLibre();
         TableRow tr = root.getID(ID, B, root);
         String generarPrint = "\n    #print\n";
         if (tr != null) {
+            generarPrint += "    lw " + reg + "," + tr.ubicacion + "\n";
             if (tr.type.equals("int")) {
                 generarPrint += "    li $v0,1\n";
             } else {
                 generarPrint += "    li $v0,4\n";
             }
-            generarPrint += "    la $a0," + tr.ubicacion + "\n";
+            generarPrint += "    move $a0," + reg + "\n";
             generarPrint += "    syscall\n\n";
+            liberarRegistro(reg);
         }
         return generarPrint;
     }
-
+    
     public String InicioFuncion(String[] params, Object bloqueActual) {
         String ret = "";
         ret += "   sw $fp, -4($sp) \n";
@@ -243,7 +246,7 @@ public class Instrucciones {
         ret += "   #Código dentro de la función \n";
         return ret;
     }
-
+    
     public String FinFuncion(String[] Params) {
         String ret = "";
         ret += "   _salida_fun: \n";
@@ -255,9 +258,9 @@ public class Instrucciones {
         ret += "   lw $s0,-12($sp) \n";
         ret += "   jr $ra \n";
         return ret;
-
+        
     }
-
+    
     public String InstruccionInputInt(String id, int offset) {
         String ins = "";
         ins += "    li $v0, 5	# read int \n";
@@ -265,7 +268,7 @@ public class Instrucciones {
         //ins += GuardarPalabra("$v0", offset, variable_en_memoria);
         return ins;
     }
-
+    
     public String InstruccionInputString(String variable_en_memoria, int offset) {
         String ins = "";
         ins += "    la $a0, buffer #load byte space into address";
