@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 /**
  *
- * @author Julio Marin
+ *
  */
 public class Instrucciones {
 
@@ -270,11 +270,10 @@ public class Instrucciones {
         ret += "\n";
         ret += "   #Guardar los parametros \n";
         for (int i = 0; i < params.size(); i++) {
-            DescriptorRegistros.remove(parametros.get(i));
+            //DescriptorRegistros.remove(parametros.get(i));
             String id = params.get(i);
             String type = GetType(id);
             TableRow t = root.getID(id, B, root);
-            System.out.println("Buscar ID" + id + " EN " + B);
             if (t != null) {
                 ret += "    sw " + parametros.get(i) + ", " + t.ubicacion + "\n";
                 if (i == params.size() - 1) {

@@ -1,0 +1,14 @@
+glb int x,y.,
+()(main:
+	(pp: "Ingrese X: ":).,
+	(in: x :).,
+	(pp: "Ingrese Y: ":).,
+	(in: y :).,
+	int c: suma(x,y).,
+	(pp: "La Suma es: " + c:).,
+:)
+
+(int x, int y)suma(fun:int
+	int z:x+y.,
+	ret z.,
+:)

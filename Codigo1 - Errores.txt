@@ -1,0 +1,31 @@
+()(main:
+	int puntaje:-1., |Declaración de Variables|
+	(pp: "Ingrese un puntaje: ":)., |Print|
+	(in: puntaje:).,|Cin|
+	
+	(puntaje < 0 or puntaje>100 )(wh:
+		(pp: "Nota no válida. Ingrese un puntaje: ":).,
+		(in: puntaje:).,
+	:)| FIN WHILE|
+
+	(puntaje)(if:
+		(0 ... 59):
+			nota: 'F' ., |La nota es ‘F’ (Reprobado)|
+			(pp: "La nota es" - nota - "(Reprobado)" - ln:).,
+		(60 ... 69):
+			nota: 'D' ., |La nota es ‘D’ (Deficiente)|
+			(pp: "La nota es" - nota - "(Deficiente)" - ln:).,
+		(70 ... 79):
+			nota: 'C' ., |La nota es ‘C’ (Suficiente)|
+			(pp: "La nota es" - nota - "(Suficiente)" - ln:).,
+		(80 ... 90):
+			nota: 'B' ., |La nota es ‘B’ (Bien)|
+			(pp: "La nota es" - nota - "(Bien)" - ln:).,
+		(90 ... 100):
+			nota: 'A' ., |La nota es ‘A’ (Excelente)|
+			(pp: "La nota es" - nota - "(Excelente)" - ln:).,
+		(els):
+			nota: 'E' ., |La nota no es válida ‘E’ (errónea)|
+			(pp: "La nota es" - nota - "(errónea)" - ln:).,
+		:)|SWITCH|
+:)

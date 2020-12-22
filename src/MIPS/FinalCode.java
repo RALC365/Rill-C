@@ -13,7 +13,7 @@ import java.util.Stack;
 
 /**
  *
- * @author Julio Marin
+ *
  */
 public class FinalCode {
 

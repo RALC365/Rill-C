@@ -1,0 +1,22 @@
+()(main:
+	(pp: "Ingrese un numero: " :).,
+	(in: a :).,
+	int b: fib(a).,
+	(pp: "Resultado: "+b:).,
+:)
+
+(int n)fib(fun:bln
+	int x.,
+	(n = 1)(if:
+		x: 1.,
+	:)
+	(n = 2)(if:
+		x: 1.,
+	:)
+	int k: n - 1.,
+	int p: n - 2.,
+	int fiba: fib(k).,
+	int fibb: fib(p).,
+	x: fiba + fibb.,
+	ret x.,
+:)
