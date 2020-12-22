@@ -33,5 +33,6 @@ public enum Operacion {
     ETIQUETAMAIN,
     FINFUNCION,
     ARREGLOASIGN,
-    DECLARACION
+    DECLARACION,
+    RETURN
 }

@@ -297,18 +297,33 @@ public class Instrucciones {
         return ret;
     }
 
-    public String FinFuncion(String[] Params) {
-        String ret = "";
-        ret += "   _salida_fun: \n";
-        ret += "   move $sp, $fp \n";
-        ret += "   lw $fp, -4($sp) \n";
-        ret += "   lw $ra, -8($sp) \n";
+    public String FinFuncion(ArrayList<String> params, Object B, String salida) {
+        String ret = salida + ":\n";
+        ret += "    move $sp, $fp \n";
+        ret += "    lw $fp, -4($sp) \n";
+        ret += "    lw $ra, -8($sp) \n";
         ret += "\n";
-        ret += "   #Restaurar los parametros \n";
-        ret += "   lw $s0,-12($sp) \n";
-        ret += "   jr $ra \n";
+        ret += "    #Restaurar los parametros \n";
+        for (int i = 0; i < params.size(); i++) {
+            DescriptorRegistros.remove(parametros.get(i));
+            String id = params.get(i);
+            String type = GetType(id);
+            TableRow t = root.getID(id, B, root);
+            if (t != null) {
+                ret += "    lw " + parametros.get(i) + ", " + t.ubicacion + "\n";
+            }
+        }
+        ret += "    jr $ra \n";
         return ret;
+    }
 
+    public String Ret(String I, Object B) {
+        String ret = "    #Retorno\n";
+        TableRow t = root.getID(I, B, root);
+        if (t != null) {
+            ret += "    lw " + "$v0" + ", " + t.ubicacion + "\n";
+        }
+        return ret;
     }
 
     public String InputInt(String id, Object B) {
@@ -327,7 +342,7 @@ public class Instrucciones {
     }
 
     public String Salto(String dest) {
-        String ret = "    b _" + dest + "\n";
+        String ret = "    b _" + dest + "\n\n";
         return ret;
     }
 

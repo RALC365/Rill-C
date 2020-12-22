@@ -99,9 +99,13 @@ public class FinalCode {
                     codigoMIPS += instruccion.PreinicioFuncion(params_per_call, c.getBloque(), c.getResultado());
                 }
                 break;
+                case RETURN: {
+                    codigoMIPS += instruccion.Ret(c.getResultado(), c.getBloque());
+                }
+                break;
                 case FINFUNCION: {
-                    paramsStack.pop();
-                    //LLAMAR FUIN FUNCION
+                    ArrayList<String> ps = paramsStack.pop();
+                    codigoMIPS += instruccion.FinFuncion(ps, c.getBloque(), "_" + c.getParametroA());
                 }
                 break;
                 case IFIGUAL: {
