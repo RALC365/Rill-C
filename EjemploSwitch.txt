@@ -11,6 +11,15 @@
 			z: 40.,
 		(els):
 			z: 60.,
+
 	:)
 	ret z.,
+:)
+
+()pruebaFor(fun:int 
+	int a: 10.,
+	(b, 10 to 20, +1)(fr:
+		a: a+b.,
+	:)
+	ret a.,
 :)

@@ -22,12 +22,14 @@ public class ThreeAddressTable {
     private int conteoTemporales;
     private int conteoEtiquetas;
     private TypesSubTable root;
+    private String forVar;
 
     public ThreeAddressTable(DefaultTreeModel model, TypesSubTable raiz) throws CustomErrorException {
         this.model = model;
         this.conteoTemporales = 0;
         this.conteoEtiquetas = 0;
         this.root = raiz;
+        this.forVar = "";
         iterateTree(root.treepart, null, 0, "", root.treepart);
         imprimirCuadruplos();
     }
@@ -36,13 +38,17 @@ public class ThreeAddressTable {
         return tablaCuadruplos;
     }
 
-    //flowAllower: 0 default, 1 if, 2 while
+    //flowAllower: 0 default, 1 if, 2 while, 3 for
     private String iterateTree(Object eachNode, String[] siguienteEtiqueta, int flowAllower, String switchVar, Object parentBlock) throws CustomErrorException {
         int minlimit = 0;
         int maxlimit = model.getChildCount(eachNode);
         if (flowAllower == 1) {
             minlimit = 1;
             maxlimit = maxlimit - 1;
+        } else {
+            if (flowAllower == 3) {
+                minlimit = 2;
+            }
         }
         for (int i = minlimit; i < maxlimit; i++) {
             Object child = model.getChild(eachNode, i);
@@ -64,7 +70,20 @@ public class ThreeAddressTable {
             }
 
             if (child.toString().equals("FOR")) {
-                iterateTree(child, siguienteEtiqueta, 0, "", child);
+                String[] nuevasEtiquetas = new String[3];
+                nuevasEtiquetas[2] = "tag" + (this.conteoEtiquetas++);
+                nuevasEtiquetas[0] = "tag" + (this.conteoEtiquetas++);
+                nuevasEtiquetas[1] = "tag" + (this.conteoEtiquetas++);
+                
+                this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[2], "", ""));
+                Object expresionChild = model.getChild(child, 0);
+                ExpresionsTree(expresionChild, nuevasEtiquetas, child);
+
+                this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[0], "", ""));
+
+                iterateTree(child, nuevasEtiquetas, 3, this.forVar, child);
+                
+                this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[1], "", ""));
             }
 
             if (child.toString().contains(":ret")) {
@@ -221,6 +240,14 @@ public class ThreeAddressTable {
 
         if (flowAllower == 2) {
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[2], "", ""));
+        } else {
+            if (flowAllower == 3) {
+                String temporalRetorno = "t" + (this.conteoTemporales++);
+                Cuadruplos temp = new Cuadruplos(Operacion.SUMA, switchVar, "1", temporalRetorno);
+                temp.setBloque(parentBlock);
+                this.tablaCuadruplos.add(temp);
+                this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[2], "", ""));
+            }
         }
 
         return null;
@@ -412,6 +439,7 @@ public class ThreeAddressTable {
             Object hijoIzquierdo = model.getChild(childNode, 1);
 //            TableRow tempLeftTable = this.root.getID(hijoIzquierdo.toString(), currentBlock, root);
 //            TableRow tempRightTable = this.root.getID(hijoDerecho.toString(), currentBlock, root);
+            this.forVar = hijoDerecho.toString();
             Cuadruplos tempCuadruplo = new Cuadruplos(Operacion.IFMAYORIGUAL, hijoDerecho.toString(), hijoIzquierdo.toString(), siguienteEtiqueta[0]);
             tempCuadruplo.setBloque(currentBlock);
 //            if (tempLeftTable != null) {
