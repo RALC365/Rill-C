@@ -99,7 +99,7 @@ public class FinalCode {
                 break;
             }
         }
-        codigoMIPS += "\n    li $v0,10\n";
+        codigoMIPS += "    li $v0,10\n";
         codigoMIPS += "    syscall\n";
         System.out.println(cargaGlobal + codigoMIPS);
     }
