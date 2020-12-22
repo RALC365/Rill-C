@@ -198,7 +198,7 @@ public class ThreeAddressTable {
             }
 
             if (child.toString().contains("IN:")) {
-                Cuadruplos temp=new Cuadruplos(Operacion.INPUT, "", "", child.toString().split(":")[1]);
+                Cuadruplos temp = new Cuadruplos(Operacion.INPUT, "", "", child.toString().split(":")[1]);
                 temp.setBloque(parentBlock);
                 this.tablaCuadruplos.add(temp);
             }
@@ -649,11 +649,17 @@ public class ThreeAddressTable {
     private String callFunction(Object o) {
         for (int i = 0; i < model.getChildCount(o); i++) {
             String param = model.getChild(o, i).toString();
-            this.tablaCuadruplos.add(new Cuadruplos(Operacion.PARAM, "", "", param));
+            Cuadruplos t = new Cuadruplos(Operacion.PARAM, "", "", param);
+            t.setBloque(o);
+            this.tablaCuadruplos.add(t);
         }
-        this.tablaCuadruplos.add(new Cuadruplos(Operacion.CALL, "", "", o.toString().split(":")[0]));
+        Cuadruplos t = new Cuadruplos(Operacion.CALL, "", "", o.toString().split(":")[0]);
+        t.setBloque(o);
+        this.tablaCuadruplos.add(t);
         String t_ret = "t" + (this.conteoTemporales++);
-        this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNACION, "RET", "", t_ret));
+        t = new Cuadruplos(Operacion.ASIGNACION, "RET", "", t_ret);
+        t.setBloque(o);
+        this.tablaCuadruplos.add(t);
         return t_ret;
     }
 

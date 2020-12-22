@@ -219,8 +219,28 @@ public class Instrucciones {
         return generarPrint;
     }
 
-    public void PreinicioFuncion(ArrayList params, Object B) {
-
+    public String PreinicioFuncion(ArrayList<String> params, Object B, String fun) {
+        String ret = "    #Llamado a función\n";
+        for (int i = 0; i < params.size(); i++) {
+            DescriptorRegistros.remove(argumentos.get(i));
+            String id = params.get(i);
+            String type = GetType(id);
+            if (type.equals("int")) {
+                ret += "    li , " + argumentos.get(i) + ", " + id + "\n";
+                guardarEnRegistros(argumentos.get(i), id);
+            } else {
+                TableRow t = root.getID(id, B, root);
+                if (t != null) {
+                    String reg = getRegistroLibre();
+                    ret += "    lw , " + reg + ", " + t.ubicacion + "\n";
+                    ret += "    move , " + argumentos.get(i) + ", " + reg + "\n";
+                    guardarEnRegistros(argumentos.get(i), id);
+                }
+            }
+            //Faltans los casos donde sea matriz y eso
+        }
+        ret += "    jal _fun_" + fun + "\n";
+        return ret;
     }
 
     public String InicioFuncion(String[] params, Object bloqueActual) {
@@ -273,7 +293,7 @@ public class Instrucciones {
             if (tr.type.equals("int")) {
                 ins += "    li $v0, 5	# read int \n";
                 ins += "    syscall     # print it \n";
-                ins += "    sw $v0, " + tr.ubicacion+"\n\n";
+                ins += "    sw $v0, " + tr.ubicacion + "\n\n";
             } else {
                 //estamos leyendo otro tipo
             }

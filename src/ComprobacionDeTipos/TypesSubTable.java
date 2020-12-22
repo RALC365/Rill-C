@@ -1084,7 +1084,7 @@ public class TypesSubTable {
 
     //Retorna el Tablerow del ID en un bloque dado
     public TableRow getID(String id, Object o_t_b, TypesSubTable o) {
-        System.out.println("BUSCANDO: " + id);
+        System.out.println("BUSCANDO: " + id + " EN " + o_t_b.toString());
         for (String i : o.children.keySet()) {
             TypesSubTable child = o.children.get(i);
             boolean iguales = false;

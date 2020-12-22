@@ -55,6 +55,7 @@ MOD = "%"
 INCREMENT = "++"|"--"
 CON_AND = "and"
 CON_OR = "or"
+CON_NOT = "not"
 
 /* data types */
 INTENGER = "int"
@@ -114,6 +115,7 @@ NUMBER = 0 | [1-9][0-9]*
     {INCREMENT}             {lexeme=yytext(); return INCREMENT;}
     {CON_AND}               {lexeme=yytext(); return CON_AND;}
     {CON_OR}                {lexeme=yytext(); return CON_OR;}
+    {CON_NOT}               {lexeme=yytext(); return CON_NOT;}
     
     /* data types */
     {INTENGER}              {lexeme=yytext(); return INTENGER;}

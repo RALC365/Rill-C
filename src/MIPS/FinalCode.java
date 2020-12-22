@@ -76,7 +76,7 @@ public class FinalCode {
                         codigoMIPS += "    syscall\n\n";
                     }
                     codigoMIPS += "_fun_" + Operacion.ETIQUETAFUN + ":\n";
-                    //LLAAMAR PREINICIO FUNCIÓN
+                    //LLAAMAR INICIO FUNCIÓN
                 }
                 break;
                 case ETIQUETA: {
@@ -93,7 +93,7 @@ public class FinalCode {
                 break;
                 case CALL: {
                     paramsStack.push(params_per_call);
-                    //LLAAMAR PREINICIO FUNCIÓN
+                    codigoMIPS += instruccion.PreinicioFuncion(params_per_call, c.getBloque(), c.getResultado());
                 }
                 break;
                 case FINFUNCION: {
