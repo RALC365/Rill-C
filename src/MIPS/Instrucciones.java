@@ -266,7 +266,6 @@ public class Instrucciones {
         int sub = 0;
         String ret = "";
         ret += "   sw $fp, -4($sp) \n";
-        ret += "   sw $fp, -4($sp) \n";
         ret += "   sw $ra, -8($sp) \n";
         ret += "\n";
         ret += "   #Guardar los parametros \n";
@@ -291,6 +290,7 @@ public class Instrucciones {
         ret += "   #mover los parámetros recibido a las S \n";
         for (int i = 0; i < params.size(); i++) {
             ret += "   move " + parametros.get(i) + ", " + argumentos.get(i) + "\n";
+
         }
         ret += "\n";
         ret += "   #Código dentro de la función \n";

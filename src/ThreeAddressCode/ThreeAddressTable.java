@@ -214,7 +214,7 @@ public class ThreeAddressTable {
             }
 
             if (child.toString().contains(":fun")) {
-                String t_ret = callFunction(child);
+                String t_ret = callFunction(child,child);
             }
 
         }
@@ -458,7 +458,7 @@ public class ThreeAddressTable {
             return ArithmeticBuild(childNode, Operacion.DIVISION, currentBlock);
         }
         if (childNode.toString().contains(":fun")) {
-            String t_ret = callFunction(childNode);
+            String t_ret = callFunction(childNode,currentBlock);
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNACION, t_ret, "", childNode.toString()));
         } else {
             if (model.getChildCount(childNode) == 1) {
@@ -498,7 +498,7 @@ public class ThreeAddressTable {
 //        TableRow tempTable = this.root.getID(leftChild.toString(), currentBlock, root);
         if ((model.getChildCount(leftChild) == 0) && (model.getChildCount(rightChild) == 0)) {
             if (rightChild.toString().contains(":fun")) {
-                String t_ret = callFunction(rightChild);
+                String t_ret = callFunction(rightChild,currentBlock);
                 Cuadruplos tempCuadruplo = new Cuadruplos(Operacion.ASIGNACION, t_ret, "", leftChild.toString());
                 tempCuadruplo.setBloque(currentBlock);
 //                tempCuadruplo.setInfoRes(tempTable.offset, tempTable.type, tempTable.ubicacion);
@@ -511,7 +511,7 @@ public class ThreeAddressTable {
             }
         } else {
             if (rightChild.toString().contains(":fun")) {
-                String t_ret = callFunction(rightChild);
+                String t_ret = callFunction(rightChild,currentBlock);
                 Cuadruplos tempCuadruplo = new Cuadruplos(Operacion.ASIGNACION, t_ret, "", leftChild.toString());
                 tempCuadruplo.setBloque(currentBlock);
 //                tempCuadruplo.setInfoRes(tempTable.offset, tempTable.type, tempTable.ubicacion);
@@ -656,15 +656,15 @@ public class ThreeAddressTable {
         System.out.println("================================Fin Cuadruplos===============================");
     }
 
-    private String callFunction(Object o) {
+    private String callFunction(Object o, Object current) {
         for (int i = 0; i < model.getChildCount(o); i++) {
             String param = model.getChild(o, i).toString();
             Cuadruplos t = new Cuadruplos(Operacion.PARAM, "", "", param);
-            t.setBloque(o);
+            t.setBloque(current);
             this.tablaCuadruplos.add(t);
         }
         Cuadruplos t = new Cuadruplos(Operacion.CALL, "", "", o.toString().split(":")[0]);
-        t.setBloque(o);
+        t.setBloque(current);
         this.tablaCuadruplos.add(t);
         return "RET";
     }
