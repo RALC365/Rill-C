@@ -6,6 +6,7 @@
 package ThreeAddressCode;
 
 import ComprobacionDeTipos.CustomErrorException;
+import ComprobacionDeTipos.TableRow;
 import java.util.ArrayList;
 import javax.swing.tree.DefaultTreeModel;
 import ComprobacionDeTipos.TypesSubTable;
@@ -33,8 +34,8 @@ public class ThreeAddressTable {
         this.forVar = "";
         for (String id : raiz.ids.keySet()) {
             tablaCuadruplos.add(new Cuadruplos(Operacion.GLOBAL, "", "", id));
+            raiz.ids.get(id).ubicacion = id;
         }
-        System.out.println(model.getChildCount(model.getRoot()));
         iterateTree(model.getRoot(), null, 0, "", model.getRoot());
         imprimirCuadruplos();
     }

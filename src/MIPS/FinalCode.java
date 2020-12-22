@@ -49,6 +49,10 @@ public class FinalCode {
                     codigoMIPS += instruccion.OperacionAritmetica(Operacion.SUMA, c.getParametroA(), c.getParametroB(), c.getResultado(), c.getBloque());
                 }
                 break;
+                case GLOBAL: {
+                    cargaGlobal += c.getResultado() + ":    .word 0\n";
+                }
+                break;
                 case RESTA: {
                     codigoMIPS += instruccion.OperacionAritmetica(Operacion.RESTA, c.getParametroA(), c.getParametroB(), c.getResultado(), c.getBloque());
                 }
