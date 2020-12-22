@@ -185,13 +185,14 @@ public class ThreeAddressTable {
                     String print_child = model.getChild(child, j).toString();
                     if (!print_child.equals("")) {
                         if (print_child.equals("ln")) {
-                            Cuadruplos temp = new Cuadruplos(Operacion.PRINT, "", "", "\\n");
+                            Cuadruplos temp = new Cuadruplos(Operacion.PRINT, "", "", "\"\\n\"");
                             temp.setBloque(parentBlock);
                             this.tablaCuadruplos.add(temp);
                         } else {
                             Cuadruplos temp = new Cuadruplos(Operacion.PRINT, "", "", print_child);
                             temp.setBloque(parentBlock);
                             this.tablaCuadruplos.add(temp);
+                            this.tablaCuadruplos.add(new Cuadruplos(Operacion.PRINT, "", "", "\"\\n\""));
                         }
                     }
                 }
