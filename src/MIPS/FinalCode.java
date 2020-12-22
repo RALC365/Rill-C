@@ -9,6 +9,7 @@ import ComprobacionDeTipos.TypesSubTable;
 import ThreeAddressCode.Cuadruplos;
 import ThreeAddressCode.Operacion;
 import java.util.ArrayList;
+import java.util.Stack;
 
 /**
  *
@@ -20,6 +21,9 @@ public class FinalCode {
     private final TypesSubTable ambitoTree;
     private final Instrucciones instruccion;
     private int conteoMensaje = 0;
+    private int bandera_etiqueta = 0;
+    private Stack<ArrayList> paramsStack = new Stack<>();
+    private ArrayList<String> params_per_call = new ArrayList();
 
     public FinalCode(ArrayList<Cuadruplos> tablaCuadruplos, TypesSubTable ambitoTree) {
         this.tablaCuadruplos = tablaCuadruplos;
@@ -28,7 +32,7 @@ public class FinalCode {
     }
 
     public void GenerarCodigoFinal() {
-        String cargaGlobal = "      .data\n";
+        String cargaGlobal = "       .data\n";
         String codigoMIPS = "       .text\n"
                 + "     .globl main\n";
         for (Cuadruplos c : this.tablaCuadruplos) {
@@ -66,7 +70,35 @@ public class FinalCode {
                 case ASIGNARREGLO: {
                 }
                 break;
+                case ETIQUETAFUN: {
+                    if (bandera_etiqueta == 0) {
+                        codigoMIPS += "    li $v0,10\n";
+                        codigoMIPS += "    syscall\n\n";
+                    }
+                    codigoMIPS += "_fun_" + Operacion.ETIQUETAFUN + ":\n";
+                    //LLAAMAR PREINICIO FUNCIÓN
+                }
+                break;
                 case ETIQUETA: {
+                    if (bandera_etiqueta == 0) {
+                        codigoMIPS += "    li $v0,10\n";
+                        codigoMIPS += "    syscall\n\n";
+                    }
+                    codigoMIPS += "_" + Operacion.ETIQUETA + ":\n";
+                }
+                break;
+                case PARAM: {
+                    params_per_call.add(c.getResultado());
+                }
+                break;
+                case CALL: {
+                    paramsStack.push(params_per_call);
+                    //LLAAMAR PREINICIO FUNCIÓN
+                }
+                break;
+                case FINFUNCION: {
+                    paramsStack.pop();
+                    //LLAMAR FUIN FUNCION
                 }
                 break;
                 case IFIGUAL: {
@@ -97,10 +129,16 @@ public class FinalCode {
                     }
                 }
                 break;
+                case INPUT: {
+                    codigoMIPS += instruccion.InputInt(c.getResultado(), c.getBloque());
+                }
+                break;
             }
         }
-        codigoMIPS += "    li $v0,10\n";
-        codigoMIPS += "    syscall\n";
+        if (bandera_etiqueta == 0) {
+            codigoMIPS += "    li $v0,10\n";
+            codigoMIPS += "    syscall\n";
+        }
         System.out.println(cargaGlobal + codigoMIPS);
     }
 }

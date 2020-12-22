@@ -6,7 +6,6 @@
 package ThreeAddressCode;
 
 import ComprobacionDeTipos.CustomErrorException;
-import ComprobacionDeTipos.TableRow;
 import java.util.ArrayList;
 import javax.swing.tree.DefaultTreeModel;
 import ComprobacionDeTipos.TypesSubTable;
@@ -199,7 +198,9 @@ public class ThreeAddressTable {
             }
 
             if (child.toString().contains("IN:")) {
-                this.tablaCuadruplos.add(new Cuadruplos(Operacion.INPUT, "", "", child.toString().split(":")[1]));
+                Cuadruplos temp=new Cuadruplos(Operacion.INPUT, "", "", child.toString().split(":")[1]);
+                temp.setBloque(parentBlock);
+                this.tablaCuadruplos.add(temp);
             }
 
             if (child.toString().contains(":fun")) {
