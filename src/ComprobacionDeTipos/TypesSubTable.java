@@ -21,7 +21,7 @@ public class TypesSubTable {
     private final DefaultTreeModel model;
     private final String functionName;
     private final String functionType;
-    private final LinkedHashMap<String, TableRow> ids = new LinkedHashMap();//Tabla de sibolos
+    public final LinkedHashMap<String, TableRow> ids = new LinkedHashMap();//Tabla de sibolos
     private final TypesSubTable parent;
     public final LinkedHashMap<String, TypesSubTable> children = new LinkedHashMap();//Arbol de Simbolos
     private int offsetActual;

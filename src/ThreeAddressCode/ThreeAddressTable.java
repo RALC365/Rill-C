@@ -9,6 +9,7 @@ import ComprobacionDeTipos.CustomErrorException;
 import java.util.ArrayList;
 import javax.swing.tree.DefaultTreeModel;
 import ComprobacionDeTipos.TypesSubTable;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  *
@@ -30,7 +31,11 @@ public class ThreeAddressTable {
         this.conteoEtiquetas = 0;
         this.root = raiz;
         this.forVar = "";
-        iterateTree(root.treepart, null, 0, "", root.treepart);
+        for (String id : raiz.ids.keySet()) {
+            tablaCuadruplos.add(new Cuadruplos(Operacion.GLOBAL, "", "", id));
+        }
+        System.out.println(model.getChildCount(model.getRoot()));
+        iterateTree(model.getRoot(), null, 0, "", model.getRoot());
         imprimirCuadruplos();
     }
 
@@ -55,13 +60,13 @@ public class ThreeAddressTable {
             if (eachNode.equals(model.getRoot())) {
                 if (child.toString().equals("MAIN")) {
                     this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETAMAIN, child.toString().split(":")[0], "", ""));
-                } else {
+                } else if (!child.toString().equals("VARIABLES_GLOBALES")) {
                     Cuadruplos t = new Cuadruplos(Operacion.ETIQUETAFUN, child.toString().split(":")[0], "", "");
                     t.setBloque(child);
                     this.tablaCuadruplos.add(t);
                 }
                 iterateTree(child, siguienteEtiqueta, 0, "", child);
-                if (!(child.toString().equals("MAIN"))) {
+                if (!(child.toString().equals("MAIN")) && !(child.toString().equals("VARIABLES_GLOBALES"))) {
                     this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, "salida_" + child.toString().split(":")[0], "", ""));
                     Cuadruplos t = new Cuadruplos(Operacion.FINFUNCION, "salida_" + child.toString().split(":")[0], "", "");
                     t.setBloque(child);
@@ -74,7 +79,7 @@ public class ThreeAddressTable {
                 nuevasEtiquetas[2] = "tag" + (this.conteoEtiquetas++);
                 nuevasEtiquetas[0] = "tag" + (this.conteoEtiquetas++);
                 nuevasEtiquetas[1] = "tag" + (this.conteoEtiquetas++);
-                
+
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[2], "", ""));
                 Object expresionChild = model.getChild(child, 0);
                 ExpresionsTree(expresionChild, nuevasEtiquetas, child);
@@ -82,7 +87,7 @@ public class ThreeAddressTable {
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[0], "", ""));
 
                 iterateTree(child, nuevasEtiquetas, 3, this.forVar, child);
-                
+
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, nuevasEtiquetas[1], "", ""));
             }
 
@@ -233,7 +238,7 @@ public class ThreeAddressTable {
             }
 
             if (child.toString().contains(":fun")) {
-                String t_ret = callFunction(child,child);
+                String t_ret = callFunction(child, child);
             }
 
         }
@@ -486,7 +491,7 @@ public class ThreeAddressTable {
             return ArithmeticBuild(childNode, Operacion.DIVISION, currentBlock);
         }
         if (childNode.toString().contains(":fun")) {
-            String t_ret = callFunction(childNode,currentBlock);
+            String t_ret = callFunction(childNode, currentBlock);
             this.tablaCuadruplos.add(new Cuadruplos(Operacion.ASIGNACION, t_ret, "", childNode.toString()));
         } else {
             if (model.getChildCount(childNode) == 1) {
@@ -526,7 +531,7 @@ public class ThreeAddressTable {
 //        TableRow tempTable = this.root.getID(leftChild.toString(), currentBlock, root);
         if ((model.getChildCount(leftChild) == 0) && (model.getChildCount(rightChild) == 0)) {
             if (rightChild.toString().contains(":fun")) {
-                String t_ret = callFunction(rightChild,currentBlock);
+                String t_ret = callFunction(rightChild, currentBlock);
                 Cuadruplos tempCuadruplo = new Cuadruplos(Operacion.ASIGNACION, t_ret, "", leftChild.toString());
                 tempCuadruplo.setBloque(currentBlock);
 //                tempCuadruplo.setInfoRes(tempTable.offset, tempTable.type, tempTable.ubicacion);
@@ -539,7 +544,7 @@ public class ThreeAddressTable {
             }
         } else {
             if (rightChild.toString().contains(":fun")) {
-                String t_ret = callFunction(rightChild,currentBlock);
+                String t_ret = callFunction(rightChild, currentBlock);
                 Cuadruplos tempCuadruplo = new Cuadruplos(Operacion.ASIGNACION, t_ret, "", leftChild.toString());
                 tempCuadruplo.setBloque(currentBlock);
 //                tempCuadruplo.setInfoRes(tempTable.offset, tempTable.type, tempTable.ubicacion);

@@ -34,5 +34,6 @@ public enum Operacion {
     FINFUNCION,
     ARREGLOASIGN,
     DECLARACION,
-    RETURN
+    RETURN,
+    GLOBAL
 }
