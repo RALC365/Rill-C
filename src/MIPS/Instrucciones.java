@@ -349,10 +349,10 @@ public class Instrucciones {
     public String SaltoCondicional(Operacion O, String D, String I, String R, Object B) {
         String ret = "";
         //Evaluamos si es un registro o un número
-        String[] registroD = getRegistroAritmetico(D, B);
+        String[] registroD = getRegistroSaltoCondicional(D, B);
         ret += registroD[0];
         D = registroD[1];
-        String[] registroI = getRegistroAritmetico(I, B);
+        String[] registroI = getRegistroSaltoCondicional(I, B);
         ret += registroI[0];
         I = registroI[1];
         switch (O) {
@@ -415,7 +415,8 @@ public class Instrucciones {
             }
             break;
             default: {
-                TableRow id = root.getID(D, B, root);
+                TableRow id = new TableRow(D, typeD, 0);
+                id = root.getID(D, B, root);
                 //En caso de ser variable
                 if (id != null) {
                     String r_v = buscarEnRegistros(D);
