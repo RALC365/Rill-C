@@ -6,12 +6,18 @@
 	(pp: "Resultado: "+b:).,
 :)
 
-(int n)fib(fun:int 
+(int n)fib(fun:int
+	int x.,
 	(n = 1)(if:
-		ret 1.,
+		x: 1.,
 	:)
 	(n = 2)(if:
-		ret 1.,
+		x: 1.,
 	:)
-	ret fib(n - 1) + fib(n - 2).,
+	int k: n - 1.,
+	int p: n - 2.,
+	int fiba: fib(k).,
+	int fibb: fib(p).,
+	x: fiba + fibb.,
+	ret x.,
 :)
