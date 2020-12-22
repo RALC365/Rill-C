@@ -281,6 +281,50 @@ public class Instrucciones {
         return ins;
     }
 
+public String Salto(String dest){
+        String ret = "    b _" + dest + "\n";
+        return ret;
+    }
+    public String SaltoCondicional(Operacion O, String D, String I, String R, Object B){
+        String ret = "";
+        //Evaluamos si es un registro o un número
+        String [] registroD = getRegistroAritmetico(D, B);
+        ret += registroD[0];
+        D = registroD[1];
+        String[] registroI = getRegistroAritmetico(I, B);
+        ret += registroI[0];
+        I = registroI[1];
+        switch (O){
+            case IFIGUAL:{
+                ret += "    beq " + D + ", " + I + ", _" + R + "\n";
+            }
+            break;
+            case IFMAYOR:{
+                ret += "    bgt " + D + ", " + I + ", _" + R + "\n";
+            }
+            break;
+            case IFMENOR:{
+                ret += "    blt " + D + ", " + I + ", _" + R + "\n";
+            }
+            break;
+            case IFMAYORIGUAL:{
+                ret += "    bge " + D + ", " + I + ", _" + R + "\n";
+            }
+            break;
+            case IFMENORIGUAL:{
+                ret += "    ble " + D + ", " + I + ", _" + R + "\n";
+            }
+            break;
+            case IFDISTINTO:{
+                ret += "    bne " + D + ", " + I + ", _" + R + "\n";
+            }
+            break;
+        }
+        return ret;
+    }
+    
+    
+    
 }
 
 /*

@@ -65,6 +65,7 @@ public class FinalCode {
                 }
                 break;
                 case GOTO: {
+                    codigoMIPS += instruccion.Salto(c.getParametroA());                    
                 }
                 break;
                 case ASIGNARREGLO: {
@@ -75,7 +76,7 @@ public class FinalCode {
                         codigoMIPS += "    li $v0,10\n";
                         codigoMIPS += "    syscall\n\n";
                     }
-                    codigoMIPS += "_fun_" + Operacion.ETIQUETAFUN + ":\n";
+                    codigoMIPS += "_fun_" + c.getParametroA() + ":\n";
                     //LLAAMAR PREINICIO FUNCIÓN
                 }
                 break;
@@ -84,7 +85,7 @@ public class FinalCode {
                         codigoMIPS += "    li $v0,10\n";
                         codigoMIPS += "    syscall\n\n";
                     }
-                    codigoMIPS += "_" + Operacion.ETIQUETA + ":\n";
+                    codigoMIPS += "_" + c.getParametroA() + ":\n";
                 }
                 break;
                 case PARAM: {
@@ -102,21 +103,27 @@ public class FinalCode {
                 }
                 break;
                 case IFIGUAL: {
+                    codigoMIPS += instruccion.SaltoCondicional(Operacion.IFIGUAL, c.getParametroA(), c.getParametroB(), c.getResultado(), c.getBloque());
                 }
                 break;
                 case IFMAYOR: {
+                    codigoMIPS += instruccion.SaltoCondicional(Operacion.IFMAYOR, c.getParametroA(), c.getParametroB(), c.getResultado(), c.getBloque());
                 }
                 break;
                 case IFMENOR: {
+                    codigoMIPS += instruccion.SaltoCondicional(Operacion.IFMENOR, c.getParametroA(), c.getParametroB(), c.getResultado(), c.getBloque());
                 }
                 break;
                 case IFMAYORIGUAL: {
+                    codigoMIPS += instruccion.SaltoCondicional(Operacion.IFMAYORIGUAL, c.getParametroA(), c.getParametroB(), c.getResultado(), c.getBloque());
                 }
                 break;
                 case IFMENORIGUAL: {
+                    codigoMIPS += instruccion.SaltoCondicional(Operacion.IFMENORIGUAL, c.getParametroA(), c.getParametroB(), c.getResultado(), c.getBloque());
                 }
                 break;
                 case IFDISTINTO: {
+                    codigoMIPS += instruccion.SaltoCondicional(Operacion.IFDISTINTO, c.getParametroA(), c.getParametroB(), c.getResultado(), c.getBloque());
                 }
                 break;
                 case PRINT: {
