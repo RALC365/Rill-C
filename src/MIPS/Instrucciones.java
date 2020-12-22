@@ -21,8 +21,9 @@ public class Instrucciones {
     public ArrayList<String> temporales = new ArrayList<>(Arrays.asList("$t0", "$t1", "$t2", "$t3",
             "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"));
     public ArrayList<String> argumentos = new ArrayList<>(Arrays.asList(
-            "$v0", "$v1", "$a0", "$a1", "$a2", "$a3", "$s0", "$s1", "$s2", "$s3", "$s4", "$s5", "$s6",
-            "$s7", "$t8", "$t9"));
+            "$a0", "$a1", "$a2", "$a3", "$s0", "$s1", "$s2", "$s3", "$s4", "$s5", "$s6", "$s7"));
+    public ArrayList<String> parametros = new ArrayList<>(Arrays.asList(
+            "$s0", "$s1", "$s2", "$s3", "$s4", "$s5", "$s6", "$s7"));
     private TypesSubTable root = null;
     private HashMap<String, String> DescriptorRegistros = new HashMap();
 
@@ -57,6 +58,17 @@ public class Instrucciones {
     private String getRegistroLibre() {
         for (String R : DescriptorRegistros.keySet()) {
             if (R.contains("t")) {
+                if (DescriptorRegistros.get(R).equals("")) {
+                    return R;
+                }
+            }
+        }
+        return "";
+    }
+
+    private String getArgumentoLibre() {
+        for (String R : DescriptorRegistros.keySet()) {
+            if (!R.contains("t")) {
                 if (DescriptorRegistros.get(R).equals("")) {
                     return R;
                 }
@@ -177,17 +189,24 @@ public class Instrucciones {
         String ret = "";
         TableRow id = root.getID(R, B, root);
         if (id != null) {
-            if (GetType(I).equals("int")) {
+            if (I.equals("RET")) {
                 String reg = getRegistroLibre();
                 ret += "    lw " + reg + ", " + id.ubicacion + "\n";
-                ret += "    li " + reg + ", " + I + "\n";
+                ret += "    move " + reg + ", " + "$v0" + "\n";
                 ret += "    sw " + reg + ", " + id.ubicacion + "\n\n";
             } else {
-                String reg = getRegistroLibre();
-                String r_i = buscarEnRegistros(I);
-                ret += "    lw " + reg + ", " + id.ubicacion + "\n";
-                ret += "    move " + reg + ", " + r_i + "\n";
-                ret += "    sw " + reg + ", " + id.ubicacion + "\n\n";
+                if (GetType(I).equals("int")) {
+                    String reg = getRegistroLibre();
+                    ret += "    lw " + reg + ", " + id.ubicacion + "\n";
+                    ret += "    li " + reg + ", " + I + "\n";
+                    ret += "    sw " + reg + ", " + id.ubicacion + "\n\n";
+                } else {
+                    String reg = getRegistroLibre();
+                    String r_i = buscarEnRegistros(I);
+                    ret += "    lw " + reg + ", " + id.ubicacion + "\n";
+                    ret += "    move " + reg + ", " + r_i + "\n";
+                    ret += "    sw " + reg + ", " + id.ubicacion + "\n\n";
+                }
             }
         }
         return ret;
@@ -239,33 +258,40 @@ public class Instrucciones {
             }
             //Faltans los casos donde sea matriz y eso
         }
-        ret += "    jal _fun_" + fun + "\n";
+        ret += "    jal _fun_" + fun + "\n\n";
         return ret;
     }
 
-    public String InicioFuncion(String[] params, Object bloqueActual) {
+    public String InicioFuncion(ArrayList<String> params, Object B) {
+        int sub = 0;
         String ret = "";
         ret += "   sw $fp, -4($sp) \n";
         ret += "   sw $fp, -4($sp) \n";
         ret += "   sw $ra, -8($sp) \n";
         ret += "\n";
         ret += "   #Guardar los parametros \n";
-        for (String param : params) {
-            if (GetType(ret).equals("")) {
-                TableRow id = root.getID(param, bloqueActual, root);
-                ret += "   sw $s0, " + id.ubicacion + " \n";
-            } else {
-                ret += "   Todavía no sé esta parte \n";
+        for (int i = 0; i < params.size(); i++) {
+            DescriptorRegistros.remove(parametros.get(i));
+            String id = params.get(i);
+            String type = GetType(id);
+            TableRow t = root.getID(id, B, root);
+            System.out.println("Buscar ID" + id + " EN " + B);
+            if (t != null) {
+                ret += "    sw " + parametros.get(i) + ", " + t.ubicacion + "\n";
+                if (i == params.size() - 1) {
+                    sub = t.offset;
+                }
             }
         }
         ret += "\n";
-        //Como se mandan en A debe tambien moverse los a a s
-        ret += "   #mover los parámetros recibido a las S \n";
-        ret += "   move $s0,$a0 \n";
-        ret += "\n";
         ret += "   #Mover Apuntadores \n";
-        ret += "   mov $fp, $sp \n";
-        ret += "   sub $sp,$sp, SUMA_OFFETS \n";
+        ret += "   move $fp, $sp \n";
+        ret += "   sub $sp,$sp, " + sub + "\n";
+        ret += "\n";
+        ret += "   #mover los parámetros recibido a las S \n";
+        for (int i = 0; i < params.size(); i++) {
+            ret += "   move " + parametros.get(i) + ", " + argumentos.get(i) + "\n";
+        }
         ret += "\n";
         ret += "   #Código dentro de la función \n";
         return ret;
@@ -274,7 +300,7 @@ public class Instrucciones {
     public String FinFuncion(String[] Params) {
         String ret = "";
         ret += "   _salida_fun: \n";
-        ret += "   mov $sp, $fp \n";
+        ret += "   move $sp, $fp \n";
         ret += "   lw $fp, -4($sp) \n";
         ret += "   lw $ra, -8($sp) \n";
         ret += "\n";
@@ -286,7 +312,6 @@ public class Instrucciones {
     }
 
     public String InputInt(String id, Object B) {
-        System.out.println("ENTRA " + id);
         TableRow tr = root.getID(id.replace(" ", ""), B, root);
         String ins = "    #input\n";
         if (tr != null) {
@@ -299,6 +324,105 @@ public class Instrucciones {
             }
         }
         return ins;
+    }
+
+    public String Salto(String dest) {
+        String ret = "    b _" + dest + "\n";
+        return ret;
+    }
+
+    public String SaltoCondicional(Operacion O, String D, String I, String R, Object B) {
+        String ret = "";
+        //Evaluamos si es un registro o un número
+        String[] registroD = getRegistroAritmetico(D, B);
+        ret += registroD[0];
+        D = registroD[1];
+        String[] registroI = getRegistroAritmetico(I, B);
+        ret += registroI[0];
+        I = registroI[1];
+        switch (O) {
+            case IFIGUAL: {
+                ret += "    beq " + D + ", " + I + ", _" + R + "\n";
+            }
+            break;
+            case IFMAYOR: {
+                ret += "    bgt " + D + ", " + I + ", _" + R + "\n";
+            }
+            break;
+            case IFMENOR: {
+                ret += "    blt " + D + ", " + I + ", _" + R + "\n";
+            }
+            break;
+            case IFMAYORIGUAL: {
+                ret += "    bge " + D + ", " + I + ", _" + R + "\n";
+            }
+            break;
+            case IFMENORIGUAL: {
+                ret += "    ble " + D + ", " + I + ", _" + R + "\n";
+            }
+            break;
+            case IFDISTINTO: {
+                ret += "    bne " + D + ", " + I + ", _" + R + "\n";
+            }
+            break;
+        }
+        return ret;
+    }
+
+    private String[] getRegistroSaltoCondicional(String D, Object B) {
+        String inst = "";
+        String registro = "";
+        String typeD = GetType(D);
+        switch (typeD) {
+            case "int": {
+                String reg = getRegistroLibre();
+                inst += "    li " + reg + ", " + D + "\n";
+                guardarEnRegistros(reg, D);
+                registro = reg;
+            }
+            break;
+            case "bln": {
+                String reg = getRegistroLibre();
+                //false = 0; true = 1. Así comparamos recios
+                D = (D.equals("false")) ? (0 + "") : ("" + 1);
+                inst += "    li " + reg + ", " + D + "\n";
+                guardarEnRegistros(reg, D);
+                registro = reg;
+            }
+            break;
+            case "chr": {
+                String reg = getRegistroLibre();
+                //Comvertimos el char a número para comparar, luego a String
+                D = "" + (int) (D.charAt(1));
+                inst += "    li " + reg + ", " + D + "\n";
+                guardarEnRegistros(reg, D);
+                registro = reg;
+            }
+            break;
+            default: {
+                TableRow id = root.getID(D, B, root);
+                //En caso de ser variable
+                if (id != null) {
+                    String r_v = buscarEnRegistros(D);
+                    //Buscar si el ID no está cargado 
+                    if (r_v.equals("")) {
+                        String r_l = getRegistroLibre();
+                        inst += "    lw " + r_l + ", " + id.ubicacion + "\n";
+                        guardarEnRegistros(r_l, id.id);
+                        registro = r_l;
+                    } else {
+                        registro = r_v;
+                    }
+                } //en caso de ser temoporal ya debería estar en descriptor
+                else {
+                    String reg = buscarEnRegistros(D);
+                    registro = reg;
+                }
+            }
+
+        }
+        String ret[] = {inst, registro};
+        return ret;
     }
 
 }

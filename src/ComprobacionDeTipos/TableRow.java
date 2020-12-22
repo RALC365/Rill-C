@@ -16,12 +16,6 @@ public class TableRow {
     public final int offset;
     public String ubicacion;
 
-    public TableRow(String id, String type, int offset, String ubicacion) {
-        this.id = id;
-        this.type = type;
-        this.offset = offset;
-        this.ubicacion = ubicacion;
-    }
 
     public TableRow(String id, String type, int offset) {
         this.id = id;
