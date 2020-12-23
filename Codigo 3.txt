@@ -2,22 +2,16 @@
 	int n.,
 	(pp: "Ingrese un numero: " :).,
 	(in: n :).,
-	int b: fib(n).,
+	int b: coscos(n).,
 	(pp: "Resultado: "+b:).,
 :)
 
-(int n)fib(fun:int
-	int x.,
-	(n = 1)(if:
-		x: 1.,
-	(n = 2):
-		x: 1.,
-	(els):
-		int k: n - 1.,
-		int p: n - 2.,
-		int fiba: fib(k).,
-		int fibb: fib(p).,
-		x: fiba + fibb.,
+(int n)coscos(fun:int
+	int x: 1.,
+	int k: n.,
+	(k < 10)(wh: 
+		x: 4 + x.,
+		k: k + 1.,
 	:)
 	ret x.,
 :)
