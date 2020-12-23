@@ -195,6 +195,7 @@ public class ThreeAddressTable {
             if (child.toString().equals("ELSE")) {
                 this.tablaCuadruplos.add(new Cuadruplos(Operacion.ETIQUETA, siguienteEtiqueta[1], "", ""));
                 iterateTree(child, siguienteEtiqueta, 0, "", child);
+                this.tablaCuadruplos.add(new Cuadruplos(Operacion.GOTO, siguienteEtiqueta[2], "", ""));
             }
 
             if (child.toString().equals("ASSIGN")) {

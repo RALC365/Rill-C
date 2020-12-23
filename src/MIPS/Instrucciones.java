@@ -269,13 +269,16 @@ public class Instrucciones {
         ret += "   sw $ra, -8($sp) \n";
         ret += "\n";
         ret += "   #Guardar los parametros \n";
+        String storeSW = "";
         for (int i = 0; i < params.size(); i++) {
+            System.out.println("Pollo: "+params.get(i));
             //DescriptorRegistros.remove(parametros.get(i));
             String id = params.get(i);
             String type = GetType(id);
             TableRow t = root.getID(id, B, root);
             if (t != null) {
-                ret += "    sw " + parametros.get(i) + ", " + t.ubicacion + "\n";
+                storeSW += "    sw " + parametros.get(i) + ", " + t.ubicacion + "\n";
+                ret += storeSW;
                 if (i == params.size() - 1) {
                     sub = t.offset;
                 }
@@ -284,14 +287,14 @@ public class Instrucciones {
         ret += "\n";
         ret += "   #Mover Apuntadores \n";
         ret += "   move $fp, $sp \n";
-        ret += "   sub $sp,$sp, " + sub + "\n";
         ret += "\n";
         ret += "   #mover los parámetros recibido a las S \n";
         for (int i = 0; i < params.size(); i++) {
             ret += "   move " + parametros.get(i) + ", " + argumentos.get(i) + "\n";
-
         }
+        ret += "   sub $sp, $sp, " + sub + "\n";
         ret += "\n";
+        ret += storeSW;
         ret += "   #Código dentro de la función \n";
         return ret;
     }
@@ -348,9 +351,11 @@ public class Instrucciones {
     public String SaltoCondicional(Operacion O, String D, String I, String R, Object B) {
         String ret = "";
         //Evaluamos si es un registro o un número
+        System.out.println("Pepsi: "+D);
         String[] registroD = getRegistroSaltoCondicional(D, B);
         ret += registroD[0];
         D = registroD[1];
+        System.out.println("Twist: "+D);
         String[] registroI = getRegistroSaltoCondicional(I, B);
         ret += registroI[0];
         I = registroI[1];
