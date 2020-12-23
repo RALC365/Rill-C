@@ -578,9 +578,24 @@ public class FrmPrincipal extends javax.swing.JFrame {
             MontarCuadruplos(tt.root);
         } catch (CustomErrorException ex) {
             Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            bandera = false;
         }
-        this.codigoFinal = new FinalCode(tablaCuadruplos.getTablaCuadruplos(), tt.getRoot());
-        this.codigoFinal.GenerarCodigoFinal();
+        if (bandera == true){
+            this.codigoFinal = new FinalCode(tablaCuadruplos.getTablaCuadruplos(), tt.getRoot());
+            String codigoMIPS = this.codigoFinal.GenerarCodigoFinal();
+            //Guardar archivo
+            JFileChooser guardar = new JFileChooser();
+            guardar.showSaveDialog(null);
+            guardar.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+
+            File archivo = guardar.getSelectedFile();
+
+            //guardarFichero(txtResultado.getText(), archivo);
+            guardarFichero(codigoMIPS, archivo);
+        }
+        
+        
+        
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed

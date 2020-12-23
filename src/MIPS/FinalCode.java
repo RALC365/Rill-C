@@ -31,7 +31,7 @@ public class FinalCode {
         this.instruccion = new Instrucciones(ambitoTree);
     }
 
-    public void GenerarCodigoFinal() {
+    public String GenerarCodigoFinal() {
         String cargaGlobal = "       .data\n";
         String codigoMIPS = "       .text\n"
                 + "     .globl main\n";
@@ -158,5 +158,6 @@ public class FinalCode {
             bandera_etiqueta++;
         }
         System.out.println(cargaGlobal + codigoMIPS);
+        return cargaGlobal + codigoMIPS;
     }
 }
